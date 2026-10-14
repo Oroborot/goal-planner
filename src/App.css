@@ -1,0 +1,7 @@
+.app { max-width: 480px; margin: 0 auto; padding: 2rem; text-align: left; }
+form { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
+form input { flex: 1; padding: 0.5rem; }
+ul { list-style: none; padding: 0; }
+li { display: flex; align-items: center; gap: 0.5rem; padding: 0.4rem 0; }
+li span { flex: 1; }
+li.done span { text-decoration: line-through; opacity: 0.5; }
