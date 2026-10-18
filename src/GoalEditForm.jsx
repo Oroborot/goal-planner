@@ -16,6 +16,7 @@ function LinkList({ legend, goals, checkedIds, onToggle, emptyText }) {
               type="checkbox"
               checked={checkedIds.includes(g.id)}
               onChange={() => onToggle(g.id)}
+              aria-label={`${legend}: ${g.title}`}
             />
             <span>
               {g.title} <span className="link-timeframe">({labelOf(g.timeframe)})</span>

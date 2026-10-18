@@ -55,3 +55,24 @@ li.done .goal-title { text-decoration: line-through; opacity: 0.5; }
 .icon-button { width: 36px; flex-shrink: 0; padding: 0; border-color: transparent; background: transparent; color: var(--text); }
 
 .empty { padding: 1rem 0; opacity: 0.7; }
+
+/* Goal titles are links to the goal's page. */
+.goal-link { text-decoration: none; }
+.goal-link:hover { text-decoration: underline; }
+.goal-meta { font-size: 0.85em; line-height: 1.3; }
+
+/* Progress bars: a grey track that fills with the accent color. */
+.progress { width: 100%; border-radius: 999px; background: var(--border); overflow: hidden; }
+.progress-small { height: 5px; margin: 0.25rem 0; }
+.progress-large { height: 12px; }
+.progress-fill { height: 100%; border-radius: 999px; background: var(--accent); transition: width 0.3s ease; }
+
+/* Goal page. */
+.goal-page-timeframe { font-size: 0.9em; }
+.goal-page-why { margin: -0.75rem 0 1rem; }
+.goal-page-progress { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1rem; color: var(--text-h); }
+.done-toggle { display: flex; align-items: center; gap: 0.6rem; min-height: 44px; cursor: pointer; }
+.done-toggle input { width: 22px; height: 22px; min-height: 0; margin: 0; accent-color: var(--accent); }
+.page-actions { display: flex; gap: 0.5rem; margin-bottom: 0.5rem; }
+.page-actions button { flex: 1; }
+.app h2 { margin-top: 1.5rem; font-size: 18px; }

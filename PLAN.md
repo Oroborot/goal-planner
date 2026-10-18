@@ -82,7 +82,8 @@ Practical features come first, visual design later: the look (colors, fonts, spa
 
 - [x] **Edit what you've added:** change a goal's title, timeframe, "why" and parent goals after creating it.
 - [x] **Flexible linking:** link goals at any time, not only when creating them. Often a goal comes first and its bigger goal only becomes clear later, so adding a goal should be quick, with linking done whenever it makes sense. A goal can link to several parent goals, and linking works in both directions: from a bigger goal, add a new smaller goal under it, or link existing smaller goals to it.
-- [ ] **Progress rollup:** completing a task updates all its parent goals, shown as a progress bar.
+- [ ] **Keep all data (history log):** "all data is good data". Every action is recorded with the time it happened: created, edited, linked, ticked, unticked, deleted, and later skipped, timer runs and reminders. Deleted goals are hidden, not erased, so nothing is ever lost. This makes it possible to count things like how many times a goal was ticked or skipped, and it's the base for history, folders, suggestions and sharing.
+- [x] **Progress rollup and goal page:** the goals list is for creating goals; the goal page is for tracking them. Tap a goal to open its own page with a progress bar, the smaller goals under it by name (tickable, each with its own progress), and the bigger goals it counts toward (tap to move up the chain). Progress: a goal with nothing under it is 0% or 100%; a bigger goal is the average of the goals under it, all the way up the chain. Both ways of completing: tick a big goal by hand at any time, or it completes itself automatically when everything under it is done (and un-completes if something under it is unticked, unless you ticked it by hand).
 - [ ] **Goal tree view:** see the whole chain from today up to the end goal. A simple version first; the fancy visuals come later (see `DESIGN-IDEAS.md`).
 
 ### Part 2: make it a daily app
@@ -120,6 +121,7 @@ These become hard to change once real data exists (after login and sync, or once
 - **Saved data lives in one browser.** Goals are stored in the browser on that device, at that web address. A different device, a different address (such as a preview link or a new domain) or clearing browser data means an empty app.
 - **The shape of saved data.** Adding new fields is always easy. Once real data exists, renaming or removing fields needs extra code that upgrades data already saved.
 - **Several parents per goal (done).** Goals store a list of parent ids (`parentIds`) instead of a single `parentId`.
-- **History for sharing.** To show the process behind a goal later, the app has to record it as it happens: when things were done, notes, reminders. Anything not recorded can't be shown later. Deleting a goal also erases its history, so finished goals may need an "archive" instead of delete.
+- **History only exists from the day it's recorded.** The app can only show or count what it recorded at the time: when things were ticked, skipped, edited, and so on. Anything done before the history log existed is gone. Deleting hides goals instead of erasing them, so their history stays.
+- **Browser storage has a size limit (about 5 MB).** The history log grows forever. For one person that's years of normal use, but it's another reason to move to login and a real database before the app is used for real.
 - **Folders should be linked by id, not by name.** Then renaming a folder doesn't break anything.
 - **The web address.** Once the app is installed on phones, changing the address means a new app and an empty data store.
