@@ -15,7 +15,7 @@ Example chain: Today: Work out -> This week: Work out 3 times -> This month: 50 
 **1. The goal chain (the core of the app)**
 
 - Goals live at different levels: end goal, year, month, week, day.
-- Each goal can link to a bigger "parent" goal.
+- Each goal can link to one or more bigger "parent" goals, so a goal can count toward several bigger goals.
 - Finishing a small goal counts as progress toward the bigger ones.
 - Several areas of life, each with its own chain (fitness, apps, money, and so on).
 
@@ -32,6 +32,8 @@ Example chain: Today: Work out -> This week: Work out 3 times -> This month: 50 
 **4. Different views**
 
 - Several ways to see the same tasks, such as a list, a goal tree, or by day or week.
+- A table view, like a spreadsheet, showing goals and their links.
+- A visual map that draws goals and the connections between them.
 
 **5. Daily repeating tasks**
 
@@ -70,11 +72,13 @@ Each step is roughly one or two sessions. Commit and deploy after every step so 
 - [x] **Finish Day 2:** saving with localStorage, timeframes and tabs. Everything else builds on this.
 - [x] **Create `PLAN.md`** with the organized list above.
 - [x] **Goal linking:** a "parent goal" dropdown when creating a goal, plus a "why" field.
-- [ ] **Edit what you've added:** change a goal's title, timeframe, "why" and parent goal after creating it.
-- [ ] **Link in both directions:** from a bigger goal, add a new smaller goal under it, or link existing smaller goals to it (not only child -> parent).
-- [ ] **Progress rollup:** completing a task updates its parent goals, shown as a progress bar.
+- [ ] **Home screen (top priority):** when you open the app, a start screen where you choose what to do: goals, notes, folders, and so on.
+- [ ] **Better look (top priority):** a design pass so the app feels less plain. Later features follow this style.
+- [ ] **Edit what you've added:** change a goal's title, timeframe, "why" and parent goals after creating it.
+- [ ] **Flexible linking:** a goal can link to several parent goals, and linking works in both directions: from a bigger goal, add a new smaller goal under it, or link existing smaller goals to it.
+- [ ] **Progress rollup:** completing a task updates all its parent goals, shown as a progress bar.
 - [ ] **Goal tree view:** see the whole chain from today up to the end goal.
-- [ ] **Home screen:** when you open the app, a start screen where you choose what to do: goals, notes, folders, and so on.
+- [ ] **More goal views:** a table view (like a spreadsheet, showing each goal and what it's linked to) and a visual map that draws goals as boxes with lines between them.
 - [ ] **Notes:** take notes and daily task lists, mark progress on them, and edit or delete them, the same way you manage goals.
 - [ ] **Folders:** a separate section with folders such as "Achieved" (finished goals, with their "why" and date) and "Reasons to try" (your "why"s, to remind you why you do things). You can create, rename and delete folders, and move goals and "why"s between them.
 - [ ] **Better look:** a design pass so the app feels less plain.
@@ -87,10 +91,12 @@ Each step is roughly one or two sessions. Commit and deploy after every step so 
 
 ## Hard to change later
 
-Most of the app is easy to change. These are the exceptions, so decide them on purpose.
+**Decided:** until the last stage, all saved data is test data. Nothing needs to be kept, so the shape of saved data can change freely and old test data can simply be cleared. No upgrade code is needed until then.
 
-- **Saved data lives in one browser.** Goals are stored in the browser on that device, at that web address. A different device, a different address (such as a preview link or a new domain) or clearing browser data means an empty app. Moving to login and sync later means copying the saved data over.
-- **The shape of saved data.** Adding new fields is easy. Renaming or removing fields, or changing what they mean, needs extra code that upgrades data people have already saved.
-- **One parent per goal.** Right now a goal can link to only one bigger goal. If one goal should count toward several bigger goals, it's easier to change before there's a lot of real data.
+These become hard to change once real data exists (after login and sync, or once real use starts):
+
+- **Saved data lives in one browser.** Goals are stored in the browser on that device, at that web address. A different device, a different address (such as a preview link or a new domain) or clearing browser data means an empty app.
+- **The shape of saved data.** Adding new fields is always easy. Once real data exists, renaming or removing fields needs extra code that upgrades data already saved.
+- **Several parents per goal.** Goals will store a list of parent ids (`parentIds`) instead of a single `parentId`. This switch is free now and gets harder once real data exists.
 - **Folders should be linked by id, not by name.** Then renaming a folder doesn't break anything.
 - **The web address.** Once the app is installed on phones, changing the address means a new app and an empty data store.
