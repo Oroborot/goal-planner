@@ -3,8 +3,10 @@ import GoalEditForm from './GoalEditForm.jsx'
 import AddSmallerGoalForm from './AddSmallerGoalForm.jsx'
 import ProgressBar from './ProgressBar.jsx'
 import { labelOf, sizeOf } from './timeframes.js'
-import { childrenOf, progressOf, percent } from './progress.js'
+import { activeGoals, childrenOf, progressOf, percent } from './progress.js'
 import { addGoal, saveGoal, toggleGoal } from './goalActions.js'
+import { deletedEvent, formatTime } from './history.js'
+import GoalHistory from './GoalHistory.jsx'
 
 // One row in the "smaller goals" or "counts toward" lists: a link to that
 // goal's page, its timeframe and how far along it is.
@@ -35,20 +37,46 @@ function LinkedGoal({ goal, goals, onToggle }) {
 
 // The page for one goal: its progress, the smaller goals under it and the
 // bigger goals it counts toward. This is where goals are tracked.
-function GoalPage({ goalId, items, setItems }) {
+// `apply` saves a change and records it in the history log; `events` is the
+// history log itself.
+function GoalPage({ goalId, items, events, apply }) {
   // 'edit' while the ✎ form is open, 'add' while the ＋ form is open.
   const [mode, setMode] = useState(null)
 
-  const goals = items.filter(item => item.list === 'goals')
+  const goals = activeGoals(items)
   const goal = goals.find(g => g.id === goalId)
 
+  // A deleted goal is hidden everywhere, but its page still shows its history.
   if (!goal) {
+    const deleted = items.find(item => item.id === goalId && item.deletedAt)
+    const entry = deleted && deletedEvent(events, goalId)
     return (
       <div className="app">
         <a href="#goals" className="back">
           ← Goals
         </a>
-        <p className="empty">This goal doesn't exist anymore.</p>
+        {deleted ? (
+          <>
+            <p className="goal-page-timeframe">{labelOf(deleted.timeframe)} goal · deleted</p>
+            <h1>{deleted.title}</h1>
+            {deleted.why && <p className="goal-page-why">Why: {deleted.why}</p>}
+            <section className="goal-page-progress">
+              {entry?.progress !== undefined && (
+                <>
+                  <ProgressBar progress={entry.progress / 100} size="large" />
+                  <p>
+                    Progress when deleted: {entry.progress}%
+                    {entry.wasDone && ' (it was done)'}
+                  </p>
+                </>
+              )}
+              <p className="goal-meta">Deleted on {formatTime(deleted.deletedAt)}.</p>
+            </section>
+            <GoalHistory goalId={goalId} events={events} />
+          </>
+        ) : (
+          <p className="empty">This goal doesn't exist.</p>
+        )}
       </div>
     )
   }
@@ -89,7 +117,7 @@ function GoalPage({ goalId, items, setItems }) {
           <input
             type="checkbox"
             checked={goal.done}
-            onChange={() => setItems(toggleGoal(items, goal.id))}
+            onChange={() => apply(toggleGoal(items, goal.id))}
             aria-label={`Mark "${goal.title}" as done`}
           />
           <span>Done</span>
@@ -101,7 +129,7 @@ function GoalPage({ goalId, items, setItems }) {
           goal={goal}
           goals={goals}
           onSave={(changes, childIds) => {
-            setItems(saveGoal(items, goal.id, changes, childIds))
+            apply(saveGoal(items, goal.id, changes, childIds))
             setMode(null)
           }}
           onCancel={() => setMode(null)}
@@ -110,7 +138,7 @@ function GoalPage({ goalId, items, setItems }) {
         <AddSmallerGoalForm
           parent={goal}
           onAdd={(title, timeframe) => {
-            setItems(addGoal(items, title, timeframe, [goal.id]))
+            apply(addGoal(items, title, timeframe, [goal.id]))
             setMode(null)
           }}
           onCancel={() => setMode(null)}
@@ -142,7 +170,7 @@ function GoalPage({ goalId, items, setItems }) {
               key={child.id}
               goal={child}
               goals={goals}
-              onToggle={() => setItems(toggleGoal(items, child.id))}
+              onToggle={() => apply(toggleGoal(items, child.id))}
             />
           ))}
         </ul>
@@ -158,6 +186,8 @@ function GoalPage({ goalId, items, setItems }) {
           ))}
         </ul>
       )}
+
+      <GoalHistory goalId={goal.id} events={events} />
     </div>
   )
 }

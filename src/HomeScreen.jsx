@@ -1,3 +1,5 @@
+import { activeGoals } from './progress.js'
+
 // "Good morning" before 12, "Good afternoon" before 18, otherwise "Good evening".
 function greeting(hour) {
   if (hour < 12) return 'Good morning'
@@ -15,7 +17,7 @@ function HomeScreen({ items }) {
   })
 
   // A short summary for the Goals button, based on the Day goals.
-  const dayGoals = items.filter(item => item.list === 'goals' && item.timeframe === 'day')
+  const dayGoals = activeGoals(items).filter(goal => goal.timeframe === 'day')
   const doneCount = dayGoals.filter(goal => goal.done).length
   const goalsSummary =
     dayGoals.length === 0

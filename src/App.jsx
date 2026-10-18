@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import HomeScreen from './HomeScreen.jsx'
 import GoalsScreen from './GoalsScreen.jsx'
 import GoalPage from './GoalPage.jsx'
+import { EVENTS_KEY, loadEvents } from './history.js'
 import './App.css'
 
 // The name of the slot in the browser's localStorage where items are saved.
@@ -40,18 +41,30 @@ function loadItems() {
 function App() {
   // Every item in the planner. Each one looks like:
   // { id, title, list, timeframe, done, createdAt, completedAt, completedBy,
-  //   parentIds, why }
+  //   parentIds, why, deletedAt }
   // `parentIds` lists the bigger goals this goal counts toward.
   const [items, setItems] = useState(loadItems)
+  // The history log: one entry for everything that happened (see history.js).
+  const [events, setEvents] = useState(loadEvents)
   const [screen, setScreen] = useState(screenFromAddress)
   // The goals list's selected tab, kept here so it's remembered when you
   // open a goal page and come back.
   const [goalsTab, setGoalsTab] = useState('day')
 
-  // Save to localStorage every time the items change.
+  // Save to localStorage every time the items or the history change.
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(items))
   }, [items])
+  useEffect(() => {
+    localStorage.setItem(EVENTS_KEY, JSON.stringify(events))
+  }, [events])
+
+  // Every change goes through here: the goal actions return the new items
+  // plus history entries for what happened, and both get saved.
+  function apply({ items: newItems, events: newEvents }) {
+    setItems(newItems)
+    if (newEvents.length > 0) setEvents(previous => [...previous, ...newEvents])
+  }
 
   // When the address changes (a link is tapped, or Back is pressed),
   // show the matching screen and start at the top of the page.
@@ -68,7 +81,8 @@ function App() {
     return (
       <GoalsScreen
         items={items}
-        setItems={setItems}
+        events={events}
+        apply={apply}
         timeframe={goalsTab}
         setTimeframe={setGoalsTab}
       />
@@ -78,7 +92,13 @@ function App() {
     // `key` gives each goal a fresh page, so open forms don't carry over
     // when you move to another goal.
     return (
-      <GoalPage key={screen.goalId} goalId={screen.goalId} items={items} setItems={setItems} />
+      <GoalPage
+        key={screen.goalId}
+        goalId={screen.goalId}
+        items={items}
+        events={events}
+        apply={apply}
+      />
     )
   }
   return <HomeScreen items={items} />

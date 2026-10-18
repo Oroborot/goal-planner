@@ -1,4 +1,11 @@
 // Progress and automatic completion for goals.
+import { makeEvent } from './history.js'
+
+// The goals that are in use: deleted goals are kept in the saved data
+// (all data is good data) but hidden everywhere else.
+export function activeGoals(items) {
+  return items.filter(item => item.list === 'goals' && !item.deletedAt)
+}
 
 // The goals linked directly under `id`.
 export function childrenOf(goals, id) {
@@ -26,25 +33,26 @@ export function percent(progress) {
 // - everything under a goal is done -> it completes itself ("auto")
 // - something under an auto-completed goal isn't done -> it un-completes
 // A goal you ticked by hand is never unticked automatically.
-// Returns a new items list.
+// Returns the new items list and history events for what changed.
 export function settleCompletion(items, idsToCheck) {
   const byId = new Map(items.map(item => [item.id, item]))
   const queue = [...idsToCheck]
+  const events = []
 
   while (queue.length > 0) {
     const goal = byId.get(queue.shift())
-    if (!goal || goal.list !== 'goals') continue
+    if (!goal || goal.list !== 'goals' || goal.deletedAt) continue
 
-    const children = [...byId.values()].filter(
-      g => g.list === 'goals' && g.parentIds.includes(goal.id),
-    )
+    const children = activeGoals([...byId.values()]).filter(g => g.parentIds.includes(goal.id))
     const allDone = children.length > 0 && children.every(child => child.done)
 
     let updated = null
     if (allDone && !goal.done) {
       updated = { ...goal, done: true, completedAt: new Date().toISOString(), completedBy: 'auto' }
+      events.push(makeEvent('auto-completed', goal))
     } else if (!allDone && goal.done && goal.completedBy === 'auto') {
       updated = { ...goal, done: false, completedAt: null, completedBy: null }
+      events.push(makeEvent('auto-uncompleted', goal))
     }
 
     // If this goal changed, its own bigger goals need checking too.
@@ -54,5 +62,5 @@ export function settleCompletion(items, idsToCheck) {
     }
   }
 
-  return items.map(item => byId.get(item.id))
+  return { items: items.map(item => byId.get(item.id)), events }
 }
