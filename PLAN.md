@@ -80,7 +80,7 @@ Practical features come first, visual design later: the look (colors, fonts, spa
 
 ### Part 1: make goals actually work
 
-- [ ] **Edit what you've added:** change a goal's title, timeframe, "why" and parent goals after creating it.
+- [x] **Edit what you've added:** change a goal's title, timeframe, "why" and parent goals after creating it.
 - [ ] **Flexible linking:** link goals at any time, not only when creating them. Often a goal comes first and its bigger goal only becomes clear later, so adding a goal should be quick, with linking done whenever it makes sense. A goal can link to several parent goals, and linking works in both directions: from a bigger goal, add a new smaller goal under it, or link existing smaller goals to it.
 - [ ] **Progress rollup:** completing a task updates all its parent goals, shown as a progress bar.
 - [ ] **Goal tree view:** see the whole chain from today up to the end goal. A simple version first; the fancy visuals come later (see `DESIGN-IDEAS.md`).

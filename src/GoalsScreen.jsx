@@ -1,22 +1,6 @@
 import { useState } from 'react'
-
-// The timeframes a goal can belong to, from smallest to biggest.
-// `value` is what gets saved, `label` is what you see on screen.
-const TIMEFRAMES = [
-  { value: 'day', label: 'Day' },
-  { value: 'week', label: 'Week' },
-  { value: 'month', label: 'Month' },
-  { value: 'year', label: 'Year' },
-]
-
-// How big a timeframe is: day = 0, week = 1, month = 2, year = 3.
-function sizeOf(timeframe) {
-  return TIMEFRAMES.findIndex(t => t.value === timeframe)
-}
-
-function labelOf(timeframe) {
-  return TIMEFRAMES[sizeOf(timeframe)].label
-}
+import GoalEditForm from './GoalEditForm.jsx'
+import { TIMEFRAMES, sizeOf, labelOf, parentOptionsFor } from './timeframes.js'
 
 // The goals screen: timeframe tabs, the add form and the goal list.
 // `items` and `setItems` come from App, which loads and saves them.
@@ -27,15 +11,15 @@ function GoalsScreen({ items, setItems }) {
   const [parentId, setParentId] = useState('')
   // The selected timeframe: drives both the tabs and the add-form dropdown.
   const [timeframe, setTimeframe] = useState('day')
+  // The id of the goal being edited right now (null means none).
+  const [editingId, setEditingId] = useState(null)
 
   const goals = items.filter(item => item.list === 'goals')
   const visibleGoals = goals.filter(goal => goal.timeframe === timeframe)
 
   // A goal can only belong to a goal with a bigger timeframe,
   // e.g. a Day goal can link to a Week, Month or Year goal.
-  const parentOptions = goals
-    .filter(goal => sizeOf(goal.timeframe) > sizeOf(timeframe))
-    .sort((a, b) => sizeOf(a.timeframe) - sizeOf(b.timeframe))
+  const parentOptions = parentOptionsFor(goals, timeframe)
 
   function countFor(value) {
     return goals.filter(goal => goal.timeframe === value).length
@@ -87,6 +71,23 @@ function GoalsScreen({ items, setItems }) {
     )
   }
 
+  // Save the changes from the edit form. If the goal got smaller, any goals
+  // linked under it that are no longer smaller get unlinked.
+  // If its timeframe changed, switch to that tab so you can still see it.
+  function saveGoal(id, changes) {
+    setItems(
+      items.map(item => {
+        if (item.id === id) return { ...item, ...changes }
+        if (item.parentId === id && sizeOf(item.timeframe) >= sizeOf(changes.timeframe)) {
+          return { ...item, parentId: null }
+        }
+        return item
+      }),
+    )
+    setEditingId(null)
+    if (changes.timeframe !== timeframe) changeTimeframe(changes.timeframe)
+  }
+
   // Deleting a goal also unlinks any smaller goals that pointed to it.
   function deleteGoal(id) {
     setItems(
@@ -117,7 +118,7 @@ function GoalsScreen({ items, setItems }) {
         ))}
       </div>
 
-      <form className="add-form" onSubmit={addGoal}>
+      <form className="goal-form" onSubmit={addGoal}>
         <input
           value={title}
           onChange={e => setTitle(e.target.value)}
@@ -163,31 +164,50 @@ function GoalsScreen({ items, setItems }) {
         <p className="empty">No {labelOf(timeframe).toLowerCase()} goals yet.</p>
       ) : (
         <ul>
-          {visibleGoals.map(goal => (
-            <li key={goal.id} className={goal.done ? 'done' : ''}>
-              <input
-                type="checkbox"
-                checked={goal.done}
-                onChange={() => toggleGoal(goal.id)}
-                aria-label={`Mark "${goal.title}" as done`}
-              />
-              <div className="goal-text">
-                <span className="goal-title">{goal.title}</span>
-                {goal.parentId && titleOf(goal.parentId) && (
-                  <span className="goal-parent">↳ {titleOf(goal.parentId)}</span>
-                )}
-                {goal.why && <span className="goal-why">Why: {goal.why}</span>}
-              </div>
-              <button
-                type="button"
-                className="delete"
-                onClick={() => deleteGoal(goal.id)}
-                aria-label={`Delete "${goal.title}"`}
-              >
-                ✕
-              </button>
-            </li>
-          ))}
+          {visibleGoals.map(goal =>
+            goal.id === editingId ? (
+              <li key={goal.id} className="editing">
+                <GoalEditForm
+                  goal={goal}
+                  goals={goals}
+                  onSave={changes => saveGoal(goal.id, changes)}
+                  onCancel={() => setEditingId(null)}
+                />
+              </li>
+            ) : (
+              <li key={goal.id} className={goal.done ? 'done' : ''}>
+                <input
+                  type="checkbox"
+                  checked={goal.done}
+                  onChange={() => toggleGoal(goal.id)}
+                  aria-label={`Mark "${goal.title}" as done`}
+                />
+                <div className="goal-text">
+                  <span className="goal-title">{goal.title}</span>
+                  {goal.parentId && titleOf(goal.parentId) && (
+                    <span className="goal-parent">↳ {titleOf(goal.parentId)}</span>
+                  )}
+                  {goal.why && <span className="goal-why">Why: {goal.why}</span>}
+                </div>
+                <button
+                  type="button"
+                  className="icon-button"
+                  onClick={() => setEditingId(goal.id)}
+                  aria-label={`Edit "${goal.title}"`}
+                >
+                  ✎
+                </button>
+                <button
+                  type="button"
+                  className="icon-button"
+                  onClick={() => deleteGoal(goal.id)}
+                  aria-label={`Delete "${goal.title}"`}
+                >
+                  ✕
+                </button>
+              </li>
+            ),
+          )}
         </ul>
       )}
     </div>
