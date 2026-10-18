@@ -67,13 +67,30 @@ Avoid a single mega prompt that says "build all of this". Claude Code would prod
 
 Each step is roughly one or two sessions. Commit and deploy after every step so a working version is always online.
 
-- [ ] **Finish Day 2:** saving with localStorage, timeframes and tabs. Everything else builds on this.
-- [ ] **Create `PLAN.md`** with the organized list above.
-- [ ] **Goal linking:** a "parent goal" dropdown when creating a goal, plus a "why" field.
+- [x] **Finish Day 2:** saving with localStorage, timeframes and tabs. Everything else builds on this.
+- [x] **Create `PLAN.md`** with the organized list above.
+- [x] **Goal linking:** a "parent goal" dropdown when creating a goal, plus a "why" field.
+- [ ] **Edit what you've added:** change a goal's title, timeframe, "why" and parent goal after creating it.
+- [ ] **Link in both directions:** from a bigger goal, add a new smaller goal under it, or link existing smaller goals to it (not only child -> parent).
 - [ ] **Progress rollup:** completing a task updates its parent goals, shown as a progress bar.
 - [ ] **Goal tree view:** see the whole chain from today up to the end goal.
+- [ ] **Home screen:** when you open the app, a start screen where you choose what to do: goals, notes, folders, and so on.
+- [ ] **Notes:** take notes and daily task lists, mark progress on them, and edit or delete them, the same way you manage goals.
+- [ ] **Folders:** a separate section with folders such as "Achieved" (finished goals, with their "why" and date) and "Reasons to try" (your "why"s, to remind you why you do things). You can create, rename and delete folders, and move goals and "why"s between them.
+- [ ] **Better look:** a design pass so the app feels less plain.
 - [ ] **Repeating daily tasks.**
 - [ ] **Liquid tube timer** with count up or down. Good CSS animation practice.
 - [ ] **Planning area and "what now" popup** with your "why" and the swap option. The swap needs an importance level on each task.
 - [ ] **Suggestions:** start with simple rules, such as "you skipped push-ups twice, do them first today", and add AI later.
+- [ ] **Login and sync:** an account so your goals and notes are the same on your phone and laptop. This needs a server and a database, not only the browser.
 - [ ] **Phone version and real notifications.** Browsers only send reminders reliably while the page is open, so true phone reminders come with a mobile app.
+
+## Hard to change later
+
+Most of the app is easy to change. These are the exceptions, so decide them on purpose.
+
+- **Saved data lives in one browser.** Goals are stored in the browser on that device, at that web address. A different device, a different address (such as a preview link or a new domain) or clearing browser data means an empty app. Moving to login and sync later means copying the saved data over.
+- **The shape of saved data.** Adding new fields is easy. Renaming or removing fields, or changing what they mean, needs extra code that upgrades data people have already saved.
+- **One parent per goal.** Right now a goal can link to only one bigger goal. If one goal should count toward several bigger goals, it's easier to change before there's a lot of real data.
+- **Folders should be linked by id, not by name.** Then renaming a folder doesn't break anything.
+- **The web address.** Once the app is installed on phones, changing the address means a new app and an empty data store.

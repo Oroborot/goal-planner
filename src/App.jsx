@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
 import './App.css'
 
-// The timeframes a goal can belong to. `value` is what gets saved,
-// `label` is what you see on screen.
+// The timeframes a goal can belong to, from smallest to biggest.
+// `value` is what gets saved, `label` is what you see on screen.
 const TIMEFRAMES = [
   { value: 'day', label: 'Day' },
   { value: 'week', label: 'Week' },
@@ -13,12 +13,23 @@ const TIMEFRAMES = [
 // The name of the slot in the browser's localStorage where items are saved.
 const STORAGE_KEY = 'planner-items'
 
+// How big a timeframe is: day = 0, week = 1, month = 2, year = 3.
+function sizeOf(timeframe) {
+  return TIMEFRAMES.findIndex(t => t.value === timeframe)
+}
+
+function labelOf(timeframe) {
+  return TIMEFRAMES[sizeOf(timeframe)].label
+}
+
 // Read saved items when the app opens. If nothing is saved yet, or the saved
 // data is broken, start with an empty list instead of crashing.
+// Items saved before goal linking existed get an empty parent and why.
 function loadItems() {
   try {
     const saved = JSON.parse(localStorage.getItem(STORAGE_KEY))
-    return Array.isArray(saved) ? saved : []
+    if (!Array.isArray(saved)) return []
+    return saved.map(item => ({ parentId: null, why: '', ...item }))
   } catch {
     return []
   }
@@ -26,9 +37,12 @@ function loadItems() {
 
 function App() {
   // Every item in the planner. Each one looks like:
-  // { id, title, list, timeframe, done, createdAt, completedAt }
+  // { id, title, list, timeframe, done, createdAt, completedAt, parentId, why }
   const [items, setItems] = useState(loadItems)
   const [title, setTitle] = useState('')
+  const [why, setWhy] = useState('')
+  // The id of the bigger goal the new goal belongs to ('' means none).
+  const [parentId, setParentId] = useState('')
   // The selected timeframe: drives both the tabs and the add-form dropdown.
   const [timeframe, setTimeframe] = useState('day')
 
@@ -41,8 +55,26 @@ function App() {
   const goals = items.filter(item => item.list === 'goals')
   const visibleGoals = goals.filter(goal => goal.timeframe === timeframe)
 
+  // A goal can only belong to a goal with a bigger timeframe,
+  // e.g. a Day goal can link to a Week, Month or Year goal.
+  const parentOptions = goals
+    .filter(goal => sizeOf(goal.timeframe) > sizeOf(timeframe))
+    .sort((a, b) => sizeOf(a.timeframe) - sizeOf(b.timeframe))
+
   function countFor(value) {
     return goals.filter(goal => goal.timeframe === value).length
+  }
+
+  function titleOf(id) {
+    const parent = items.find(item => item.id === id)
+    return parent ? parent.title : null
+  }
+
+  // Switching timeframe clears the chosen parent, because the list of
+  // allowed parents changes with the timeframe.
+  function changeTimeframe(value) {
+    setTimeframe(value)
+    setParentId('')
   }
 
   function addGoal(e) {
@@ -56,9 +88,13 @@ function App() {
       done: false,
       createdAt: new Date().toISOString(),
       completedAt: null,
+      parentId: parentId || null,
+      why: why.trim(),
     }
     setItems([...items, newItem])
     setTitle('')
+    setWhy('')
+    setParentId('')
   }
 
   function toggleGoal(id) {
@@ -75,11 +111,14 @@ function App() {
     )
   }
 
+  // Deleting a goal also unlinks any smaller goals that pointed to it.
   function deleteGoal(id) {
-    setItems(items.filter(item => item.id !== id))
+    setItems(
+      items
+        .filter(item => item.id !== id)
+        .map(item => (item.parentId === id ? { ...item, parentId: null } : item)),
+    )
   }
-
-  const currentLabel = TIMEFRAMES.find(t => t.value === timeframe).label
 
   return (
     <div className="app">
@@ -92,36 +131,57 @@ function App() {
             type="button"
             className={t.value === timeframe ? 'tab active' : 'tab'}
             aria-pressed={t.value === timeframe}
-            onClick={() => setTimeframe(t.value)}
+            onClick={() => changeTimeframe(t.value)}
           >
             {t.label} <span className="count">{countFor(t.value)}</span>
           </button>
         ))}
       </div>
 
-      <form onSubmit={addGoal}>
+      <form className="add-form" onSubmit={addGoal}>
         <input
           value={title}
           onChange={e => setTitle(e.target.value)}
           placeholder="What's your goal?"
           aria-label="Goal"
         />
-        <select
-          value={timeframe}
-          onChange={e => setTimeframe(e.target.value)}
-          aria-label="Timeframe"
-        >
-          {TIMEFRAMES.map(t => (
-            <option key={t.value} value={t.value}>
-              {t.label}
-            </option>
-          ))}
-        </select>
+        <div className="row">
+          <select
+            value={timeframe}
+            onChange={e => changeTimeframe(e.target.value)}
+            aria-label="Timeframe"
+          >
+            {TIMEFRAMES.map(t => (
+              <option key={t.value} value={t.value}>
+                {t.label}
+              </option>
+            ))}
+          </select>
+          <select
+            value={parentId}
+            onChange={e => setParentId(e.target.value)}
+            aria-label="Parent goal"
+            disabled={parentOptions.length === 0}
+          >
+            <option value="">No parent goal</option>
+            {parentOptions.map(goal => (
+              <option key={goal.id} value={goal.id}>
+                {goal.title} ({labelOf(goal.timeframe)})
+              </option>
+            ))}
+          </select>
+        </div>
+        <input
+          value={why}
+          onChange={e => setWhy(e.target.value)}
+          placeholder="Why does this matter to you? (optional)"
+          aria-label="Why"
+        />
         <button type="submit">Add</button>
       </form>
 
       {visibleGoals.length === 0 ? (
-        <p className="empty">No {currentLabel.toLowerCase()} goals yet.</p>
+        <p className="empty">No {labelOf(timeframe).toLowerCase()} goals yet.</p>
       ) : (
         <ul>
           {visibleGoals.map(goal => (
@@ -132,7 +192,13 @@ function App() {
                 onChange={() => toggleGoal(goal.id)}
                 aria-label={`Mark "${goal.title}" as done`}
               />
-              <span>{goal.title}</span>
+              <div className="goal-text">
+                <span className="goal-title">{goal.title}</span>
+                {goal.parentId && titleOf(goal.parentId) && (
+                  <span className="goal-parent">↳ {titleOf(goal.parentId)}</span>
+                )}
+                {goal.why && <span className="goal-why">Why: {goal.why}</span>}
+              </div>
               <button
                 type="button"
                 className="delete"
