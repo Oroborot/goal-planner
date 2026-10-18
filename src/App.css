@@ -6,6 +6,18 @@ input, select, button { font: inherit; font-size: 16px; min-height: 44px; box-si
 input, select { padding: 0 0.6rem; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--text-h); }
 button { padding: 0 1rem; border: 1px solid var(--accent-border); border-radius: 8px; background: var(--accent-bg); color: var(--text-h); cursor: pointer; }
 
+/* Home screen: date, greeting and one big button per section. */
+.date { font-size: 0.9em; text-transform: capitalize; }
+.app h1 + .subtitle { margin-top: -0.75rem; margin-bottom: 1.5rem; }
+.tiles { display: flex; flex-direction: column; gap: 0.75rem; }
+.tile { display: flex; flex-direction: column; gap: 0.15rem; padding: 1rem; border: 1px solid var(--accent-border); border-radius: 12px; background: var(--accent-bg); text-decoration: none; color: var(--text); }
+.tile-title { font-size: 1.15em; font-weight: 600; color: var(--text-h); }
+.tile-sub { font-size: 0.9em; }
+.tile.disabled { border-color: var(--border); background: transparent; opacity: 0.6; }
+
+/* "← Home" link at the top of a section screen. */
+.back { display: inline-flex; align-items: center; min-height: 44px; color: var(--accent); text-decoration: none; }
+
 /* Timeframe tabs: four equal-width buttons in a row. */
 .tabs { display: flex; gap: 0.25rem; margin-bottom: 1rem; }
 .tab { flex: 1; min-width: 0; padding: 0 2px; font-size: 15px; white-space: nowrap;border-color: var(--border); background: transparent; color: var(--text); }
