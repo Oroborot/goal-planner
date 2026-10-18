@@ -1,7 +1,25 @@
-.app { max-width: 480px; margin: 0 auto; padding: 2rem; text-align: left; }
+.app { max-width: 480px; width: 100%; margin: 0 auto; padding: 1.5rem 1rem; text-align: left; box-sizing: border-box; }
+
+/* Shared look for inputs and buttons. 16px text stops iPhones zooming in,
+   and 44px height makes them easy to tap. */
+input, select, button { font: inherit; font-size: 16px; min-height: 44px; box-sizing: border-box; }
+input, select { padding: 0 0.6rem; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--text-h); }
+button { padding: 0 1rem; border: 1px solid var(--accent-border); border-radius: 8px; background: var(--accent-bg); color: var(--text-h); cursor: pointer; }
+
+/* Timeframe tabs: four equal-width buttons in a row. */
+.tabs { display: flex; gap: 0.25rem; margin-bottom: 1rem; }
+.tab { flex: 1; min-width: 0; padding: 0 2px; font-size: 15px; white-space: nowrap;border-color: var(--border); background: transparent; color: var(--text); }
+.tab.active { border-color: var(--accent); background: var(--accent-bg); color: var(--text-h); font-weight: 600; }
+.count { display: inline-block; min-width: 1.4em; margin-left: 0.15rem; padding: 0 0.25em; border-radius: 999px; background: var(--border); font-size: 0.8em; }
+
 form { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
-form input { flex: 1; padding: 0.5rem; }
-ul { list-style: none; padding: 0; }
-li { display: flex; align-items: center; gap: 0.5rem; padding: 0.4rem 0; }
-li span { flex: 1; }
+form input { flex: 1; min-width: 0; }
+
+ul { list-style: none; padding: 0; margin: 0; }
+li { display: flex; align-items: center; gap: 0.75rem; padding: 0.25rem 0; border-bottom: 1px solid var(--border); }
+li input[type='checkbox'] { width: 22px; height: 22px; min-height: 0; margin: 0 0 0 0.25rem; accent-color: var(--accent); }
+li span { flex: 1; color: var(--text-h); overflow-wrap: anywhere; }
 li.done span { text-decoration: line-through; opacity: 0.5; }
+.delete { width: 44px; padding: 0; border-color: transparent; background: transparent; color: var(--text); }
+
+.empty { padding: 1rem 0; opacity: 0.7; }
