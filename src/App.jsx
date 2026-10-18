@@ -17,12 +17,17 @@ function screenFromAddress() {
 
 // Read saved items when the app opens. If nothing is saved yet, or the saved
 // data is broken, start with an empty list instead of crashing.
-// Items saved before goal linking existed get an empty parent and why.
+// Older test items had a single `parentId`; they get turned into a
+// `parentIds` list so everything uses the same shape.
 function loadItems() {
   try {
     const saved = JSON.parse(localStorage.getItem(STORAGE_KEY))
     if (!Array.isArray(saved)) return []
-    return saved.map(item => ({ parentId: null, why: '', ...item }))
+    return saved.map(({ parentId, ...item }) => ({
+      why: '',
+      ...item,
+      parentIds: item.parentIds ?? (parentId ? [parentId] : []),
+    }))
   } catch {
     return []
   }
@@ -30,7 +35,8 @@ function loadItems() {
 
 function App() {
   // Every item in the planner. Each one looks like:
-  // { id, title, list, timeframe, done, createdAt, completedAt, parentId, why }
+  // { id, title, list, timeframe, done, createdAt, completedAt, parentIds, why }
+  // `parentIds` lists the bigger goals this goal counts toward.
   const [items, setItems] = useState(loadItems)
   const [screen, setScreen] = useState(screenFromAddress)
 

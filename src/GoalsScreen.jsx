@@ -1,6 +1,22 @@
-import { useState } from 'react'
+import { Fragment, useState } from 'react'
 import GoalEditForm from './GoalEditForm.jsx'
-import { TIMEFRAMES, sizeOf, labelOf, parentOptionsFor } from './timeframes.js'
+import AddSmallerGoalForm from './AddSmallerGoalForm.jsx'
+import { TIMEFRAMES, labelOf, biggerGoals } from './timeframes.js'
+
+// A new goal with all its fields filled in.
+function makeGoal(title, timeframe, parentIds, why = '') {
+  return {
+    id: crypto.randomUUID(),
+    title,
+    list: 'goals',
+    timeframe,
+    done: false,
+    createdAt: new Date().toISOString(),
+    completedAt: null,
+    parentIds,
+    why,
+  }
+}
 
 // The goals screen: timeframe tabs, the add form and the goal list.
 // `items` and `setItems` come from App, which loads and saves them.
@@ -8,26 +24,35 @@ function GoalsScreen({ items, setItems }) {
   const [title, setTitle] = useState('')
   const [why, setWhy] = useState('')
   // The id of the bigger goal the new goal belongs to ('' means none).
+  // More parents can be added later with the ✎ button.
   const [parentId, setParentId] = useState('')
   // The selected timeframe: drives both the tabs and the add-form dropdown.
   const [timeframe, setTimeframe] = useState('day')
-  // The id of the goal being edited right now (null means none).
+  // The goal being edited (✎), and the goal getting a new smaller goal (＋).
+  // Only one of these is open at a time; null means none.
   const [editingId, setEditingId] = useState(null)
+  const [addingUnderId, setAddingUnderId] = useState(null)
 
   const goals = items.filter(item => item.list === 'goals')
   const visibleGoals = goals.filter(goal => goal.timeframe === timeframe)
 
   // A goal can only belong to a goal with a bigger timeframe,
   // e.g. a Day goal can link to a Week, Month or Year goal.
-  const parentOptions = parentOptionsFor(goals, timeframe)
+  const parentOptions = biggerGoals(goals, timeframe)
 
   function countFor(value) {
     return goals.filter(goal => goal.timeframe === value).length
   }
 
-  function titleOf(id) {
-    const parent = items.find(item => item.id === id)
-    return parent ? parent.title : null
+  function parentTitles(goal) {
+    return goal.parentIds
+      .map(id => goals.find(g => g.id === id)?.title)
+      .filter(Boolean)
+      .join(' · ')
+  }
+
+  function childCount(goal) {
+    return goals.filter(g => g.parentIds.includes(goal.id)).length
   }
 
   // Switching timeframe clears the chosen parent, because the list of
@@ -37,24 +62,29 @@ function GoalsScreen({ items, setItems }) {
     setParentId('')
   }
 
+  function openEdit(id) {
+    setAddingUnderId(null)
+    setEditingId(id)
+  }
+
+  function openAddUnder(id) {
+    setEditingId(null)
+    setAddingUnderId(id)
+  }
+
   function addGoal(e) {
     e.preventDefault()
     if (!title.trim()) return
-    const newItem = {
-      id: crypto.randomUUID(),
-      title: title.trim(),
-      list: 'goals',
-      timeframe,
-      done: false,
-      createdAt: new Date().toISOString(),
-      completedAt: null,
-      parentId: parentId || null,
-      why: why.trim(),
-    }
-    setItems([...items, newItem])
+    setItems([...items, makeGoal(title.trim(), timeframe, parentId ? [parentId] : [], why.trim())])
     setTitle('')
     setWhy('')
     setParentId('')
+  }
+
+  // The ＋ button: a new smaller goal, already linked under `parentGoalId`.
+  function addSmallerGoal(parentGoalId, newTitle, newTimeframe) {
+    setItems([...items, makeGoal(newTitle, newTimeframe, [parentGoalId])])
+    setAddingUnderId(null)
   }
 
   function toggleGoal(id) {
@@ -71,15 +101,21 @@ function GoalsScreen({ items, setItems }) {
     )
   }
 
-  // Save the changes from the edit form. If the goal got smaller, any goals
-  // linked under it that are no longer smaller get unlinked.
+  // Save the changes from the edit form. `childIds` are the smaller goals
+  // that should sit under this goal: link the ticked ones, unlink the rest.
   // If its timeframe changed, switch to that tab so you can still see it.
-  function saveGoal(id, changes) {
+  function saveGoal(id, changes, childIds) {
     setItems(
       items.map(item => {
         if (item.id === id) return { ...item, ...changes }
-        if (item.parentId === id && sizeOf(item.timeframe) >= sizeOf(changes.timeframe)) {
-          return { ...item, parentId: null }
+        if (item.list !== 'goals') return item
+        const isLinked = item.parentIds.includes(id)
+        const shouldLink = childIds.includes(item.id)
+        if (isLinked && !shouldLink) {
+          return { ...item, parentIds: item.parentIds.filter(p => p !== id) }
+        }
+        if (!isLinked && shouldLink) {
+          return { ...item, parentIds: [...item.parentIds, id] }
         }
         return item
       }),
@@ -93,7 +129,11 @@ function GoalsScreen({ items, setItems }) {
     setItems(
       items
         .filter(item => item.id !== id)
-        .map(item => (item.parentId === id ? { ...item, parentId: null } : item)),
+        .map(item =>
+          item.parentIds?.includes(id)
+            ? { ...item, parentIds: item.parentIds.filter(p => p !== id) }
+            : item,
+        ),
     )
   }
 
@@ -164,50 +204,81 @@ function GoalsScreen({ items, setItems }) {
         <p className="empty">No {labelOf(timeframe).toLowerCase()} goals yet.</p>
       ) : (
         <ul>
-          {visibleGoals.map(goal =>
-            goal.id === editingId ? (
-              <li key={goal.id} className="editing">
-                <GoalEditForm
-                  goal={goal}
-                  goals={goals}
-                  onSave={changes => saveGoal(goal.id, changes)}
-                  onCancel={() => setEditingId(null)}
-                />
-              </li>
-            ) : (
-              <li key={goal.id} className={goal.done ? 'done' : ''}>
-                <input
-                  type="checkbox"
-                  checked={goal.done}
-                  onChange={() => toggleGoal(goal.id)}
-                  aria-label={`Mark "${goal.title}" as done`}
-                />
-                <div className="goal-text">
-                  <span className="goal-title">{goal.title}</span>
-                  {goal.parentId && titleOf(goal.parentId) && (
-                    <span className="goal-parent">↳ {titleOf(goal.parentId)}</span>
+          {visibleGoals.map(goal => {
+            if (goal.id === editingId) {
+              return (
+                <li key={goal.id} className="editing">
+                  <GoalEditForm
+                    goal={goal}
+                    goals={goals}
+                    onSave={(changes, childIds) => saveGoal(goal.id, changes, childIds)}
+                    onCancel={() => setEditingId(null)}
+                  />
+                </li>
+              )
+            }
+            const parents = parentTitles(goal)
+            const children = childCount(goal)
+            return (
+              <Fragment key={goal.id}>
+                <li className={goal.done ? 'done' : ''}>
+                  <input
+                    type="checkbox"
+                    checked={goal.done}
+                    onChange={() => toggleGoal(goal.id)}
+                    aria-label={`Mark "${goal.title}" as done`}
+                  />
+                  <div className="goal-text">
+                    <span className="goal-title">{goal.title}</span>
+                    {parents && <span className="goal-parent">↳ {parents}</span>}
+                    {children > 0 && (
+                      <span className="goal-children">
+                        {children} smaller goal{children === 1 ? '' : 's'}
+                      </span>
+                    )}
+                    {goal.why && <span className="goal-why">Why: {goal.why}</span>}
+                  </div>
+                  {goal.timeframe !== 'day' && (
+                    <button
+                      type="button"
+                      className="icon-button"
+                      onClick={() => openAddUnder(goal.id)}
+                      aria-label={`Add a smaller goal under "${goal.title}"`}
+                    >
+                      ＋
+                    </button>
                   )}
-                  {goal.why && <span className="goal-why">Why: {goal.why}</span>}
-                </div>
-                <button
-                  type="button"
-                  className="icon-button"
-                  onClick={() => setEditingId(goal.id)}
-                  aria-label={`Edit "${goal.title}"`}
-                >
-                  ✎
-                </button>
-                <button
-                  type="button"
-                  className="icon-button"
-                  onClick={() => deleteGoal(goal.id)}
-                  aria-label={`Delete "${goal.title}"`}
-                >
-                  ✕
-                </button>
-              </li>
-            ),
-          )}
+                  <button
+                    type="button"
+                    className="icon-button"
+                    onClick={() => openEdit(goal.id)}
+                    aria-label={`Edit "${goal.title}"`}
+                  >
+                    ✎
+                  </button>
+                  <button
+                    type="button"
+                    className="icon-button"
+                    onClick={() => deleteGoal(goal.id)}
+                    aria-label={`Delete "${goal.title}"`}
+                  >
+                    ✕
+                  </button>
+                </li>
+                {goal.id === addingUnderId && (
+                  <li className="editing">
+                    <AddSmallerGoalForm
+                      parent={goal}
+                      onAdd={(newTitle, newTimeframe) =>
+                        addSmallerGoal(goal.id, newTitle, newTimeframe)
+                      }
+                      onCancel={() => setAddingUnderId(null)}
+                    />
+                  </li>
+                )}
+              </Fragment>
+            )
+          })}
         </ul>
       )}
     </div>

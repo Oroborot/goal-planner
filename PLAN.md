@@ -81,7 +81,7 @@ Practical features come first, visual design later: the look (colors, fonts, spa
 ### Part 1: make goals actually work
 
 - [x] **Edit what you've added:** change a goal's title, timeframe, "why" and parent goals after creating it.
-- [ ] **Flexible linking:** link goals at any time, not only when creating them. Often a goal comes first and its bigger goal only becomes clear later, so adding a goal should be quick, with linking done whenever it makes sense. A goal can link to several parent goals, and linking works in both directions: from a bigger goal, add a new smaller goal under it, or link existing smaller goals to it.
+- [x] **Flexible linking:** link goals at any time, not only when creating them. Often a goal comes first and its bigger goal only becomes clear later, so adding a goal should be quick, with linking done whenever it makes sense. A goal can link to several parent goals, and linking works in both directions: from a bigger goal, add a new smaller goal under it, or link existing smaller goals to it.
 - [ ] **Progress rollup:** completing a task updates all its parent goals, shown as a progress bar.
 - [ ] **Goal tree view:** see the whole chain from today up to the end goal. A simple version first; the fancy visuals come later (see `DESIGN-IDEAS.md`).
 
@@ -119,7 +119,7 @@ These become hard to change once real data exists (after login and sync, or once
 
 - **Saved data lives in one browser.** Goals are stored in the browser on that device, at that web address. A different device, a different address (such as a preview link or a new domain) or clearing browser data means an empty app.
 - **The shape of saved data.** Adding new fields is always easy. Once real data exists, renaming or removing fields needs extra code that upgrades data already saved.
-- **Several parents per goal.** Goals will store a list of parent ids (`parentIds`) instead of a single `parentId`. This switch is free now and gets harder once real data exists.
+- **Several parents per goal (done).** Goals store a list of parent ids (`parentIds`) instead of a single `parentId`.
 - **History for sharing.** To show the process behind a goal later, the app has to record it as it happens: when things were done, notes, reminders. Anything not recorded can't be shown later. Deleting a goal also erases its history, so finished goals may need an "archive" instead of delete.
 - **Folders should be linked by id, not by name.** Then renaming a folder doesn't break anything.
 - **The web address.** Once the app is installed on phones, changing the address means a new app and an empty data store.
