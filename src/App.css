@@ -1,4 +1,10 @@
-.app { max-width: 480px; width: 100%; margin: 0 auto; padding: 1.5rem 1rem; text-align: left; box-sizing: border-box; }
+.app { max-width: 480px; width: 100%; margin: 0 auto; padding: 1.5rem 1rem 6rem; text-align: left; box-sizing: border-box; }
+
+/* Bottom bar: 5 icons, the round ＋ in the middle in the accent color. */
+.bottom-bar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 20; display: grid; grid-template-columns: repeat(5, 1fr); align-items: center; max-width: 480px; margin: 0 auto; padding: 6px 8px calc(10px + env(safe-area-inset-bottom)); box-sizing: border-box; background: var(--bg); border-top: 1px solid var(--border); }
+.bar-item { display: flex; justify-content: center; align-items: center; min-height: 44px; color: var(--text); }
+.bar-item.active { color: var(--accent); }
+.bar-add { justify-self: center; display: flex; align-items: center; justify-content: center; width: 52px; height: 52px; border-radius: 50%; background: var(--accent); color: var(--bg); }
 
 /* Shared look for inputs and buttons. 16px text stops iPhones zooming in,
    and 44px height makes them easy to tap. */

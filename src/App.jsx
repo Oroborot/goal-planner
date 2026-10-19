@@ -10,6 +10,7 @@ import MonthPage from './MonthPage.jsx'
 import { mondayOf, todayKey } from './calendar.js'
 import { EVENTS_KEY, loadEvents, makeEvent } from './history.js'
 import TimerBar from './TimerBar.jsx'
+import BottomBar from './BottomBar.jsx'
 import {
   alarm,
   elapsedMs,
@@ -219,6 +220,7 @@ function App() {
         </div>
       )}
       {page}
+      <BottomBar screen={screen.name} />
     </>
   )
 }
