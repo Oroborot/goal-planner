@@ -29,6 +29,14 @@ A place to collect visual ideas for later. Nothing here is being built yet. Add 
 
 - A tube that fills with liquid as time passes (counting up) or drains (counting down).
 
+## Home screen
+
+- Replace "What do you want to do?" under the greeting with an **inspirational quote**, changing each day (or each time the app opens).
+- Quote ideas so far (final list decided later; check the exact wording and author of each before using):
+  - "Do what you need to do to become what you want to be."
+  - "Be offended that someone can take your days and do better." (credited as Seneca; check the source)
+- Maybe: let the user add their own quotes, or show their own "why"s as quotes.
+
 ## General look
 
 - To be decided once the app's "vibe" is clear from using it.
