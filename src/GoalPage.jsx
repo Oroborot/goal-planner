@@ -10,6 +10,7 @@ import GoalHistory from './GoalHistory.jsx'
 import RepeatPanel from './RepeatPanel.jsx'
 import RepeatSummary from './RepeatSummary.jsx'
 import { isDoneNow, repeatStats } from './repeat.js'
+import { notesLinkingTo } from './noteActions.js'
 
 // One row in the "smaller goals" or "counts toward" lists: a link to that
 // goal's page, its timeframe and how far along it is.
@@ -98,6 +99,7 @@ function GoalPage({ goalId, items, events, apply }) {
   )
   const doneCount = children.filter(isDoneNow).length
   const parents = goal.parentIds.map(id => goals.find(g => g.id === id)).filter(Boolean)
+  const linkedNotes = notesLinkingTo(items, goal.id)
 
   // The line under the progress bar.
   const childSummary = `${doneCount} of ${children.length} smaller goals done`
@@ -204,6 +206,22 @@ function GoalPage({ goalId, items, events, apply }) {
             <LinkedGoal key={parent.id} goal={parent} goals={goals} />
           ))}
         </ul>
+      )}
+
+      {linkedNotes.length > 0 && (
+        <>
+          <h2>Linked notes</h2>
+          <ul className="plain-links">
+            {linkedNotes.map(note => (
+              <li key={note.id}>
+                <a href={`#note/${note.id}`} className="goal-link">
+                  <span className="short-id">{note.shortId}</span>
+                  {note.title}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </>
       )}
 
       <GoalHistory goalId={goal.id} events={events} />

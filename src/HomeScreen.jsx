@@ -1,5 +1,6 @@
 import { activeGoals } from './progress.js'
 import { isDoneNow } from './repeat.js'
+import { activeNotes } from './noteActions.js'
 
 // "Good morning" before 12, "Good afternoon" before 18, otherwise "Good evening".
 function greeting(hour) {
@@ -25,6 +26,14 @@ function HomeScreen({ items }) {
       ? 'No day goals yet'
       : `${doneCount} of ${dayGoals.length} day goals done`
 
+  // A short summary for the Notes button: open tasks first.
+  const notes = activeNotes(items)
+  const openTasks = notes.filter(note => note.isTask && !note.done).length
+  const notesSummary =
+    notes.length === 0
+      ? 'No notes yet'
+      : `${openTasks} open task${openTasks === 1 ? '' : 's'} · ${notes.length} note${notes.length === 1 ? '' : 's'}`
+
   return (
     <div className="app">
       <p className="date">{today}</p>
@@ -36,10 +45,10 @@ function HomeScreen({ items }) {
           <span className="tile-title">Goals</span>
           <span className="tile-sub">{goalsSummary}</span>
         </a>
-        <div className="tile disabled" aria-disabled="true">
+        <a href="#notes" className="tile">
           <span className="tile-title">Notes</span>
-          <span className="tile-sub">Coming soon</span>
-        </div>
+          <span className="tile-sub">{notesSummary}</span>
+        </a>
         <div className="tile disabled" aria-disabled="true">
           <span className="tile-title">Folders</span>
           <span className="tile-sub">Coming soon</span>

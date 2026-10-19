@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react'
 import HomeScreen from './HomeScreen.jsx'
 import GoalsScreen from './GoalsScreen.jsx'
 import GoalPage from './GoalPage.jsx'
+import NotesScreen from './NotesScreen.jsx'
+import NotePage from './NotePage.jsx'
 import { EVENTS_KEY, loadEvents } from './history.js'
 import './App.css'
 
@@ -11,11 +13,15 @@ const STORAGE_KEY = 'planner-items'
 // Which screen to show, read from the end of the web address:
 //   #goals        -> the goals list
 //   #goal/<id>    -> the page for one goal
+//   #notes        -> the notes list
+//   #note/<id>    -> the page for one note
 //   anything else -> the home screen
 function screenFromAddress() {
   const address = window.location.hash.slice(1)
   if (address === 'goals') return { name: 'goals' }
   if (address.startsWith('goal/')) return { name: 'goal', goalId: address.slice(5) }
+  if (address === 'notes') return { name: 'notes' }
+  if (address.startsWith('note/')) return { name: 'note', noteId: address.slice(5) }
   return { name: 'home' }
 }
 
@@ -99,6 +105,20 @@ function App() {
       <GoalPage
         key={screen.goalId}
         goalId={screen.goalId}
+        items={items}
+        events={events}
+        apply={apply}
+      />
+    )
+  }
+  if (screen.name === 'notes') {
+    return <NotesScreen items={items} apply={apply} />
+  }
+  if (screen.name === 'note') {
+    return (
+      <NotePage
+        key={screen.noteId}
+        noteId={screen.noteId}
         items={items}
         events={events}
         apply={apply}

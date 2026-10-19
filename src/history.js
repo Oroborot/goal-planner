@@ -44,6 +44,8 @@ const EVENT_TEXT = {
   'auto-uncompleted': () => 'Un-completed automatically',
   deleted: () => 'Deleted',
   restored: () => 'Restored',
+  'note-linked': e => `Linked to “${e.linkTitle}”`,
+  'note-unlinked': e => `Unlinked from “${e.linkTitle}”`,
 }
 
 export function eventText(event) {

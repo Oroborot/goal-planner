@@ -77,6 +77,17 @@ li.done .goal-title { text-decoration: line-through; opacity: 0.5; }
 .page-actions button { flex: 1; }
 .app h2 { margin-top: 1.5rem; font-size: 18px; }
 
+/* Notes. */
+.short-id { display: inline-block; margin-right: 0.4rem; padding: 0 0.35em; border-radius: 6px; background: var(--accent-bg); color: var(--accent); font-family: var(--mono); font-size: 0.8em; }
+.search { width: 100%; margin-bottom: 0.5rem; }
+.task-toggle { flex: 1; font-size: 0.9em; }
+.goal-form textarea, .note-body { font: inherit; font-size: 16px; }
+.goal-form textarea { padding: 0.6rem; border: 1px solid var(--border); border-radius: 8px; background: var(--bg); color: var(--text-h); resize: vertical; box-sizing: border-box; }
+.note-body { white-space: pre-wrap; overflow-wrap: anywhere; color: var(--text-h); margin: 0.5rem 0 1rem; }
+.link-list input[type='search'] { width: 100%; margin: 0.25rem 0; }
+.plain-links { margin-bottom: 0.5rem; }
+.plain-links li { min-height: 44px; }
+
 /* Repeating goals. */
 .goal-repeat { font-size: 0.85em; line-height: 1.3; color: var(--accent); }
 .repeat-fields select { width: 100%; margin-top: 0.25rem; }

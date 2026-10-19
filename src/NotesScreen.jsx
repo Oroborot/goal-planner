@@ -1,0 +1,165 @@
+import { useState } from 'react'
+import { activeNotes, addNote, restoreNote, toggleNote } from './noteActions.js'
+import { formatTime } from './history.js'
+
+const FILTERS = [
+  { value: 'all', label: 'All' },
+  { value: 'tasks', label: 'Tasks' },
+  { value: 'notes', label: 'Notes' },
+]
+
+// The first line of a note's text, as a short preview.
+function preview(body) {
+  const firstLine = body.split('\n').find(line => line.trim()) ?? ''
+  return firstLine.length > 80 ? `${firstLine.slice(0, 80)}…` : firstLine
+}
+
+// The notes list: quick add, search, filter, and every note as a card.
+// Tap a note's title to open it, edit it and link it.
+function NotesScreen({ items, apply }) {
+  const [title, setTitle] = useState('')
+  const [isTask, setIsTask] = useState(false)
+  const [search, setSearch] = useState('')
+  const [filter, setFilter] = useState('all')
+
+  const notes = activeNotes(items)
+  const query = search.trim().toLowerCase()
+  const visible = notes
+    .filter(note => filter === 'all' || (filter === 'tasks') === note.isTask)
+    .filter(
+      note =>
+        !query ||
+        `${note.shortId} ${note.title} ${note.body}`.toLowerCase().includes(query),
+    )
+    // Open tasks first, then newest changes first.
+    .sort((a, b) => {
+      const openA = a.isTask && !a.done
+      const openB = b.isTask && !b.done
+      if (openA !== openB) return openA ? -1 : 1
+      return b.updatedAt.localeCompare(a.updatedAt)
+    })
+  const deleted = items.filter(item => item.list === 'notes' && item.deletedAt)
+
+  function submit(e) {
+    e.preventDefault()
+    if (!title.trim()) return
+    apply(addNote(items, title.trim(), isTask))
+    setTitle('')
+  }
+
+  return (
+    <div className="app">
+      <a href="#" className="back">
+        ← Home
+      </a>
+      <h1>Notes</h1>
+
+      <form className="goal-form" onSubmit={submit}>
+        <input
+          value={title}
+          onChange={e => setTitle(e.target.value)}
+          placeholder="Write a note or a task…"
+          aria-label="New note"
+        />
+        <div className="row">
+          <label className="done-toggle task-toggle">
+            <input
+              type="checkbox"
+              checked={isTask}
+              onChange={e => setIsTask(e.target.checked)}
+              aria-label="It's a task"
+            />
+            <span>It's a task (has a tick box)</span>
+          </label>
+          <button type="submit">Add</button>
+        </div>
+      </form>
+
+      <input
+        className="search"
+        type="search"
+        value={search}
+        onChange={e => setSearch(e.target.value)}
+        placeholder="Search notes, or an id like N3"
+        aria-label="Search notes"
+      />
+      <div className="tabs">
+        {FILTERS.map(f => (
+          <button
+            key={f.value}
+            type="button"
+            className={f.value === filter ? 'tab active' : 'tab'}
+            aria-pressed={f.value === filter}
+            onClick={() => setFilter(f.value)}
+          >
+            {f.label}
+          </button>
+        ))}
+      </div>
+
+      {visible.length === 0 ? (
+        <p className="empty">{notes.length === 0 ? 'No notes yet.' : 'Nothing matches.'}</p>
+      ) : (
+        <ul>
+          {visible.map(note => (
+            <li key={note.id} className={note.done ? 'done' : ''}>
+              {note.isTask && (
+                <input
+                  type="checkbox"
+                  checked={note.done}
+                  onChange={() => apply(toggleNote(items, note.id))}
+                  aria-label={`Mark "${note.title}" as done`}
+                />
+              )}
+              <div className="goal-text">
+                <span>
+                  <span className="short-id">{note.shortId}</span>
+                  <a href={`#note/${note.id}`} className="goal-title goal-link">
+                    {note.title}
+                  </a>
+                </span>
+                {note.body && <span className="goal-why">{preview(note.body)}</span>}
+                {note.links.length > 0 && (
+                  <span className="goal-children">
+                    🔗 {note.links.length} link{note.links.length === 1 ? '' : 's'}
+                  </span>
+                )}
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      {deleted.length > 0 && (
+        <details className="deleted-goals">
+          <summary>Deleted notes ({deleted.length})</summary>
+          <ul>
+            {deleted.map(note => (
+              <li key={note.id}>
+                <div className="goal-text">
+                  <span>
+                    <span className="short-id">{note.shortId}</span>
+                    <a href={`#note/${note.id}`} className="goal-title goal-link">
+                      {note.title}
+                    </a>
+                  </span>
+                  <span className="goal-meta">deleted {formatTime(note.deletedAt)}</span>
+                </div>
+                <button
+                  type="button"
+                  className="secondary restore-button"
+                  onClick={() => apply(restoreNote(items, note.id))}
+                  aria-label={`Restore "${note.title}"`}
+                >
+                  Restore
+                </button>
+              </li>
+            ))}
+          </ul>
+        </details>
+      )}
+    </div>
+  )
+}
+
+export default NotesScreen
