@@ -112,6 +112,47 @@ Practical features come first, visual design later: the look (colors, fonts, spa
 - [ ] **Login and sync:** an account so your goals and notes are the same on your phone and laptop. This needs a server and a database, not only the browser.
 - [ ] **Share goal journeys (later, once real data is in use):** share a finished goal with a friend, including the smaller goals, "why"s, reminders and steps that led to it, so they can see how you did it. They can copy the whole goal set as a fresh start for themselves, without your dates or ticks. Needs login and sync first.
 - [ ] **Phone version and real notifications.** Browsers only send reminders reliably while the page is open, so true phone reminders come with a mobile app.
+- [ ] **Legal and privacy:** everything in the "Legal and privacy checklist" below. Must be done before the app goes public (before login, payments, sharing or app stores).
+
+## Legal and privacy checklist (before going public)
+
+Not started. Collect templates first (web, GitHub), then have a lawyer review before launch. Not legal advice.
+
+**Documents**
+- [ ] Privacy policy: what data is collected, why, where it's stored, who sees it, how long it's kept
+- [ ] Terms of service
+- [ ] Cookie policy, plus a cookie/consent banner if non-essential cookies or analytics are used
+- [ ] License to use the app
+- [ ] Eligibility: minimum age, who may use it
+- [ ] Subscription pricing and billing: prices, renewals, cancelling, refunds, free trials
+- [ ] Your content and recordings: who owns goals, notes and "why"s; what the app may do with them
+- [ ] Third-party services: hosting (Vercel), payments, analytics, AI, app stores
+- [ ] Acceptable use: what users may not do (especially for sharing)
+- [ ] Our intellectual property: name, logo, design, code
+- [ ] Disclaimers: not medical, fitness, financial or professional advice
+- [ ] Limitation of liability
+- [ ] Indemnification
+- [ ] Termination: closing accounts, what happens to data
+- [ ] App store terms (Apple, Google)
+- [ ] Governing law
+- [ ] Dispute resolution and arbitration
+- [ ] State- and country-specific notices
+- [ ] Changes to the terms, and how users are told
+- [ ] Contact details
+
+**Extra items to check**
+- [ ] Data protection laws: GDPR (EU/UK) and CCPA (California), depending on where users live
+- [ ] User data rights in the app: download my data, delete my account and data
+- [ ] Children's privacy (COPPA in the US): block or handle users under 13 (16 in some countries)
+- [ ] Data security: encryption, passwords, what to do if data leaks
+- [ ] Data retention: how long history, deleted goals and accounts are kept. The history log keeps everything, so this must be stated clearly
+- [ ] Sharing goal journeys: consent before sharing, what friends can see, reporting misuse
+- [ ] App store privacy labels (Apple "nutrition label", Google data safety form)
+- [ ] Auto-renewal rules for subscriptions (clear cancel button, reminders before charging)
+- [ ] AI disclosure if suggestions use AI
+- [ ] Accessibility
+- [ ] Trademark check on the app's name
+- [ ] Business setup (company, tax) before charging money
 
 ## Hard to change later
 
