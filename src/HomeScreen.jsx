@@ -26,7 +26,7 @@ function HomeScreen({ items }) {
       ? 'No day goals yet'
       : `${doneCount} of ${dayGoals.length} day goals done`
 
-  // A short summary for the Today (calendar) button: today's tasks and
+  // A short summary for the Calendar button: today's tasks and
   // the habits planned for today.
   const todayTasks = activeGoals(items).filter(
     goal => goal.date === todayKey() || (goal.repeat && isScheduled(goal, now)),
@@ -53,7 +53,7 @@ function HomeScreen({ items }) {
 
       <nav className="tiles">
         <a href="#day" className="tile">
-          <span className="tile-title">Today</span>
+          <span className="tile-title">Calendar</span>
           <span className="tile-sub">{todaySummary}</span>
         </a>
         <a href="#goals" className="tile">

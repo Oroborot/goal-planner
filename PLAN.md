@@ -133,8 +133,8 @@ Inspiration: Google Calendar (week/month overview), Todoist (daily list), Sunsam
 - [x] Every task links to a goal, with a color per goal (or life area). Colors done: 8 colors, smaller goals take their bigger goal's color. Decided: a calendar task is a Day goal with a date; being on the calendar is optional ("Add to calendar", off by default); tasks without a goal are allowed but shown grey with a "link me" hint.
 - [x] Today page: a list where tasks can have an optional time. Habits for that weekday show below; quick add with time and goal.
 - [x] Go to tomorrow and onward (arrow buttons first, swipe later).
-- [ ] Week view: each task shows its name and its goal's color. Decided: on a phone, the 7 days are stacked; each day can be folded or opened, so it never becomes a huge list.
-- [ ] Month view: same, smaller.
+- [x] Week view: each task shows its name and its goal's color. Decided: on a phone, the 7 days are stacked; each day can be folded or opened, so it never becomes a huge list.
+- [x] Month view, first version: **A** a dot grid (iPhone Calendar style): goal-colored dots per day; tap a day to see its tasks below the grid with "Open day". **C** your Month goals with progress bars above the grid. Later: **B** each week row shows "% done"; **D** quick add a task on a tapped day, and add a Month goal from the top.
 - [ ] Move an unfinished task to another day (button first, drag later).
 
 **Next phases:**

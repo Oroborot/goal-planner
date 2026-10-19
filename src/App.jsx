@@ -6,6 +6,7 @@ import NotesScreen from './NotesScreen.jsx'
 import NotePage from './NotePage.jsx'
 import DayPage from './DayPage.jsx'
 import WeekPage from './WeekPage.jsx'
+import MonthPage from './MonthPage.jsx'
 import { mondayOf, todayKey } from './calendar.js'
 import { EVENTS_KEY, loadEvents, makeEvent } from './history.js'
 import TimerBar from './TimerBar.jsx'
@@ -31,11 +32,14 @@ const STORAGE_KEY = 'planner-items'
 //   #day          -> today in the calendar
 //   #day/<date>   -> one day in the calendar, e.g. #day/2026-10-21
 //   #week         -> this week; #week/<date> -> the week with that date
+//   #month        -> this month; #month/2026-10 -> that month
 //   anything else -> the home screen
 function screenFromAddress() {
   const address = window.location.hash.slice(1)
   if (address === 'day') return { name: 'day', dateKey: todayKey() }
   if (address === 'week') return { name: 'week', mondayKey: mondayOf(todayKey()) }
+  if (address === 'month') return { name: 'month', monthKey: todayKey().slice(0, 7) }
+  if (/^month\/\d{4}-\d{2}$/.test(address)) return { name: 'month', monthKey: address.slice(6) }
   if (/^week\/\d{4}-\d{2}-\d{2}$/.test(address)) return { name: 'week', mondayKey: mondayOf(address.slice(5)) }
   if (/^day\/\d{4}-\d{2}-\d{2}$/.test(address)) return { name: 'day', dateKey: address.slice(4) }
   if (address === 'goals') return { name: 'goals' }
@@ -183,6 +187,8 @@ function App() {
     page = <DayPage key={screen.dateKey} dateKey={screen.dateKey} items={items} apply={apply} />
   } else if (screen.name === 'week') {
     page = <WeekPage key={screen.mondayKey} mondayKey={screen.mondayKey} items={items} apply={apply} />
+  } else if (screen.name === 'month') {
+    page = <MonthPage key={screen.monthKey} monthKey={screen.monthKey} items={items} apply={apply} />
   } else if (screen.name === 'notes') {
     page = <NotesScreen items={items} apply={apply} />
   } else if (screen.name === 'note') {
