@@ -30,8 +30,49 @@ export function dayLabel(key) {
   })
 }
 
+// The Monday of the week that `key` is in.
+export function mondayOf(key) {
+  const daysSinceMonday = (parseKey(key).getDay() + 6) % 7
+  return addDaysKey(key, -daysSinceMonday)
+}
+
+// Tasks planned on a date: with a time first (earliest first), then the rest.
+export function tasksOn(goals, key) {
+  return goals
+    .filter(g => g.date === key)
+    .sort((a, b) => {
+      if (a.time && b.time) return a.time.localeCompare(b.time)
+      if (a.time) return -1
+      if (b.time) return 1
+      return a.createdAt.localeCompare(b.createdAt)
+    })
+}
+
+// Habits planned for that weekday, from the day they started repeating.
+export function habitsOn(goals, key) {
+  const day = parseKey(key)
+  return goals.filter(
+    g =>
+      g.repeat &&
+      g.repeat.days.includes(day.getDay()) &&
+      key >= (g.repeatSince || g.createdAt).slice(0, 10),
+  )
+}
+
+// How many of a day's tasks and habits are done.
+export function dayCounts(goals, key) {
+  const tasks = tasksOn(goals, key)
+  const habits = habitsOn(goals, key)
+  return {
+    done: tasks.filter(t => t.done).length + habits.filter(h => h.doneDates.includes(key)).length,
+    total: tasks.length + habits.length,
+  }
+}
+
 // "📅 Today · 07:00" for a task's date and optional time.
+// Adds "(done early, planned for Tue 28 Oct)" for tasks done before their day.
 export function whenLabel(goal) {
   if (!goal.date) return ''
-  return goal.time ? `${dayLabel(goal.date)} · ${goal.time}` : dayLabel(goal.date)
+  const when = goal.time ? `${dayLabel(goal.date)} · ${goal.time}` : dayLabel(goal.date)
+  return goal.plannedDate ? `${when} (done early, planned for ${dayLabel(goal.plannedDate)})` : when
 }

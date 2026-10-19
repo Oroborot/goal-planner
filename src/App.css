@@ -98,6 +98,20 @@ li.done .goal-title { text-decoration: line-through; opacity: 0.5; }
 .day-time { flex: 0 0 3.2em; font-family: var(--mono); font-size: 0.85em; color: var(--text); }
 .habit-mark { flex: 0 0 22px; margin-left: 0.25rem; text-align: center; color: var(--accent); }
 
+/* Day / Week switch, and the week page's folding days. */
+.view-switch .tab { display: flex; align-items: center; justify-content: center; text-decoration: none; }
+.week { display: flex; flex-direction: column; gap: 0.35rem; }
+.week-day { border: 1px solid var(--border); border-radius: 10px; }
+.week-day.today { border-color: var(--accent-border); }
+.week-day-head { display: flex; align-items: center; gap: 0.5rem; width: 100%; padding: 0 0.75rem; border: 0; border-radius: 10px; background: transparent; text-align: left; }
+.week-day-name { flex: 0 0 4.5em; color: var(--text-h); font-weight: 600; }
+.week-dots { flex: 1; display: flex; gap: 2px; overflow: hidden; }
+.week-dots .goal-dot { margin-right: 0; }
+.week-count { margin-left: auto; }
+.chevron { color: var(--text); }
+.week-day-body { padding: 0 0.75rem 0.5rem; }
+.day-list.compact li { padding: 0.15rem 0; }
+
 /* Calendar: a task's date/time, and the hint for tasks not linked to a goal. */
 .goal-when { font-size: 0.85em; line-height: 1.3; color: var(--text-h); }
 .link-me { align-self: flex-start; min-height: 0; padding: 0; border: 0; background: none; font-size: 0.8em; line-height: 1.3; color: var(--text); font-style: italic; text-decoration: underline dotted; cursor: pointer; }

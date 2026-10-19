@@ -36,6 +36,9 @@ function makeGoal(title, timeframe, parentIds, why = '') {
     // and an optional time ('07:00'). Only Day goals have these.
     date: null,
     time: null,
+    // Set when a task is done before its planned day: the day it was
+    // planned for (it then moves to the day it was actually done).
+    plannedDate: null,
   }
 }
 
@@ -87,17 +90,29 @@ export function toggleGoal(items, id) {
     const events = [makeEvent(doneToday ? 'unticked' : 'ticked', goal, { date: today })]
     return finish(updated, events, goal.parentIds)
   }
-  const updated = items.map(item =>
-    item.id === id
-      ? {
-          ...item,
-          done: !item.done,
-          completedAt: item.done ? null : new Date().toISOString(),
-          completedBy: item.done ? null : 'hand',
-        }
-      : item,
-  )
-  const events = [makeEvent(goal.done ? 'unticked' : 'ticked', goal)]
+  // A calendar task ticked before its planned day was done early: it moves
+  // to today, and remembers the day it was planned for. Unticking it puts
+  // it back on that planned day.
+  const today = todayKey()
+  const early = !goal.done && goal.date && goal.date > today
+  const backToPlan = goal.done && goal.plannedDate
+  const updated = items.map(item => {
+    if (item.id !== id) return item
+    const changed = {
+      ...item,
+      done: !item.done,
+      completedAt: item.done ? null : new Date().toISOString(),
+      completedBy: item.done ? null : 'hand',
+    }
+    if (early) Object.assign(changed, { date: today, plannedDate: item.date })
+    if (backToPlan) Object.assign(changed, { date: item.plannedDate, plannedDate: null })
+    return changed
+  })
+  const events = [
+    early
+      ? makeEvent('ticked', goal, { early: true, plannedDate: goal.date })
+      : makeEvent(goal.done ? 'unticked' : 'ticked', goal),
+  ]
   return finish(updated, events, goal.parentIds)
 }
 

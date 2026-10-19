@@ -42,13 +42,23 @@ export function formatSeconds(seconds) {
   return `${s} sec`
 }
 
+// '2026-10-28' -> "Tue 28 Oct".
+export function shortDate(key) {
+  const [y, m, d] = key.split('-').map(Number)
+  return new Date(y, m - 1, d).toLocaleDateString(undefined, {
+    weekday: 'short',
+    day: 'numeric',
+    month: 'short',
+  })
+}
+
 // How each event reads on the goal page.
 const EVENT_TEXT = {
   created: () => 'Created',
   edited: e => `Edited: ${e.fields.join(', ')}`,
   linked: e => `Linked under “${e.parentTitle}”`,
   unlinked: e => `Unlinked from “${e.parentTitle}”`,
-  ticked: () => 'Ticked done',
+  ticked: e => (e.early ? `Ticked done early (planned for ${shortDate(e.plannedDate)})` : 'Ticked done'),
   unticked: () => 'Unticked',
   'auto-completed': () => 'Completed automatically',
   'auto-uncompleted': () => 'Un-completed automatically',
