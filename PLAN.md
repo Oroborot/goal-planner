@@ -1,5 +1,28 @@
 # Goal Planner App Plan
 
+## Main purpose (never lose sight of this)
+
+This is a **goal-achiever planner, not a calendar app**. The calendar is the place where goals, notes and tasks live and get streamlined. **Every task should connect to a goal.**
+
+## How we work
+
+- **Personal app for now, no spending.** Before any step that needs money (servers, databases, AI usage, app store fees), say so in advance and explain the cost.
+- **Warn before big steps.** Before any task that takes a lot of time or brainpower, warn first; it may change the order.
+- **Compare real apps before any design choice** (see "Design decision process" below).
+- **Beginner-friendly instructions.** For every step, say exactly where it happens (VS Code, terminal, browser, GitHub, Vercel) and what you should see after it. Always give the test link (http://localhost:5173).
+
+## Design decision process
+
+Used for every feature before any code is written:
+
+1. **Look:** name 2–3 real apps to compare (or sketch one if none exist).
+2. **Like / Skip:** say what you like and what you don't need from each.
+3. **Map:** each "like" becomes a named piece of the app.
+4. **Combine:** one sentence describing the mix.
+5. **Phase:** sort the pieces into first / next / later.
+6. **Questions:** settle open choices for the first phase only.
+7. **Build:** only then start coding.
+
 ## Why this angle works
 
 The angle is strong: every small task visibly feeds a bigger goal, and the app reminds you why you do it, in your own words. Most planners are just lists of tasks. Some apps link tasks to goals, so the idea isn't fully unique, but the mix of the goal chain, your own "why", the swap option and the liquid timer feels personal and motivating rather than corporate.
@@ -18,6 +41,14 @@ Example chain: Today: Work out -> This week: Work out 3 times -> This month: 50 
 - Each goal can link to one or more bigger "parent" goals, so a goal can count toward several bigger goals.
 - Finishing a small goal counts as progress toward the bigger ones.
 - Several areas of life, each with its own chain (fitness, apps, money, and so on).
+
+**Goal structure**
+
+- **End goals:** long-term (e.g. get fit, get rich).
+- **Milestones** inside end goals, reached by: number of times a task is done, hours put in, or certificates earned.
+- **Habits:** recurring tasks (e.g. daily run). Built as "repeating goals".
+- **Deadlines and priorities** on anything where they make sense (details later).
+- **Side quests (later):** optional challenges the user writes and attaches to a task (e.g. daily run → "run my chosen distance in 30 min or less"). The user marks whether they achieved it. Gives a reward, possibly visual bonuses (details later).
 
 **2. Your "why"**
 
@@ -39,9 +70,9 @@ Example chain: Today: Work out -> This week: Work out 3 times -> This month: 50 
 
 - Mark tasks that repeat every day or on certain days.
 
-**6. Planning area and "what now" popup**
+**6. Calendar and "what now" popup**
 
-- Add the day's tasks in a planning section, for example 3 tasks.
+- The calendar is where the day's tasks get planned (see "Calendar" in the build steps).
 - The app pops up with what to do next, with your "why" attached.
 - If you want to skip, it offers another task that's equally important.
 
@@ -91,21 +122,53 @@ Practical features come first, visual design later: the look (colors, fonts, spa
 ### Part 2: make it a daily app
 
 - [x] **Notes and daily tasks:** take notes and daily task lists, mark progress on them, and edit or delete them, the same way you manage goals. Each note has a small id (N1, N2…), can be a task with a tick box, and links to other notes or goals both ways. Notes have categories: main ones (Ideas, Thoughts, Reminders…) and sub-categories under them, with filter chips, rename and delete. Later: merge notes, link by typing an id like N3 in the text.
-- [ ] **Timer:** a timer per task that counts up (how long I worked) or down (time left). A plain version first; the liquid tube look comes with the design pass.
-- [ ] **Reminders:** set a reminder on a goal or task. The app shows it when it's open; real phone notifications come with the phone version.
+- [x] **Timer:** a timer per task that counts up (how long I worked) or down (time left, in minutes and seconds). A plain version first; the liquid tube look comes with the design pass. Later: a place to see all repeating goals, timers and tasks together (with the design pass).
+#### Calendar
+
+Phone first, computer maybe later. Main flow: **Today** page → turn the page to **Tomorrow** → keep going day by day → then a **Week** view → then a **Month** view. Data stays on the device (localStorage) for now.
+
+Inspiration: Google Calendar (week/month overview), Todoist (daily list), Sunsama (moving tasks between days), Akiflow (both views together + statistics).
+
+**Phase 1 (first):**
+- [ ] Every task links to a goal, with a color per goal (or life area).
+- [ ] Today page: a list where tasks can have an optional time.
+- [ ] Go to tomorrow and onward (arrow buttons first, swipe later).
+- [ ] Week view: each task shows its name and its goal's color.
+- [ ] Month view: same, smaller.
+- [ ] Move an unfinished task to another day (button first, drag later).
+
+**Next phases:**
+- [ ] **"What now" popup:** at the planned time, show the task with its "why": Do it, Silence (snooze), Change (move or edit), or Swap for another equally important task that fits the current time. Every choice goes into the history log (done, skipped, snoozed, swapped), so skips get counted. Popups only work while the app is open.
+- [ ] **Time windows and chains:** times a task can be done (e.g. working out: mornings or late afternoon; shower: start or end of day), a rough duration, and "do this after that" (shower after the workout). An importance level per task, used for swapping.
+- [ ] **Assisted rescheduling (no AI):** unfinished tasks get highlighted. If the user turns help on, the app suggests a new day/time from the priorities the user set; the user makes the final decision.
+- [ ] **Stats:** how many times, how much time, progress toward goals. Rewards are user-defined (see "Reward system").
+
 - [ ] **Installable app (PWA):** add the app to your phone's home screen so you can use it every day.
+
+- [ ] **Navigation menu:** a proper way to move around the app (side menu or bottom bar) instead of going back and forth. Comes after the planner and the goal views, once all main sections exist.
+- [ ] **History cleanup:** delete single history entries (e.g. mistakes) or the whole history, each with a confirmation. Keep it discreet: history folded away or reached from the menu, not always open. Note: deleting entries also changes the counts built from them (times ticked, timer totals).
 
 ### Part 3: find the vibe
 
 - [ ] **Better look:** a design pass, based on how you actually use the app. Pick ideas from `DESIGN-IDEAS.md`.
+- [ ] **Home screen design:** background of the user's choice, date and time, custom or chosen imagery, a small bar at the top showing tasks done today, and a button at the bottom that takes you to the main area.
 
 ### Part 4: extras
 
 - [ ] **Folders:** a separate section with folders such as "Achieved" (finished goals, with their "why" and date) and "Reasons to try" (your "why"s, to remind you why you do things). You can create, rename and delete folders, and move goals and "why"s between them.
-- [ ] **Planning area and "what now" popup** with your "why" and the swap option. The swap needs an importance level on each task.
 - [ ] **Liquid tube timer look:** the animated version of the timer. Good CSS animation practice.
 - [ ] **More goal views:** a table view (like a spreadsheet), a link view and a big tree view. See `DESIGN-IDEAS.md`.
 - [ ] **Suggestions:** start with simple rules, such as "you skipped push-ups twice, do them first today", and add AI later.
+- [ ] **Side quests:** see "Goal structure".
+- [ ] **Task details:** notes, location or links inside a task; sub-tasks inside a task; a time estimate per task with a warning when a day is overloaded; task durations shown as block heights in the day/week views.
+- [ ] **Organizing:** several color-coded calendars (e.g. Work, Fitness) that can be shown/hidden; labels and filters; an Inbox for tasks with no date yet; time-blocking: drag a task from the Inbox onto a time in the calendar.
+- [ ] **Speed:** quick add by typing a sentence (e.g. "run tomorrow 7am") using a free date-parsing library, not AI; a typing shortcut/command bar.
+- [ ] **Routines:** guided morning planning; evening shutdown/reflection (also the daily review); weekly review; energy tracker (how drained or energetic a day is).
+- [ ] **Reminders before a task.** Warn before building: phone notifications while the app is closed may need a server (possible cost).
+
+**Not wanted:** karma points or streak scoring, an inbox collecting tasks from other apps, a vertical timeline with icons.
+
+**AI (parked until the end):** e.g. "plan my tomorrow from text". Only when actually needed, and only after explaining the cost.
 
 ### Part 5: the real product
 
