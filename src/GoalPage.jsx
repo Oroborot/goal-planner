@@ -13,6 +13,7 @@ import RepeatSummary from './RepeatSummary.jsx'
 import { isDoneNow, repeatStats } from './repeat.js'
 import { notesLinkingTo } from './noteActions.js'
 import { colorOf } from './colors.js'
+import { whenLabel } from './calendar.js'
 
 // One row in the "smaller goals" or "counts toward" lists: a link to that
 // goal's page, its timeframe and how far along it is.
@@ -128,7 +129,10 @@ function GoalPage({ goalId, items, events, apply, timer, timerControls }) {
       <a href="#goals" className="back">
         ← Goals
       </a>
-      <p className="goal-page-timeframe">{labelOf(goal.timeframe)} goal</p>
+      <p className="goal-page-timeframe">
+        {labelOf(goal.timeframe)} goal
+        {goal.date && ` · 📅 ${whenLabel(goal)}`}
+      </p>
       <h1>
         <span className="goal-dot big" style={{ background: colorOf(goals, goal) }} />
         {goal.title}

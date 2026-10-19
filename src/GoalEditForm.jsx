@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { TIMEFRAMES, labelOf, biggerGoals, smallerGoals } from './timeframes.js'
 import { EVERY_DAY } from './repeat.js'
+import WhenFields from './WhenFields.jsx'
 import RepeatFields from './RepeatFields.jsx'
 import ColorPicker from './ColorPicker.jsx'
 import { colorOf } from './colors.js'
@@ -60,6 +61,9 @@ function GoalEditForm({ goal, goals, onSave, onCancel }) {
     times: goal.target?.times ?? 3,
   })
   const noDaysPicked = repeat.mode === 'days' && repeat.days.length === 0
+  // Date and optional time, for one-time Day goals (calendar tasks).
+  const [when, setWhen] = useState({ date: goal.date || '', time: goal.time || '' })
+  const onCalendar = timeframe === 'day' && repeat.mode === 'none'
 
   const parentOptions = biggerGoals(goals, timeframe, goal.id)
   const childOptions = smallerGoals(goals, timeframe, goal.id)
@@ -85,6 +89,8 @@ function GoalEditForm({ goal, goals, onSave, onCancel }) {
         why: why.trim(),
         parentIds,
         color,
+        date: onCalendar ? when.date || null : null,
+        time: onCalendar && when.date ? when.time || null : null,
         repeat: repeats ? { days: repeat.mode === 'daily' ? EVERY_DAY : repeat.days } : null,
         target: repeats
           ? { per: repeat.per, times: repeat.per === 'day' ? 1 : repeat.times }
@@ -125,6 +131,7 @@ function GoalEditForm({ goal, goals, onSave, onCancel }) {
         inherited={colorOf(goals, { ...goal, color: null, parentIds })}
       />
       <RepeatFields value={repeat} onChange={setRepeat} />
+      {onCalendar && <WhenFields when={when} onChange={setWhen} />}
       <LinkList
         legend="Counts toward"
         goals={parentOptions}

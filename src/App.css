@@ -88,6 +88,21 @@ li.done .goal-title { text-decoration: line-through; opacity: 0.5; }
 .plain-links { margin-bottom: 0.5rem; }
 .plain-links li { min-height: 44px; }
 
+/* Day page: ← title →, the day's summary, and the task list with times. */
+.day-nav { display: flex; align-items: center; gap: 0.5rem; }
+.day-nav-title { flex: 1; text-align: center; }
+.day-nav-title h1 { margin: 0; line-height: 1.15; }
+.day-nav .icon-button { width: 44px; font-size: 1.3em; border-color: var(--border); }
+.today-link { display: flex; justify-content: center; }
+.day-summary { text-align: center; margin: 0.25rem 0 0.75rem; }
+.day-time { flex: 0 0 3.2em; font-family: var(--mono); font-size: 0.85em; color: var(--text); }
+.habit-mark { flex: 0 0 22px; margin-left: 0.25rem; text-align: center; color: var(--accent); }
+
+/* Calendar: a task's date/time, and the hint for tasks not linked to a goal. */
+.goal-when { font-size: 0.85em; line-height: 1.3; color: var(--text-h); }
+.link-me { align-self: flex-start; min-height: 0; padding: 0; border: 0; background: none; font-size: 0.8em; line-height: 1.3; color: var(--text); font-style: italic; text-decoration: underline dotted; cursor: pointer; }
+.when-fields .row > input { flex: 1; min-width: 0; }
+
 /* Goal colors: a dot before the title, and the picker in the edit form. */
 .goal-dot { display: inline-block; width: 10px; height: 10px; margin-right: 0.45rem; border-radius: 50%; vertical-align: middle; }
 .goal-dot.big { width: 14px; height: 14px; }

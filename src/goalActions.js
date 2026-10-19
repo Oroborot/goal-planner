@@ -32,6 +32,10 @@ function makeGoal(title, timeframe, parentIds, why = '') {
     target: null,
     repeatSince: null,
     doneDates: [],
+    // Calendar: the day a one-time Day goal is planned for ('2026-10-21'),
+    // and an optional time ('07:00'). Only Day goals have these.
+    date: null,
+    time: null,
   }
 }
 
@@ -46,8 +50,13 @@ function finish(items, events, idsToCheck) {
 }
 
 // Add a goal. A new, unfinished goal can un-complete its bigger goals.
-export function addGoal(items, title, timeframe, parentIds, why = '') {
+// `when` can put a Day goal on the calendar: { date, time } (both optional).
+export function addGoal(items, title, timeframe, parentIds, why = '', when = {}) {
   const goal = makeGoal(title, timeframe, parentIds, why)
+  if (timeframe === 'day') {
+    goal.date = when.date || null
+    goal.time = (when.date && when.time) || null
+  }
   const events = [
     makeEvent('created', goal, { timeframe }),
     ...parentIds.map(parentId =>
@@ -101,11 +110,14 @@ export function saveGoal(items, id, changes, childIds) {
   // don't count as missed. A repeating goal is never "done" once and for all.
   if (after.repeat && !before.repeat) after.repeatSince = new Date().toISOString()
   if (after.repeat) Object.assign(after, { done: false, completedAt: null, completedBy: null })
+  // Only one-time Day goals sit on a calendar date; repeating goals use
+  // their repeat days instead. Being on the calendar is optional.
+  if (after.timeframe !== 'day' || after.repeat || !after.date) Object.assign(after, { date: null, time: null })
   const events = []
 
   // Which fields changed.
   const same = (a, b) => JSON.stringify(a) === JSON.stringify(b)
-  const fields = ['title', 'timeframe', 'why', 'repeat', 'target', 'color'].filter(
+  const fields = ['title', 'timeframe', 'why', 'repeat', 'target', 'color', 'date', 'time'].filter(
     field => !same(before[field], after[field]),
   )
   if (fields.length > 0) events.push(makeEvent('edited', after, { fields }))

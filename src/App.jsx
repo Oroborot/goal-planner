@@ -4,6 +4,8 @@ import GoalsScreen from './GoalsScreen.jsx'
 import GoalPage from './GoalPage.jsx'
 import NotesScreen from './NotesScreen.jsx'
 import NotePage from './NotePage.jsx'
+import DayPage from './DayPage.jsx'
+import { todayKey } from './calendar.js'
 import { EVENTS_KEY, loadEvents, makeEvent } from './history.js'
 import TimerBar from './TimerBar.jsx'
 import {
@@ -25,9 +27,13 @@ const STORAGE_KEY = 'planner-items'
 //   #goal/<id>    -> the page for one goal
 //   #notes        -> the notes list
 //   #note/<id>    -> the page for one note
+//   #day          -> today in the calendar
+//   #day/<date>   -> one day in the calendar, e.g. #day/2026-10-21
 //   anything else -> the home screen
 function screenFromAddress() {
   const address = window.location.hash.slice(1)
+  if (address === 'day') return { name: 'day', dateKey: todayKey() }
+  if (/^day\/\d{4}-\d{2}-\d{2}$/.test(address)) return { name: 'day', dateKey: address.slice(4) }
   if (address === 'goals') return { name: 'goals' }
   if (address.startsWith('goal/')) return { name: 'goal', goalId: address.slice(5) }
   if (address === 'notes') return { name: 'notes' }
@@ -47,6 +53,8 @@ function loadItems() {
       why: '',
       completedBy: item.done ? 'hand' : null,
       color: null,
+      date: null,
+      time: null,
       repeat: null,
       target: null,
       repeatSince: null,
@@ -166,6 +174,8 @@ function App() {
         timerControls={timerControls}
       />
     )
+  } else if (screen.name === 'day') {
+    page = <DayPage key={screen.dateKey} dateKey={screen.dateKey} items={items} apply={apply} />
   } else if (screen.name === 'notes') {
     page = <NotesScreen items={items} apply={apply} />
   } else if (screen.name === 'note') {

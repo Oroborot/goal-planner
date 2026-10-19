@@ -1,5 +1,5 @@
 import { activeGoals } from './progress.js'
-import { isDoneNow } from './repeat.js'
+import { isDoneNow, isScheduled, todayKey } from './repeat.js'
 import { activeNotes } from './noteActions.js'
 
 // "Good morning" before 12, "Good afternoon" before 18, otherwise "Good evening".
@@ -26,6 +26,17 @@ function HomeScreen({ items }) {
       ? 'No day goals yet'
       : `${doneCount} of ${dayGoals.length} day goals done`
 
+  // A short summary for the Today (calendar) button: today's tasks and
+  // the habits planned for today.
+  const todayTasks = activeGoals(items).filter(
+    goal => goal.date === todayKey() || (goal.repeat && isScheduled(goal, now)),
+  )
+  const todayDone = todayTasks.filter(isDoneNow).length
+  const todaySummary =
+    todayTasks.length === 0
+      ? 'Nothing planned today'
+      : `${todayDone} of ${todayTasks.length} done today`
+
   // A short summary for the Notes button: open tasks first.
   const notes = activeNotes(items)
   const openTasks = notes.filter(note => note.isTask && !note.done).length
@@ -41,6 +52,10 @@ function HomeScreen({ items }) {
       <p className="subtitle">What do you want to do?</p>
 
       <nav className="tiles">
+        <a href="#day" className="tile">
+          <span className="tile-title">Today</span>
+          <span className="tile-sub">{todaySummary}</span>
+        </a>
         <a href="#goals" className="tile">
           <span className="tile-title">Goals</span>
           <span className="tile-sub">{goalsSummary}</span>

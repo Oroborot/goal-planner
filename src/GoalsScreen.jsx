@@ -5,6 +5,8 @@ import ProgressBar from './ProgressBar.jsx'
 import DeletedGoals from './DeletedGoals.jsx'
 import RepeatSummary from './RepeatSummary.jsx'
 import { isDoneNow } from './repeat.js'
+import WhenFields from './WhenFields.jsx'
+import { whenLabel } from './calendar.js'
 import { colorOf } from './colors.js'
 import { TIMEFRAMES, labelOf, biggerGoals } from './timeframes.js'
 import { activeGoals, childrenOf, progressOf, percent } from './progress.js'
@@ -21,6 +23,8 @@ function GoalsScreen({ items, events, apply, timeframe, setTimeframe }) {
   // The id of the bigger goal the new goal belongs to ('' means none).
   // More parents can be added later with the ✎ button.
   const [parentId, setParentId] = useState('')
+  // Date and optional time for a new Day goal (a calendar task).
+  const [when, setWhen] = useState({ date: '', time: '' })
   // The goal being edited (✎), and the goal getting a new smaller goal (＋).
   // Only one of these is open at a time; null means none.
   const [editingId, setEditingId] = useState(null)
@@ -64,7 +68,9 @@ function GoalsScreen({ items, events, apply, timeframe, setTimeframe }) {
   function submitNewGoal(e) {
     e.preventDefault()
     if (!title.trim()) return
-    apply(addGoal(items, title.trim(), timeframe, parentId ? [parentId] : [], why.trim()))
+    apply(addGoal(items, title.trim(), timeframe, parentId ? [parentId] : [], why.trim(), when))
+    // Keep the date for the next task; the time is usually different.
+    setWhen({ ...when, time: '' })
     setTitle('')
     setWhy('')
     setParentId('')
@@ -144,6 +150,7 @@ function GoalsScreen({ items, events, apply, timeframe, setTimeframe }) {
           placeholder="Why does this matter to you? (optional)"
           aria-label="Why"
         />
+        {timeframe === 'day' && <WhenFields when={when} onChange={setWhen} />}
         <button type="submit">Add</button>
       </form>
 
@@ -181,7 +188,13 @@ function GoalsScreen({ items, events, apply, timeframe, setTimeframe }) {
                       <span className="goal-dot" style={{ background: colorOf(goals, goal) }} />
                       {goal.title}
                     </a>
+                    {goal.date && <span className="goal-when">📅 {whenLabel(goal)}</span>}
                     {parents && <span className="goal-parent">↳ {parents}</span>}
+                    {!parents && goal.timeframe !== 'year' && (
+                      <button type="button" className="link-me" onClick={() => openEdit(goal.id)}>
+                        Not linked to a goal yet · tap to link
+                      </button>
+                    )}
                     {goal.repeat && <RepeatSummary goal={goal} />}
                     {children > 0 && (
                       <>
