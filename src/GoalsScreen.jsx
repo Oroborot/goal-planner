@@ -3,6 +3,8 @@ import GoalEditForm from './GoalEditForm.jsx'
 import AddSmallerGoalForm from './AddSmallerGoalForm.jsx'
 import ProgressBar from './ProgressBar.jsx'
 import DeletedGoals from './DeletedGoals.jsx'
+import RepeatSummary from './RepeatSummary.jsx'
+import { isDoneNow } from './repeat.js'
 import { TIMEFRAMES, labelOf, biggerGoals } from './timeframes.js'
 import { activeGoals, childrenOf, progressOf, percent } from './progress.js'
 import { addGoal, deleteGoal, saveGoal, toggleGoal } from './goalActions.js'
@@ -166,10 +168,10 @@ function GoalsScreen({ items, events, apply, timeframe, setTimeframe }) {
             const progress = progressOf(goals, goal)
             return (
               <Fragment key={goal.id}>
-                <li className={goal.done ? 'done' : ''}>
+                <li className={isDoneNow(goal) ? 'done' : ''}>
                   <input
                     type="checkbox"
-                    checked={goal.done}
+                    checked={isDoneNow(goal)}
                     onChange={() => apply(toggleGoal(items, goal.id))}
                     aria-label={`Mark "${goal.title}" as done`}
                   />
@@ -178,6 +180,7 @@ function GoalsScreen({ items, events, apply, timeframe, setTimeframe }) {
                       {goal.title}
                     </a>
                     {parents && <span className="goal-parent">↳ {parents}</span>}
+                    {goal.repeat && <RepeatSummary goal={goal} />}
                     {children > 0 && (
                       <>
                         <span className="goal-children">

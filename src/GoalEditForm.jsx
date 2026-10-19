@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import { TIMEFRAMES, labelOf, biggerGoals, smallerGoals } from './timeframes.js'
+import { EVERY_DAY } from './repeat.js'
+import RepeatFields from './RepeatFields.jsx'
 
 // A list of goals with a checkbox each, used for linking.
 // `checkedIds` are the ticked ones; `onToggle(id)` ticks or unticks one.
@@ -47,6 +49,14 @@ function GoalEditForm({ goal, goals, onSave, onCancel }) {
   const [childIds, setChildIds] = useState(
     goals.filter(g => g.parentIds.includes(goal.id)).map(g => g.id),
   )
+  // Repeat settings, in the shape RepeatFields uses.
+  const [repeat, setRepeat] = useState({
+    mode: !goal.repeat ? 'none' : goal.repeat.days.length === 7 ? 'daily' : 'days',
+    days: goal.repeat?.days ?? [1, 3, 5],
+    per: goal.target?.per ?? 'day',
+    times: goal.target?.times ?? 3,
+  })
+  const noDaysPicked = repeat.mode === 'days' && repeat.days.length === 0
 
   const parentOptions = biggerGoals(goals, timeframe, goal.id)
   const childOptions = smallerGoals(goals, timeframe, goal.id)
@@ -63,8 +73,21 @@ function GoalEditForm({ goal, goals, onSave, onCancel }) {
 
   function save(e) {
     e.preventDefault()
-    if (!title.trim()) return
-    onSave({ title: title.trim(), timeframe, why: why.trim(), parentIds }, childIds)
+    if (!title.trim() || noDaysPicked) return
+    const repeats = repeat.mode !== 'none'
+    onSave(
+      {
+        title: title.trim(),
+        timeframe,
+        why: why.trim(),
+        parentIds,
+        repeat: repeats ? { days: repeat.mode === 'daily' ? EVERY_DAY : repeat.days } : null,
+        target: repeats
+          ? { per: repeat.per, times: repeat.per === 'day' ? 1 : repeat.times }
+          : null,
+      },
+      childIds,
+    )
   }
 
   return (
@@ -92,6 +115,7 @@ function GoalEditForm({ goal, goals, onSave, onCancel }) {
         placeholder="Why does this matter to you? (optional)"
         aria-label="Why"
       />
+      <RepeatFields value={repeat} onChange={setRepeat} />
       <LinkList
         legend="Counts toward"
         goals={parentOptions}
@@ -112,7 +136,7 @@ function GoalEditForm({ goal, goals, onSave, onCancel }) {
         <button type="button" className="secondary" onClick={onCancel}>
           Cancel
         </button>
-        <button type="submit" disabled={!title.trim()}>
+        <button type="submit" disabled={!title.trim() || noDaysPicked}>
           Save
         </button>
       </div>

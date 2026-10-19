@@ -7,17 +7,20 @@ import { activeGoals, childrenOf, progressOf, percent } from './progress.js'
 import { addGoal, restoreGoal, saveGoal, toggleGoal } from './goalActions.js'
 import { deletedEvent, formatTime } from './history.js'
 import GoalHistory from './GoalHistory.jsx'
+import RepeatPanel from './RepeatPanel.jsx'
+import RepeatSummary from './RepeatSummary.jsx'
+import { isDoneNow, repeatStats } from './repeat.js'
 
 // One row in the "smaller goals" or "counts toward" lists: a link to that
 // goal's page, its timeframe and how far along it is.
 function LinkedGoal({ goal, goals, onToggle }) {
   const progress = progressOf(goals, goal)
   return (
-    <li className={goal.done ? 'done' : ''}>
+    <li className={isDoneNow(goal) ? 'done' : ''}>
       {onToggle && (
         <input
           type="checkbox"
-          checked={goal.done}
+          checked={isDoneNow(goal)}
           onChange={onToggle}
           aria-label={`Mark "${goal.title}" as done`}
         />
@@ -29,6 +32,7 @@ function LinkedGoal({ goal, goals, onToggle }) {
         <span className="goal-meta">
           {labelOf(goal.timeframe)} · {percent(progress)}%
         </span>
+        {goal.repeat && <RepeatSummary goal={goal} />}
         <ProgressBar progress={progress} />
       </div>
     </li>
@@ -92,13 +96,19 @@ function GoalPage({ goalId, items, events, apply }) {
   const children = childrenOf(goals, goal.id).sort(
     (a, b) => sizeOf(b.timeframe) - sizeOf(a.timeframe),
   )
-  const doneCount = children.filter(child => child.done).length
+  const doneCount = children.filter(isDoneNow).length
   const parents = goal.parentIds.map(id => goals.find(g => g.id === id)).filter(Boolean)
 
   // The line under the progress bar.
   const childSummary = `${doneCount} of ${children.length} smaller goals done`
   let summary
-  if (goal.done && goal.completedBy === 'hand') {
+  if (goal.repeat) {
+    const stats = repeatStats(goal)
+    summary = isDoneNow(goal) ? 'Done today' : 'Not done today yet'
+    if (goal.target.per !== 'day') {
+      summary += ` · ${stats.thisPeriod} of ${stats.periodTarget} this ${goal.target.per}`
+    }
+  } else if (goal.done && goal.completedBy === 'hand') {
     summary = children.length > 0 ? `Done, ticked by hand (${childSummary})` : 'Done'
   } else if (goal.done) {
     summary = 'Done: completed automatically, everything under it is done'
@@ -123,13 +133,15 @@ function GoalPage({ goalId, items, events, apply }) {
         <label className="done-toggle">
           <input
             type="checkbox"
-            checked={goal.done}
+            checked={isDoneNow(goal)}
             onChange={() => apply(toggleGoal(items, goal.id))}
             aria-label={`Mark "${goal.title}" as done`}
           />
-          <span>Done</span>
+          <span>{goal.repeat ? 'Done today' : 'Done'}</span>
         </label>
       </section>
+
+      {goal.repeat && <RepeatPanel goal={goal} />}
 
       {mode === 'edit' ? (
         <GoalEditForm

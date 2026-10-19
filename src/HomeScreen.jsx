@@ -1,4 +1,5 @@
 import { activeGoals } from './progress.js'
+import { isDoneNow } from './repeat.js'
 
 // "Good morning" before 12, "Good afternoon" before 18, otherwise "Good evening".
 function greeting(hour) {
@@ -18,7 +19,7 @@ function HomeScreen({ items }) {
 
   // A short summary for the Goals button, based on the Day goals.
   const dayGoals = activeGoals(items).filter(goal => goal.timeframe === 'day')
-  const doneCount = dayGoals.filter(goal => goal.done).length
+  const doneCount = dayGoals.filter(isDoneNow).length
   const goalsSummary =
     dayGoals.length === 0
       ? 'No day goals yet'

@@ -30,6 +30,10 @@ function loadItems() {
     return saved.map(({ parentId, ...item }) => ({
       why: '',
       completedBy: item.done ? 'hand' : null,
+      repeat: null,
+      target: null,
+      repeatSince: null,
+      doneDates: [],
       ...item,
       parentIds: item.parentIds ?? (parentId ? [parentId] : []),
     }))

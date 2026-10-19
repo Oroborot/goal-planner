@@ -1,5 +1,6 @@
 // Progress and automatic completion for goals.
 import { makeEvent } from './history.js'
+import { periodProgress } from './repeat.js'
 
 // The goals that are in use: deleted goals are kept in the saved data
 // (all data is good data) but hidden everywhere else.
@@ -13,10 +14,13 @@ export function childrenOf(goals, id) {
 }
 
 // How far along a goal is, from 0 (nothing done) to 1 (all done).
+// - A repeating goal: progress toward its target right now
+//   (e.g. done 2 of 3 times this week = 0.67).
 // - A ticked goal is always 1.
 // - A goal with nothing under it is 0 until it's ticked.
 // - Otherwise it's the average of the goals under it, all the way down.
 export function progressOf(goals, goal) {
+  if (goal.repeat) return periodProgress(goal)
   if (goal.done) return 1
   const children = childrenOf(goals, goal.id)
   if (children.length === 0) return 0
@@ -44,7 +48,10 @@ export function settleCompletion(items, idsToCheck) {
     if (!goal || goal.list !== 'goals' || goal.deletedAt) continue
 
     const children = activeGoals([...byId.values()]).filter(g => g.parentIds.includes(goal.id))
-    const allDone = children.length > 0 && children.every(child => child.done)
+    // A repeating goal is a habit that's never "finished", so a goal with
+    // one under it never completes itself; tick it by hand instead.
+    const allDone =
+      children.length > 0 && children.every(child => !child.repeat && child.done)
 
     let updated = null
     if (allDone && !goal.done) {

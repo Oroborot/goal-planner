@@ -7,6 +7,7 @@
 import { activeGoals, percent, progressOf, settleCompletion } from './progress.js'
 import { makeEvent } from './history.js'
 import { sizeOf } from './timeframes.js'
+import { todayKey } from './repeat.js'
 
 // A new goal with all its fields filled in.
 function makeGoal(title, timeframe, parentIds, why = '') {
@@ -24,6 +25,11 @@ function makeGoal(title, timeframe, parentIds, why = '') {
     why,
     // Set when the goal is deleted; deleted goals are hidden, not erased.
     deletedAt: null,
+    // Repeating goals (see repeat.js); null for one-time goals.
+    repeat: null,
+    target: null,
+    repeatSince: null,
+    doneDates: [],
   }
 }
 
@@ -50,8 +56,26 @@ export function addGoal(items, title, timeframe, parentIds, why = '') {
 }
 
 // Tick or untick a goal by hand, then let its bigger goals react.
+// A repeating goal is ticked for today only: today's date is added to (or
+// taken off) its list of done days.
 export function toggleGoal(items, id) {
   const goal = items.find(item => item.id === id)
+  if (goal.repeat) {
+    const today = todayKey()
+    const doneToday = goal.doneDates.includes(today)
+    const updated = items.map(item =>
+      item.id === id
+        ? {
+            ...item,
+            doneDates: doneToday
+              ? item.doneDates.filter(d => d !== today)
+              : [...item.doneDates, today],
+          }
+        : item,
+    )
+    const events = [makeEvent(doneToday ? 'unticked' : 'ticked', goal, { date: today })]
+    return finish(updated, events, goal.parentIds)
+  }
   const updated = items.map(item =>
     item.id === id
       ? {
@@ -71,10 +95,17 @@ export function toggleGoal(items, id) {
 export function saveGoal(items, id, changes, childIds) {
   const before = items.find(item => item.id === id)
   const after = { ...before, ...changes }
+  // Turning repeat on starts the counter from now, so days before that
+  // don't count as missed. A repeating goal is never "done" once and for all.
+  if (after.repeat && !before.repeat) after.repeatSince = new Date().toISOString()
+  if (after.repeat) Object.assign(after, { done: false, completedAt: null, completedBy: null })
   const events = []
 
-  // Which of the plain fields changed.
-  const fields = ['title', 'timeframe', 'why'].filter(field => before[field] !== after[field])
+  // Which fields changed.
+  const same = (a, b) => JSON.stringify(a) === JSON.stringify(b)
+  const fields = ['title', 'timeframe', 'why', 'repeat', 'target'].filter(
+    field => !same(before[field], after[field]),
+  )
   if (fields.length > 0) events.push(makeEvent('edited', after, { fields }))
 
   // Bigger goals this goal was linked to or unlinked from.
