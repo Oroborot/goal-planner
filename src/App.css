@@ -142,7 +142,7 @@ li.done .goal-title { text-decoration: line-through; opacity: 0.5; }
 .swatch.inherit.selected { border-style: solid; }
 
 /* Timer: bar at the top of every screen, and the panel on goal/note pages. */
-.timer-bar { position: sticky; top: 0; z-index: 10; display: flex; align-items: center; gap: 0.5rem; width: 100%; max-width: 480px; margin: 0 auto; padding: 0.4rem 1rem; box-sizing: border-box; background: var(--bg); border-bottom: 1px solid var(--accent-border); }
+.timer-bar { position: sticky; top: env(safe-area-inset-top); z-index: 10; display: flex; align-items: center; gap: 0.5rem; width: 100%; max-width: 480px; margin: 0 auto; padding: 0.4rem 1rem; box-sizing: border-box; background: var(--bg); border-bottom: 1px solid var(--accent-border); }
 .timer-bar-title { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text-h); text-decoration: none; }
 .timer-bar-clock { font-family: var(--mono); font-size: 1.1em; color: var(--accent); }
 .timer-bar button { min-height: 36px; padding: 0 0.6rem; }

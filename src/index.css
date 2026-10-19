@@ -50,8 +50,13 @@
   }
 }
 
+/* On iPhones with a notch and a home bar, keep content out from under them
+   (env(...) is 0 on screens without them). */
 body {
   margin: 0;
+  background: var(--bg);
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom)
+    env(safe-area-inset-left);
 }
 
 #root {

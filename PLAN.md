@@ -135,7 +135,7 @@ Inspiration: Google Calendar (week/month overview), Todoist (daily list), Sunsam
 - [x] Go to tomorrow and onward (arrow buttons first, swipe later).
 - [x] Week view: each task shows its name and its goal's color. Decided: on a phone, the 7 days are stacked; each day can be folded or opened, so it never becomes a huge list.
 - [x] Month view, first version: **A** a dot grid (iPhone Calendar style): goal-colored dots per day; tap a day to see its tasks below the grid with "Open day". **C** your Month goals with progress bars above the grid. Later: **B** each week row shows "% done"; **D** quick add a task on a tapped day, and add a Month goal from the top.
-- [ ] Move an unfinished task to another day (button first, drag later).
+- [ ] Move an unfinished task to another day (button first, drag later). **Postponed (later):** dates can already be changed with ✎ Edit; this adds one-tap moving (Today / Tomorrow / Next week / pick a date) and a "left from earlier · move all to today" reminder. Convenience only.
 
 **Next phases:**
 - [ ] **"What now" popup:** at the planned time, show the task with its "why": Do it, Silence (snooze), Change (move or edit), or Swap for another equally important task that fits the current time. Every choice goes into the history log (done, skipped, snoozed, swapped), so skips get counted. Popups only work while the app is open.
@@ -143,7 +143,8 @@ Inspiration: Google Calendar (week/month overview), Todoist (daily list), Sunsam
 - [ ] **Assisted rescheduling (no AI):** unfinished tasks get highlighted. If the user turns help on, the app suggests a new day/time from the priorities the user set; the user makes the final decision.
 - [ ] **Stats:** how many times, how much time, progress toward goals. Rewards are user-defined (see "Reward system").
 
-- [ ] **Installable app (PWA):** add the app to your phone's home screen so you can use it every day.
+- [ ] **Installable app (PWA):** add the app to your phone's home screen so you can use it every day. Works on iPhone (Safari → Share → Add to Home Screen) and Android. Data stays on the phone; notifications later (need a server).
+- [ ] **Backup (later, after the basics):** one button downloads all data as a file, one loads it back. Important because data lives only on the phone: deleting the app icon or losing the phone loses it. ~30 min, free.
 
 - [ ] **Navigation menu:** a proper way to move around the app (side menu or bottom bar) instead of going back and forth. Comes after the planner and the goal views, once all main sections exist.
 - [ ] **History cleanup:** delete single history entries (e.g. mistakes) or the whole history, each with a confirmation. Keep it discreet: history folded away or reached from the menu, not always open. Note: deleting entries also changes the counts built from them (times ticked, timer totals).
@@ -151,7 +152,7 @@ Inspiration: Google Calendar (week/month overview), Todoist (daily list), Sunsam
 ### Part 3: find the vibe
 
 - [ ] **Better look:** a design pass, based on how you actually use the app. Pick ideas from `DESIGN-IDEAS.md`.
-- [ ] **Home screen design:** background of the user's choice, date and time, custom or chosen imagery, a small bar at the top showing tasks done today, and a button at the bottom that takes you to the main area.
+- [ ] **Home screen design:** an inspirational quote instead of "What do you want to do?" (ideas in `DESIGN-IDEAS.md`), background of the user's choice, date and time, custom or chosen imagery, a small bar at the top showing tasks done today, and a button at the bottom that takes you to the main area.
 
 ### Part 4: extras
 
