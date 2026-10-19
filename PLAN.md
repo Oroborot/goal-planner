@@ -183,6 +183,7 @@ Inspiration: Google Calendar (week/month overview), Todoist (daily list), Sunsam
 Small things added along the way that might not be needed in the final app. Review this list during the design pass.
 
 - [ ] The "Not linked to a goal yet · tap to link" hint under tasks without a bigger goal.
+- [ ] The ＋ button on goals in the goals list (adds a smaller goal under it; ✎ Edit and the goal page can do the same).
 
 ## Legal and privacy checklist (before going public)
 

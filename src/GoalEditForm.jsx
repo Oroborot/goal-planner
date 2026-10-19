@@ -93,7 +93,7 @@ function GoalEditForm({ goal, goals, onSave, onCancel }) {
         time: onCalendar && when.date ? when.time || null : null,
         repeat: repeats ? { days: repeat.mode === 'daily' ? EVERY_DAY : repeat.days } : null,
         target: repeats
-          ? { per: repeat.per, times: repeat.per === 'day' ? 1 : repeat.times }
+          ? { per: repeat.per, times: repeat.per === 'day' ? 1 : Number(repeat.times) || 1 }
           : null,
       },
       childIds,

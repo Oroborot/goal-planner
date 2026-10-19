@@ -9,7 +9,10 @@ function TimerPanel({ item, timer, events, controls }) {
   // Countdown length, as minutes plus seconds (e.g. 0 min 30 sec).
   const [minutes, setMinutes] = useState(25)
   const [seconds, setSeconds] = useState(0)
-  const countdownSeconds = minutes * 60 + seconds
+  // The boxes may be empty while typing; empty counts as 0.
+  const countdownSeconds = (Number(minutes) || 0) * 60 + (Number(seconds) || 0)
+  const clamp = (value, max) =>
+    value === '' ? '' : Math.min(max, Math.max(0, Number(value) || 0))
   const mine = timer?.itemId === item.id
   const now = useNow(mine && !timer.pausedAt)
   const totals = timeTotals(events, item.id)
@@ -62,7 +65,7 @@ function TimerPanel({ item, timer, events, controls }) {
             min="0"
             max="600"
             value={minutes}
-            onChange={e => setMinutes(Math.min(600, Math.max(0, Number(e.target.value) || 0)))}
+            onChange={e => setMinutes(clamp(e.target.value, 600))}
             aria-label="Countdown minutes"
           />
           <span>min</span>
@@ -71,7 +74,7 @@ function TimerPanel({ item, timer, events, controls }) {
             min="0"
             max="59"
             value={seconds}
-            onChange={e => setSeconds(Math.min(59, Math.max(0, Number(e.target.value) || 0)))}
+            onChange={e => setSeconds(clamp(e.target.value, 59))}
             aria-label="Countdown seconds"
           />
           <span>sec</span>

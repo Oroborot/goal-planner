@@ -53,7 +53,10 @@ function RepeatFields({ value, onChange }) {
               min="1"
               max="31"
               value={value.times}
-              onChange={e => set({ times: Math.max(1, Number(e.target.value) || 1) })}
+              // The box may be empty while typing; Save treats empty as 1.
+              onChange={e =>
+                set({ times: e.target.value === '' ? '' : Math.min(31, Math.max(1, Number(e.target.value))) })
+              }
               aria-label="Times"
             />
           )}
