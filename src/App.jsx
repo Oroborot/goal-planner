@@ -12,6 +12,8 @@ import { EVENTS_KEY, loadEvents, makeEvent } from './history.js'
 import TimerBar from './TimerBar.jsx'
 import BottomBar from './BottomBar.jsx'
 import AddSheet from './AddSheet.jsx'
+import SideMenu from './SideMenu.jsx'
+import { ArchivePage, ComingSoonPage, HistoryPage } from './MenuPages.jsx'
 import {
   alarm,
   elapsedMs,
@@ -38,6 +40,7 @@ const STORAGE_KEY = 'planner-items'
 //   anything else -> the home screen
 function screenFromAddress() {
   const address = window.location.hash.slice(1)
+  if (['history', 'archive', 'views', 'settings'].includes(address)) return { name: address }
   if (address === 'day') return { name: 'day', dateKey: todayKey() }
   if (address === 'week') return { name: 'week', mondayKey: mondayOf(todayKey()) }
   if (address === 'month') return { name: 'month', monthKey: todayKey().slice(0, 7) }
@@ -121,6 +124,8 @@ function App() {
   const [timer, setTimer] = useState(loadTimer)
   // True while the ＋ add sheet is open.
   const [adding, setAdding] = useState(false)
+  // True while the side menu is open.
+  const [menuOpen, setMenuOpen] = useState(false)
   // Set when a countdown ends, for the "Time's up" banner.
   const [timesUp, setTimesUp] = useState(null)
   useEffect(() => saveTimer(timer), [timer])
@@ -193,6 +198,14 @@ function App() {
     page = <WeekPage key={screen.mondayKey} mondayKey={screen.mondayKey} items={items} apply={apply} />
   } else if (screen.name === 'month') {
     page = <MonthPage key={screen.monthKey} monthKey={screen.monthKey} items={items} apply={apply} />
+  } else if (screen.name === 'history') {
+    page = <HistoryPage items={items} events={events} />
+  } else if (screen.name === 'archive') {
+    page = <ArchivePage items={items} events={events} apply={apply} />
+  } else if (screen.name === 'views') {
+    page = <ComingSoonPage title="Views" text="Tree, table and map views of your goals are coming later." />
+  } else if (screen.name === 'settings') {
+    page = <ComingSoonPage title="Settings" text="Customize (colors, icons, fonts, themes) is coming later." />
   } else if (screen.name === 'notes') {
     page = <NotesScreen items={items} apply={apply} />
   } else if (screen.name === 'note') {
@@ -224,6 +237,7 @@ function App() {
       )}
       {page}
       <BottomBar screen={screen.name} onAdd={() => setAdding(true)} />
+      <SideMenu open={menuOpen} setOpen={setMenuOpen} />
       {adding && <AddSheet items={items} apply={apply} onClose={() => setAdding(false)} />}
     </>
   )
