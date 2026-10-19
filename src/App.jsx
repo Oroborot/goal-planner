@@ -11,6 +11,7 @@ import { mondayOf, todayKey } from './calendar.js'
 import { EVENTS_KEY, loadEvents, makeEvent } from './history.js'
 import TimerBar from './TimerBar.jsx'
 import BottomBar from './BottomBar.jsx'
+import AddSheet from './AddSheet.jsx'
 import {
   alarm,
   elapsedMs,
@@ -118,6 +119,8 @@ function App() {
 
   // The timer (see timer.js), saved so a refresh keeps it running.
   const [timer, setTimer] = useState(loadTimer)
+  // True while the ＋ add sheet is open.
+  const [adding, setAdding] = useState(false)
   // Set when a countdown ends, for the "Time's up" banner.
   const [timesUp, setTimesUp] = useState(null)
   useEffect(() => saveTimer(timer), [timer])
@@ -220,7 +223,8 @@ function App() {
         </div>
       )}
       {page}
-      <BottomBar screen={screen.name} />
+      <BottomBar screen={screen.name} onAdd={() => setAdding(true)} />
+      {adding && <AddSheet items={items} apply={apply} onClose={() => setAdding(false)} />}
     </>
   )
 }

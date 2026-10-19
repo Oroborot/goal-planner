@@ -13,9 +13,8 @@ const SECTION = {
 }
 
 // The bar at the bottom of every screen: Home, Calendar, ＋, Goals, Notes.
-// Icons only. ＋ opens today's page with its add form for now; a sheet
-// with Task / Habit / Goal / Note comes in the next step.
-function BottomBar({ screen }) {
+// Icons only. ＋ opens the add sheet (Task / Habit / Note / Goal).
+function BottomBar({ screen, onAdd }) {
   const active = SECTION[screen]
   const item = (name, href) => (
     <a
@@ -31,9 +30,9 @@ function BottomBar({ screen }) {
     <nav className="bottom-bar" aria-label="Main">
       {item('home', '#')}
       {item('calendar', '#day')}
-      <a href="#day" className="bar-add">
+      <button type="button" className="bar-add" onClick={onAdd}>
         <AppIcon name="add" />
-      </a>
+      </button>
       {item('goals', '#goals')}
       {item('notes', '#notes')}
     </nav>

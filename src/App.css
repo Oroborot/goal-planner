@@ -4,7 +4,16 @@
 .bottom-bar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 20; display: grid; grid-template-columns: repeat(5, 1fr); align-items: center; max-width: 480px; margin: 0 auto; padding: 6px 8px calc(10px + env(safe-area-inset-bottom)); box-sizing: border-box; background: var(--bg); border-top: 1px solid var(--border); }
 .bar-item { display: flex; justify-content: center; align-items: center; min-height: 44px; color: var(--text); }
 .bar-item.active { color: var(--accent); }
-.bar-add { justify-self: center; display: flex; align-items: center; justify-content: center; width: 52px; height: 52px; border-radius: 50%; background: var(--accent); color: var(--bg); }
+/* The ＋ sheet: slides up from the bottom over a dimmed screen. */
+.sheet-backdrop { position: fixed; inset: 0; z-index: 30; display: flex; align-items: flex-end; justify-content: center; background: rgba(0, 0, 0, 0.5); }
+.sheet { display: flex; flex-direction: column; gap: 0.6rem; width: 100%; max-width: 480px; padding: 1rem 1rem calc(1rem + env(safe-area-inset-bottom)); box-sizing: border-box; border-radius: 16px 16px 0 0; background: var(--bg); animation: sheet-up 0.18s ease-out; }
+@keyframes sheet-up { from { transform: translateY(100%); } }
+.sheet-choices { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+.sheet-choices button { display: flex; flex-direction: column; justify-content: center; min-height: 56px; }
+.sheet-choices span { font-size: 0.75em; color: var(--text); }
+.sheet-error { margin: 0; font-size: 0.85em; color: #e5484d; }
+.sheet-close { width: 100%; }
+.bar-add { justify-self: center; padding: 0; border: 0; display: flex; align-items: center; justify-content: center; width: 52px; height: 52px; border-radius: 50%; background: var(--accent); color: var(--bg); }
 
 /* Shared look for inputs and buttons. 16px text stops iPhones zooming in,
    and 44px height makes them easy to tap. */

@@ -69,6 +69,18 @@ export function addGoal(items, title, timeframe, parentIds, why = '', when = {})
   return finish([...items, goal], events, parentIds)
 }
 
+// Quick add from the ＋ sheet: a Day goal that repeats every day.
+export function addHabit(items, title) {
+  const result = addGoal(items, title, 'day', [])
+  const habit = result.items[result.items.length - 1]
+  Object.assign(habit, {
+    repeat: { days: [0, 1, 2, 3, 4, 5, 6] },
+    target: { per: 'day', times: 1 },
+    repeatSince: habit.createdAt,
+  })
+  return result
+}
+
 // Tick or untick a goal by hand, then let its bigger goals react.
 // A repeating goal is ticked for today only: today's date is added to (or
 // taken off) its list of done days.
