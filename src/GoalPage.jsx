@@ -8,9 +8,11 @@ import { addGoal, restoreGoal, saveGoal, toggleGoal } from './goalActions.js'
 import { deletedEvent, formatTime } from './history.js'
 import GoalHistory from './GoalHistory.jsx'
 import RepeatPanel from './RepeatPanel.jsx'
+import TimerPanel from './TimerPanel.jsx'
 import RepeatSummary from './RepeatSummary.jsx'
 import { isDoneNow, repeatStats } from './repeat.js'
 import { notesLinkingTo } from './noteActions.js'
+import { colorOf } from './colors.js'
 
 // One row in the "smaller goals" or "counts toward" lists: a link to that
 // goal's page, its timeframe and how far along it is.
@@ -28,6 +30,7 @@ function LinkedGoal({ goal, goals, onToggle }) {
       )}
       <div className="goal-text">
         <a href={`#goal/${goal.id}`} className="goal-title goal-link">
+          <span className="goal-dot" style={{ background: colorOf(goals, goal) }} />
           {goal.title}
         </a>
         <span className="goal-meta">
@@ -44,7 +47,7 @@ function LinkedGoal({ goal, goals, onToggle }) {
 // bigger goals it counts toward. This is where goals are tracked.
 // `apply` saves a change and records it in the history log; `events` is the
 // history log itself.
-function GoalPage({ goalId, items, events, apply }) {
+function GoalPage({ goalId, items, events, apply, timer, timerControls }) {
   // 'edit' while the ✎ form is open, 'add' while the ＋ form is open.
   const [mode, setMode] = useState(null)
 
@@ -126,7 +129,10 @@ function GoalPage({ goalId, items, events, apply }) {
         ← Goals
       </a>
       <p className="goal-page-timeframe">{labelOf(goal.timeframe)} goal</p>
-      <h1>{goal.title}</h1>
+      <h1>
+        <span className="goal-dot big" style={{ background: colorOf(goals, goal) }} />
+        {goal.title}
+      </h1>
       {goal.why && <p className="goal-page-why">Why: {goal.why}</p>}
 
       <section className="goal-page-progress">
@@ -176,6 +182,8 @@ function GoalPage({ goalId, items, events, apply }) {
           )}
         </div>
       )}
+
+      <TimerPanel item={goal} timer={timer} events={events} controls={timerControls} />
 
       <h2>Smaller goals under this</h2>
       {children.length === 0 ? (

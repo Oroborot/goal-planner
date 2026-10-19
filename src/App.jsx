@@ -1,10 +1,20 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import HomeScreen from './HomeScreen.jsx'
 import GoalsScreen from './GoalsScreen.jsx'
 import GoalPage from './GoalPage.jsx'
 import NotesScreen from './NotesScreen.jsx'
 import NotePage from './NotePage.jsx'
-import { EVENTS_KEY, loadEvents } from './history.js'
+import { EVENTS_KEY, loadEvents, makeEvent } from './history.js'
+import TimerBar from './TimerBar.jsx'
+import {
+  alarm,
+  elapsedMs,
+  loadTimer,
+  pauseTimer,
+  resumeTimer,
+  saveTimer,
+  startTimer,
+} from './timer.js'
 import './App.css'
 
 // The name of the slot in the browser's localStorage where items are saved.
@@ -36,6 +46,7 @@ function loadItems() {
     return saved.map(({ parentId, ...item }) => ({
       why: '',
       completedBy: item.done ? 'hand' : null,
+      color: null,
       repeat: null,
       target: null,
       repeatSince: null,
@@ -87,8 +98,52 @@ function App() {
     return () => window.removeEventListener('hashchange', onAddressChange)
   }, [])
 
+  // The timer (see timer.js), saved so a refresh keeps it running.
+  const [timer, setTimer] = useState(loadTimer)
+  // Set when a countdown ends, for the "Time's up" banner.
+  const [timesUp, setTimesUp] = useState(null)
+  useEffect(() => saveTimer(timer), [timer])
+
+  // The running timer, readable right away (state updates arrive later),
+  // so a finishing countdown is never saved twice.
+  const timerRef = useRef(timer)
+  useEffect(() => {
+    timerRef.current = timer
+  }, [timer])
+
+  // End the timer and, if `save`, record the session in the history log.
+  function endTimer(save) {
+    const current = timerRef.current
+    if (!current) return null
+    timerRef.current = null
+    setTimer(null)
+    const seconds = Math.round(elapsedMs(current, Date.now()) / 1000)
+    if (save && seconds > 0) {
+      const item = { id: current.itemId, title: current.title }
+      setEvents(previous => [...previous, makeEvent('timed', item, { seconds, mode: current.mode })])
+    }
+    return current
+  }
+
+  const timerControls = {
+    start: (item, mode, seconds) => setTimer(startTimer(item, mode, seconds)),
+    pause: () => setTimer(t => pauseTimer(t)),
+    resume: () => setTimer(t => resumeTimer(t)),
+    stop: () => endTimer(true),
+    cancel: () => endTimer(false),
+    finish: () => {
+      const finished = endTimer(true)
+      if (finished) {
+        alarm()
+        setTimesUp(finished.title)
+      }
+    },
+  }
+
+  // The screen to show, picked from the web address.
+  let page
   if (screen.name === 'goals') {
-    return (
+    page = (
       <GoalsScreen
         items={items}
         events={events}
@@ -97,35 +152,52 @@ function App() {
         setTimeframe={setGoalsTab}
       />
     )
-  }
-  if (screen.name === 'goal') {
+  } else if (screen.name === 'goal') {
     // `key` gives each goal a fresh page, so open forms don't carry over
     // when you move to another goal.
-    return (
+    page = (
       <GoalPage
         key={screen.goalId}
         goalId={screen.goalId}
         items={items}
         events={events}
         apply={apply}
+        timer={timer}
+        timerControls={timerControls}
       />
     )
-  }
-  if (screen.name === 'notes') {
-    return <NotesScreen items={items} apply={apply} />
-  }
-  if (screen.name === 'note') {
-    return (
+  } else if (screen.name === 'notes') {
+    page = <NotesScreen items={items} apply={apply} />
+  } else if (screen.name === 'note') {
+    page = (
       <NotePage
         key={screen.noteId}
         noteId={screen.noteId}
         items={items}
         events={events}
         apply={apply}
+        timer={timer}
+        timerControls={timerControls}
       />
     )
+  } else {
+    page = <HomeScreen items={items} />
   }
-  return <HomeScreen items={items} />
+
+  return (
+    <>
+      {timer && <TimerBar timer={timer} items={items} controls={timerControls} />}
+      {timesUp && (
+        <div className="times-up" role="alert">
+          <span>⏰ Time's up: {timesUp}</span>
+          <button type="button" className="secondary" onClick={() => setTimesUp(null)}>
+            OK
+          </button>
+        </div>
+      )}
+      {page}
+    </>
+  )
 }
 
 export default App

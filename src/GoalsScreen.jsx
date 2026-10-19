@@ -5,6 +5,7 @@ import ProgressBar from './ProgressBar.jsx'
 import DeletedGoals from './DeletedGoals.jsx'
 import RepeatSummary from './RepeatSummary.jsx'
 import { isDoneNow } from './repeat.js'
+import { colorOf } from './colors.js'
 import { TIMEFRAMES, labelOf, biggerGoals } from './timeframes.js'
 import { activeGoals, childrenOf, progressOf, percent } from './progress.js'
 import { addGoal, deleteGoal, saveGoal, toggleGoal } from './goalActions.js'
@@ -177,6 +178,7 @@ function GoalsScreen({ items, events, apply, timeframe, setTimeframe }) {
                   />
                   <div className="goal-text">
                     <a href={`#goal/${goal.id}`} className="goal-title goal-link">
+                      <span className="goal-dot" style={{ background: colorOf(goals, goal) }} />
                       {goal.title}
                     </a>
                     {parents && <span className="goal-parent">↳ {parents}</span>}

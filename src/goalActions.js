@@ -25,6 +25,8 @@ function makeGoal(title, timeframe, parentIds, why = '') {
     why,
     // Set when the goal is deleted; deleted goals are hidden, not erased.
     deletedAt: null,
+    // Its own color (see colors.js), or null to use its bigger goal's.
+    color: null,
     // Repeating goals (see repeat.js); null for one-time goals.
     repeat: null,
     target: null,
@@ -103,7 +105,7 @@ export function saveGoal(items, id, changes, childIds) {
 
   // Which fields changed.
   const same = (a, b) => JSON.stringify(a) === JSON.stringify(b)
-  const fields = ['title', 'timeframe', 'why', 'repeat', 'target'].filter(
+  const fields = ['title', 'timeframe', 'why', 'repeat', 'target', 'color'].filter(
     field => !same(before[field], after[field]),
   )
   if (fields.length > 0) events.push(makeEvent('edited', after, { fields }))

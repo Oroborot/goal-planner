@@ -2,6 +2,8 @@ import { useState } from 'react'
 import { TIMEFRAMES, labelOf, biggerGoals, smallerGoals } from './timeframes.js'
 import { EVERY_DAY } from './repeat.js'
 import RepeatFields from './RepeatFields.jsx'
+import ColorPicker from './ColorPicker.jsx'
+import { colorOf } from './colors.js'
 
 // A list of goals with a checkbox each, used for linking.
 // `checkedIds` are the ticked ones; `onToggle(id)` ticks or unticks one.
@@ -44,6 +46,7 @@ function GoalEditForm({ goal, goals, onSave, onCancel }) {
   const [title, setTitle] = useState(goal.title)
   const [timeframe, setTimeframe] = useState(goal.timeframe)
   const [why, setWhy] = useState(goal.why || '')
+  const [color, setColor] = useState(goal.color ?? null)
   const [parentIds, setParentIds] = useState(goal.parentIds)
   // The smaller goals that currently list this goal as a parent.
   const [childIds, setChildIds] = useState(
@@ -81,6 +84,7 @@ function GoalEditForm({ goal, goals, onSave, onCancel }) {
         timeframe,
         why: why.trim(),
         parentIds,
+        color,
         repeat: repeats ? { days: repeat.mode === 'daily' ? EVERY_DAY : repeat.days } : null,
         target: repeats
           ? { per: repeat.per, times: repeat.per === 'day' ? 1 : repeat.times }
@@ -114,6 +118,11 @@ function GoalEditForm({ goal, goals, onSave, onCancel }) {
         onChange={e => setWhy(e.target.value)}
         placeholder="Why does this matter to you? (optional)"
         aria-label="Why"
+      />
+      <ColorPicker
+        value={color}
+        onChange={setColor}
+        inherited={colorOf(goals, { ...goal, color: null, parentIds })}
       />
       <RepeatFields value={repeat} onChange={setRepeat} />
       <LinkList

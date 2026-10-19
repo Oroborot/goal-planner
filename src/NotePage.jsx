@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import NoteEditForm from './NoteEditForm.jsx'
 import GoalHistory from './GoalHistory.jsx'
+import TimerPanel from './TimerPanel.jsx'
 import { deleteNote, notesLinkingTo, restoreNote, saveNote, toggleNote } from './noteActions.js'
 import { formatTime } from './history.js'
 import { labelOf } from './timeframes.js'
@@ -24,7 +25,7 @@ function ItemLink({ item }) {
 }
 
 // The page for one note: its text, its links both ways, and its history.
-function NotePage({ noteId, items, events, apply }) {
+function NotePage({ noteId, items, events, apply, timer, timerControls }) {
   const [editing, setEditing] = useState(false)
   const note = items.find(item => item.id === noteId && item.list === 'notes')
 
@@ -106,6 +107,10 @@ function NotePage({ noteId, items, events, apply }) {
             </div>
           )}
         </>
+      )}
+
+      {note.isTask && !note.deletedAt && (
+        <TimerPanel item={note} timer={timer} events={events} controls={timerControls} />
       )}
 
       <h2>Links</h2>

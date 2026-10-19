@@ -130,10 +130,10 @@ Phone first, computer maybe later. Main flow: **Today** page → turn the page t
 Inspiration: Google Calendar (week/month overview), Todoist (daily list), Sunsama (moving tasks between days), Akiflow (both views together + statistics).
 
 **Phase 1 (first):**
-- [ ] Every task links to a goal, with a color per goal (or life area).
+- [x] Every task links to a goal, with a color per goal (or life area). Colors done: 8 colors, smaller goals take their bigger goal's color. Decided: a calendar task is a Day goal with a date; tasks without a goal are allowed but shown grey with a "link me" hint.
 - [ ] Today page: a list where tasks can have an optional time.
 - [ ] Go to tomorrow and onward (arrow buttons first, swipe later).
-- [ ] Week view: each task shows its name and its goal's color.
+- [ ] Week view: each task shows its name and its goal's color. Decided: on a phone, the 7 days are stacked; each day can be folded or opened, so it never becomes a huge list.
 - [ ] Month view: same, smaller.
 - [ ] Move an unfinished task to another day (button first, drag later).
 

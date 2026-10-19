@@ -32,6 +32,16 @@ export function loadEvents() {
   }
 }
 
+// "1 h 5 min 23 sec", "1 min 23 sec", or "40 sec".
+export function formatSeconds(seconds) {
+  const h = Math.floor(seconds / 3600)
+  const m = Math.floor((seconds % 3600) / 60)
+  const s = seconds % 60
+  if (h > 0) return `${h} h ${m} min ${s} sec`
+  if (m > 0) return `${m} min ${s} sec`
+  return `${s} sec`
+}
+
 // How each event reads on the goal page.
 const EVENT_TEXT = {
   created: () => 'Created',
@@ -44,6 +54,7 @@ const EVENT_TEXT = {
   'auto-uncompleted': () => 'Un-completed automatically',
   deleted: () => 'Deleted',
   restored: () => 'Restored',
+  timed: e => `Timer: ${formatSeconds(e.seconds)} (${e.mode === 'down' ? 'countdown' : 'count up'})`,
   'note-linked': e => `Linked to “${e.linkTitle}”`,
   'note-unlinked': e => `Unlinked from “${e.linkTitle}”`,
 }

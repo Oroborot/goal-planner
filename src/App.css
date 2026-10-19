@@ -88,6 +88,25 @@ li.done .goal-title { text-decoration: line-through; opacity: 0.5; }
 .plain-links { margin-bottom: 0.5rem; }
 .plain-links li { min-height: 44px; }
 
+/* Goal colors: a dot before the title, and the picker in the edit form. */
+.goal-dot { display: inline-block; width: 10px; height: 10px; margin-right: 0.45rem; border-radius: 50%; vertical-align: middle; }
+.goal-dot.big { width: 14px; height: 14px; }
+.swatches { display: flex; flex-wrap: wrap; gap: 0.5rem; padding: 0.25rem 0; }
+.swatch { width: 36px; min-height: 36px; height: 36px; padding: 0; border: 2px solid transparent; border-radius: 50%; background: var(--swatch); }
+.swatch.selected { border-color: var(--text-h); box-shadow: 0 0 0 2px var(--bg) inset; }
+.swatch.inherit { background: transparent; border: 2px dashed var(--swatch); color: var(--text-h); }
+.swatch.inherit.selected { border-style: solid; }
+
+/* Timer: bar at the top of every screen, and the panel on goal/note pages. */
+.timer-bar { position: sticky; top: 0; z-index: 10; display: flex; align-items: center; gap: 0.5rem; width: 100%; max-width: 480px; margin: 0 auto; padding: 0.4rem 1rem; box-sizing: border-box; background: var(--bg); border-bottom: 1px solid var(--accent-border); }
+.timer-bar-title { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text-h); text-decoration: none; }
+.timer-bar-clock { font-family: var(--mono); font-size: 1.1em; color: var(--accent); }
+.timer-bar button { min-height: 36px; padding: 0 0.6rem; }
+.times-up { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; max-width: 480px; margin: 0 auto; padding: 0.5rem 1rem; box-sizing: border-box; background: var(--accent-bg); color: var(--text-h); }
+.timer-panel { margin-bottom: 0.5rem; }
+.timer-clock { margin: 0.25rem 0 0; font-family: var(--mono); font-size: 2.5em; color: var(--text-h); text-align: center; }
+.timer-panel .goal-meta { text-align: left; }
+
 /* Note categories. */
 .chips { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-bottom: 0.5rem; }
 .chip { min-height: 36px; padding: 0 0.8rem; border-color: var(--border); border-radius: 999px; background: transparent; color: var(--text); font-size: 0.9em; }
