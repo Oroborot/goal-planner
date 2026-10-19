@@ -6,6 +6,7 @@
 // The screens hand that to `apply` (from App), which saves both.
 import { activeGoals, percent, progressOf, settleCompletion } from './progress.js'
 import { makeEvent } from './history.js'
+import { sizeOf } from './timeframes.js'
 
 // A new goal with all its fields filled in.
 function makeGoal(title, timeframe, parentIds, why = '') {
@@ -112,7 +113,11 @@ export function saveGoal(items, id, changes, childIds) {
 export function deleteGoal(items, id) {
   const goal = items.find(item => item.id === id)
   const progress = percent(progressOf(activeGoals(items), goal))
-  const events = [makeEvent('deleted', goal, { progress, wasDone: goal.done })]
+  // The smaller goals under it, so a restore can link them back.
+  const childIds = activeGoals(items)
+    .filter(item => item.parentIds.includes(id))
+    .map(item => item.id)
+  const events = [makeEvent('deleted', goal, { progress, wasDone: goal.done, childIds })]
   const updated = items.map(item => {
     if (item.id === id) return { ...item, deletedAt: new Date().toISOString() }
     if (item.parentIds?.includes(id) && !item.deletedAt) {
@@ -122,4 +127,42 @@ export function deleteGoal(items, id) {
     return item
   })
   return finish(updated, events, goal.parentIds)
+}
+
+// Bring a deleted goal back, with its history.
+// - Its bigger goals stay linked if they still exist and are still bigger.
+// - Smaller goals that were unlinked when it was deleted get linked back,
+//   if they still exist and are still smaller.
+// `deletedEntry` is the goal's "deleted" history entry (it lists those
+// smaller goals); older entries may not have that list.
+export function restoreGoal(items, id, deletedEntry) {
+  const goal = items.find(item => item.id === id)
+  const active = activeGoals(items)
+  const activeTimeframe = otherId => active.find(item => item.id === otherId)?.timeframe
+  const events = [makeEvent('restored', goal)]
+
+  // Bigger goals: keep the ones still around and still bigger.
+  const parentIds = goal.parentIds.filter(p => {
+    const timeframe = activeTimeframe(p)
+    return timeframe && sizeOf(timeframe) > sizeOf(goal.timeframe)
+  })
+  for (const parentId of goal.parentIds.filter(p => !parentIds.includes(p))) {
+    events.push(makeEvent('unlinked', goal, { parentId, parentTitle: titleOf(items, parentId) }))
+  }
+
+  // Smaller goals: link back the ones still around and still smaller.
+  const childIds = (deletedEntry?.childIds ?? []).filter(c => {
+    const timeframe = activeTimeframe(c)
+    return timeframe && sizeOf(timeframe) < sizeOf(goal.timeframe)
+  })
+
+  const updated = items.map(item => {
+    if (item.id === id) return { ...item, deletedAt: null, parentIds }
+    if (childIds.includes(item.id) && !item.parentIds.includes(id)) {
+      events.push(makeEvent('linked', item, { parentId: id, parentTitle: goal.title }))
+      return { ...item, parentIds: [...item.parentIds, id] }
+    }
+    return item
+  })
+  return finish(updated, events, [id, ...parentIds])
 }

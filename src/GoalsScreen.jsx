@@ -233,7 +233,7 @@ function GoalsScreen({ items, events, apply, timeframe, setTimeframe }) {
         </ul>
       )}
 
-      <DeletedGoals items={items} events={events} />
+      <DeletedGoals items={items} events={events} apply={apply} />
     </div>
   )
 }

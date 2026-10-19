@@ -4,7 +4,7 @@ import AddSmallerGoalForm from './AddSmallerGoalForm.jsx'
 import ProgressBar from './ProgressBar.jsx'
 import { labelOf, sizeOf } from './timeframes.js'
 import { activeGoals, childrenOf, progressOf, percent } from './progress.js'
-import { addGoal, saveGoal, toggleGoal } from './goalActions.js'
+import { addGoal, restoreGoal, saveGoal, toggleGoal } from './goalActions.js'
 import { deletedEvent, formatTime } from './history.js'
 import GoalHistory from './GoalHistory.jsx'
 
@@ -72,6 +72,13 @@ function GoalPage({ goalId, items, events, apply }) {
               )}
               <p className="goal-meta">Deleted on {formatTime(deleted.deletedAt)}.</p>
             </section>
+            <button
+              type="button"
+              className="secondary restore-page-button"
+              onClick={() => apply(restoreGoal(items, goalId, entry))}
+            >
+              Restore this goal
+            </button>
             <GoalHistory goalId={goalId} events={events} />
           </>
         ) : (

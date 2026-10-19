@@ -1,10 +1,11 @@
 import { labelOf } from './timeframes.js'
 import { deletedEvent, formatTime, tickCount } from './history.js'
+import { restoreGoal } from './goalActions.js'
 
 // The folded "Deleted goals" section at the bottom of the goals list.
 // Deleted goals are kept (all data is good data); this is where you find
 // them again. Tap a title to see that goal's page and full history.
-function DeletedGoals({ items, events }) {
+function DeletedGoals({ items, events, apply }) {
   const deleted = items
     .filter(item => item.list === 'goals' && item.deletedAt)
     .sort((a, b) => b.deletedAt.localeCompare(a.deletedAt))
@@ -32,6 +33,14 @@ function DeletedGoals({ items, events }) {
                   ticked {ticks === 1 ? '1 time' : `${ticks} times`}
                 </span>
               </div>
+              <button
+                type="button"
+                className="secondary restore-button"
+                onClick={() => apply(restoreGoal(items, goal.id, entry))}
+                aria-label={`Restore "${goal.title}"`}
+              >
+                Restore
+              </button>
             </li>
           )
         })}

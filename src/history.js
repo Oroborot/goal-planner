@@ -43,6 +43,7 @@ const EVENT_TEXT = {
   'auto-completed': () => 'Completed automatically',
   'auto-uncompleted': () => 'Un-completed automatically',
   deleted: () => 'Deleted',
+  restored: () => 'Restored',
 }
 
 export function eventText(event) {
