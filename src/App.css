@@ -88,6 +88,17 @@ li.done .goal-title { text-decoration: line-through; opacity: 0.5; }
 .plain-links { margin-bottom: 0.5rem; }
 .plain-links li { min-height: 44px; }
 
+/* Note categories. */
+.chips { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-bottom: 0.5rem; }
+.chip { min-height: 36px; padding: 0 0.8rem; border-color: var(--border); border-radius: 999px; background: transparent; color: var(--text); font-size: 0.9em; }
+.chip.active { border-color: var(--accent); background: var(--accent-bg); color: var(--text-h); font-weight: 600; }
+.sub-chips .chip { min-height: 32px; font-size: 0.85em; }
+.goal-form > select { width: 100%; }
+.manage-categories .sub-category { padding-left: 1rem; }
+.manage-categories .rename-row { flex: 1; }
+.manage-categories .rename-row input { flex: 1; min-width: 0; }
+button.full { width: 100%; margin: 0.5rem 0; }
+
 /* Repeating goals. */
 .goal-repeat { font-size: 0.85em; line-height: 1.3; color: var(--accent); }
 .repeat-fields select { width: 100%; margin-top: 0.25rem; }

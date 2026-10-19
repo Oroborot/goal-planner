@@ -1,6 +1,14 @@
 import { useState } from 'react'
 import { activeNotes, addNote, restoreNote, toggleNote } from './noteActions.js'
 import { formatTime } from './history.js'
+import {
+  activeCategories,
+  categoryAndSubs,
+  categoryPath,
+  categoryTree,
+} from './categoryActions.js'
+import CategorySelect from './CategorySelect.jsx'
+import ManageCategories from './ManageCategories.jsx'
 
 const FILTERS = [
   { value: 'all', label: 'All' },
@@ -21,10 +29,29 @@ function NotesScreen({ items, apply }) {
   const [isTask, setIsTask] = useState(false)
   const [search, setSearch] = useState('')
   const [filter, setFilter] = useState('all')
+  // The selected category chip (null = all). Also the default category for
+  // new notes, so a note added while viewing "Ideas" lands in Ideas.
+  const [categoryId, setCategoryId] = useState(null)
+  const [newCategoryId, setNewCategoryId] = useState(null)
+
+  const categories = activeCategories(items)
+  const selected = categories.find(c => c.id === categoryId)
+  // The main category of the selection, to show its sub-categories.
+  const mainId = selected ? (selected.parentId ?? selected.id) : null
+  const mains = categoryTree(items).filter(entry => entry.depth === 0).map(entry => entry.category)
+  const subs = categories.filter(c => mainId && c.parentId === mainId)
+  // Only filter by a category that still exists (it may have been deleted).
+  const inCategory = selected ? categoryAndSubs(items, selected.id) : null
+
+  function pickCategory(id) {
+    setCategoryId(id)
+    setNewCategoryId(id)
+  }
 
   const notes = activeNotes(items)
   const query = search.trim().toLowerCase()
   const visible = notes
+    .filter(note => !inCategory || inCategory.includes(note.categoryId))
     .filter(note => filter === 'all' || (filter === 'tasks') === note.isTask)
     .filter(
       note =>
@@ -43,7 +70,7 @@ function NotesScreen({ items, apply }) {
   function submit(e) {
     e.preventDefault()
     if (!title.trim()) return
-    apply(addNote(items, title.trim(), isTask))
+    apply(addNote(items, title.trim(), isTask, newCategoryId))
     setTitle('')
   }
 
@@ -61,6 +88,9 @@ function NotesScreen({ items, apply }) {
           placeholder="Write a note or a task…"
           aria-label="New note"
         />
+        {categories.length > 0 && (
+          <CategorySelect items={items} value={newCategoryId} onChange={setNewCategoryId} />
+        )}
         <div className="row">
           <label className="done-toggle task-toggle">
             <input
@@ -83,6 +113,41 @@ function NotesScreen({ items, apply }) {
         placeholder="Search notes, or an id like N3"
         aria-label="Search notes"
       />
+      {mains.length > 0 && (
+        <div className="chips" aria-label="Categories">
+          <button
+            type="button"
+            className={!selected ? 'chip active' : 'chip'}
+            onClick={() => pickCategory(null)}
+          >
+            All
+          </button>
+          {mains.map(c => (
+            <button
+              key={c.id}
+              type="button"
+              className={mainId === c.id ? 'chip active' : 'chip'}
+              onClick={() => pickCategory(c.id)}
+            >
+              {c.name}
+            </button>
+          ))}
+        </div>
+      )}
+      {subs.length > 0 && (
+        <div className="chips sub-chips" aria-label="Sub-categories">
+          {subs.map(c => (
+            <button
+              key={c.id}
+              type="button"
+              className={categoryId === c.id ? 'chip active' : 'chip'}
+              onClick={() => pickCategory(categoryId === c.id ? mainId : c.id)}
+            >
+              └ {c.name}
+            </button>
+          ))}
+        </div>
+      )}
       <div className="tabs">
         {FILTERS.map(f => (
           <button
@@ -118,6 +183,9 @@ function NotesScreen({ items, apply }) {
                     {note.title}
                   </a>
                 </span>
+                {note.categoryId && categoryPath(items, note.categoryId) && (
+                  <span className="goal-meta">🏷 {categoryPath(items, note.categoryId)}</span>
+                )}
                 {note.body && <span className="goal-why">{preview(note.body)}</span>}
                 {note.links.length > 0 && (
                   <span className="goal-children">
@@ -129,6 +197,8 @@ function NotesScreen({ items, apply }) {
           ))}
         </ul>
       )}
+
+      <ManageCategories items={items} apply={apply} />
 
       {deleted.length > 0 && (
         <details className="deleted-goals">

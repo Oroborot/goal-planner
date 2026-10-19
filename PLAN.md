@@ -90,7 +90,7 @@ Practical features come first, visual design later: the look (colors, fonts, spa
 
 ### Part 2: make it a daily app
 
-- [x] **Notes and daily tasks:** take notes and daily task lists, mark progress on them, and edit or delete them, the same way you manage goals. Each note has a small id (N1, N2…), can be a task with a tick box, and links to other notes or goals both ways. Later: merge notes, link by typing an id like N3 in the text.
+- [x] **Notes and daily tasks:** take notes and daily task lists, mark progress on them, and edit or delete them, the same way you manage goals. Each note has a small id (N1, N2…), can be a task with a tick box, and links to other notes or goals both ways. Notes have categories: main ones (Ideas, Thoughts, Reminders…) and sub-categories under them, with filter chips, rename and delete. Later: merge notes, link by typing an id like N3 in the text.
 - [ ] **Timer:** a timer per task that counts up (how long I worked) or down (time left). A plain version first; the liquid tube look comes with the design pass.
 - [ ] **Reminders:** set a reminder on a goal or task. The app shows it when it's open; real phone notifications come with the phone version.
 - [ ] **Installable app (PWA):** add the app to your phone's home screen so you can use it every day.

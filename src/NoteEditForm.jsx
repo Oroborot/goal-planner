@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { activeNotes } from './noteActions.js'
 import { activeGoals } from './progress.js'
 import { labelOf } from './timeframes.js'
+import CategorySelect from './CategorySelect.jsx'
 
 // The edit form on a note's page: title, text, task or not, and links.
 // Links can go to any other note or any goal. Nothing changes until Save.
@@ -11,6 +12,7 @@ function NoteEditForm({ note, items, onSave, onCancel }) {
   const [isTask, setIsTask] = useState(note.isTask)
   const [links, setLinks] = useState(note.links)
   const [linkSearch, setLinkSearch] = useState('')
+  const [categoryId, setCategoryId] = useState(note.categoryId ?? null)
 
   // Everything this note could link to, filtered by the search box.
   const query = linkSearch.trim().toLowerCase()
@@ -32,7 +34,7 @@ function NoteEditForm({ note, items, onSave, onCancel }) {
   function save(e) {
     e.preventDefault()
     if (!title.trim()) return
-    onSave({ title: title.trim(), body, isTask, links })
+    onSave({ title: title.trim(), body, isTask, links, categoryId })
   }
 
   return (
@@ -45,6 +47,7 @@ function NoteEditForm({ note, items, onSave, onCancel }) {
         aria-label="Text"
         rows={6}
       />
+      <CategorySelect items={items} value={categoryId} onChange={setCategoryId} />
       <label className="done-toggle">
         <input
           type="checkbox"

@@ -4,6 +4,7 @@ import GoalHistory from './GoalHistory.jsx'
 import { deleteNote, notesLinkingTo, restoreNote, saveNote, toggleNote } from './noteActions.js'
 import { formatTime } from './history.js'
 import { labelOf } from './timeframes.js'
+import { categoryPath } from './categoryActions.js'
 
 // A link to a note or a goal, shown as "N3 Title" or "Title (Week goal)".
 function ItemLink({ item }) {
@@ -52,6 +53,7 @@ function NotePage({ noteId, items, events, apply }) {
       <p className="goal-page-timeframe">
         <span className="short-id">{note.shortId}</span>
         {note.isTask ? 'Task' : 'Note'}
+        {note.categoryId && categoryPath(items, note.categoryId) && ` · 🏷 ${categoryPath(items, note.categoryId)}`}
         {note.deletedAt && ` · deleted ${formatTime(note.deletedAt)}`}
       </p>
 

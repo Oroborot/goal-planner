@@ -4,6 +4,7 @@
 //   createdAt, updatedAt, links, deletedAt }
 // - shortId: a small id like "N12", easy to read and refer to
 // - links:   ids of other notes or goals this note is linked to
+// - categoryId: its category, like Ideas or Ideas › App ideas (or null)
 //
 // Like goalActions.js, each function returns { items, events } for `apply`.
 import { makeEvent } from './history.js'
@@ -28,7 +29,7 @@ function titleOf(items, id) {
   return item.list === 'notes' ? `${item.shortId} ${item.title}` : item.title
 }
 
-export function addNote(items, title, isTask) {
+export function addNote(items, title, isTask, categoryId = null) {
   const now = new Date().toISOString()
   const note = {
     id: crypto.randomUUID(),
@@ -42,6 +43,8 @@ export function addNote(items, title, isTask) {
     createdAt: now,
     updatedAt: now,
     links: [],
+    // The note's category (see categoryActions.js), or null.
+    categoryId,
     deletedAt: null,
   }
   return { items: [...items, note], events: [makeEvent('created', note, { shortId: note.shortId })] }
@@ -69,6 +72,7 @@ export function saveNote(items, id, changes) {
   const events = []
 
   const fields = ['title', 'body', 'isTask'].filter(field => before[field] !== after[field])
+  if ((before.categoryId ?? null) !== (after.categoryId ?? null)) fields.push('category')
   if (fields.length > 0) events.push(makeEvent('edited', after, { fields }))
   for (const linkId of after.links.filter(l => !before.links.includes(l))) {
     events.push(makeEvent('note-linked', after, { linkId, linkTitle: titleOf(items, linkId) }))
