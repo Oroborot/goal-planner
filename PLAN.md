@@ -146,12 +146,13 @@ Inspiration: Google Calendar (week/month overview), Todoist (daily list), Sunsam
 - [ ] **Installable app (PWA):** add the app to your phone's home screen so you can use it every day. Works on iPhone (Safari → Share → Add to Home Screen) and Android. Data stays on the phone; notifications later (need a server).
 - [ ] **Backup (later, after the basics):** one button downloads all data as a file, one loads it back. Important because data lives only on the phone: deleting the app icon or losing the phone loses it. ~30 min, free.
 
-- [ ] **Navigation menu:** a proper way to move around the app (side menu or bottom bar) instead of going back and forth. Comes after the planner and the goal views, once all main sections exist.
+- [ ] **Navigation menu:** decided (see `DESIGN-IDEAS.md` → Navigation): bottom bar with icons only (Home, Calendar, round ＋ in the accent color, Goals, Notes), ＋ opens Task / Habit / Goal / Note; side menu by swiping from the left (Views, Settings, History, Archive, Note categories). Build in two parts: bottom bar + ＋ sheet (~60 min), then side menu + History + Archive (~60 min).
 - [ ] **History cleanup:** delete single history entries (e.g. mistakes) or the whole history, each with a confirmation. Keep it discreet: history folded away or reached from the menu, not always open. Note: deleting entries also changes the counts built from them (times ticked, timer totals).
 
 ### Part 3: find the vibe
 
 - [ ] **Better look:** a design pass, based on how you actually use the app. Pick ideas from `DESIGN-IDEAS.md`.
+- [ ] **Customize:** in Settings, pick icon set, all colors (one-color themes like all blue or all pink), font, text size, light/dark, with a live preview screen. Theme templates: four seasons, gold, iridescent, violet, black hole, star rupture. Details in `DESIGN-IDEAS.md` → Customize.
 - [ ] **Home screen design:** an inspirational quote instead of "What do you want to do?" (ideas in `DESIGN-IDEAS.md`), background of the user's choice, date and time, custom or chosen imagery, a small bar at the top showing tasks done today, and a button at the bottom that takes you to the main area.
 
 ### Part 4: extras

@@ -37,6 +37,23 @@ A place to collect visual ideas for later. Nothing here is being built yet. Add 
   - "Be offended that someone can take your days and do better." (credited as Seneca; check the source)
 - Maybe: let the user add their own quotes, or show their own "why"s as quotes.
 
+## Navigation (decided, not built yet)
+
+- Bottom bar, icons only, no labels: **Home, Calendar, ＋, Goals, Notes**. App opens on Home.
+- ＋ is round, slightly bigger than the other icons, in the **theme's accent color** (purple for now). Opens a sheet: Task / Habit / Goal / Note.
+- Side menu by swiping from the left edge (no Menu button): Views, Settings, History, Archive, Note categories; later Statistics, Folders, Backup, Help.
+- Icons live in one place so they can be swapped for other sets or custom-made icons.
+
+## Customize (user preferences)
+
+- A **Customize** section (in Settings) where the user picks:
+  - which icon set to use (templates made later, or custom icons)
+  - colors for everything: background, text, accent, the ＋ button, goal colors, icons
+  - font and text size; light or dark
+- **Live preview**: a small dummy screen that updates as you pick colors, so you see the result before saving.
+- **One-color themes**: everything blue, pink, orange, and so on.
+- **Theme templates**: the four seasons (spring, summer, autumn, winter), gold, iridescent, violet, black hole, star rupture.
+
 ## General look
 
 - To be decided once the app's "vibe" is clear from using it.
