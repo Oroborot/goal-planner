@@ -11,6 +11,7 @@ import { colorOf } from './colors.js'
 import { TIMEFRAMES, labelOf, biggerGoals } from './timeframes.js'
 import { activeGoals, childrenOf, progressOf, percent } from './progress.js'
 import { addGoal, deleteGoal, saveGoal, toggleGoal } from './goalActions.js'
+import BackLink from './BackLink.jsx'
 
 // The goals list: timeframe tabs, the add form and the goals. This is where
 // goals are created; tap a goal's title to open its page and track it.
@@ -92,9 +93,7 @@ function GoalsScreen({ items, events, apply, timeframe, setTimeframe }) {
 
   return (
     <div className="app">
-      <a href="#" className="back">
-        ← Home
-      </a>
+      <BackLink fallback="#" />
       <h1>Goals</h1>
 
       <div className="tabs">

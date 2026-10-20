@@ -6,6 +6,7 @@ import { biggerGoals, labelOf } from './timeframes.js'
 import DayList from './DayList.jsx'
 import ViewSwitch from './ViewSwitch.jsx'
 import NowBox from './NowBox.jsx'
+import BackLink from './BackLink.jsx'
 
 // One day of the calendar: the tasks planned for it (Day goals with that
 // date) and the habits planned for that weekday. ← → move day by day.
@@ -33,9 +34,7 @@ function DayPage({ dateKey, items, apply }) {
 
   return (
     <div className="app">
-      <a href="#" className="back">
-        ← Home
-      </a>
+      <BackLink fallback="#" />
       <ViewSwitch view="day" dateKey={dateKey} />
 
       <div className="day-nav">

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { skipTask, snoozeTask, swapTasks, toggleGoal } from './goalActions.js'
+import { skipTask, snoozeTask, swapTasks } from './goalActions.js'
 import { tasksOn, todayKey } from './calendar.js'
 import { colorOf } from './colors.js'
 
@@ -25,9 +25,9 @@ function NowRow({ task, label, goals, items, apply, swapOptions }) {
         <span className="now-label">{label}</span>
       </div>
       <div className="now-actions">
-        <button type="button" onClick={() => apply(toggleGoal(items, task.id))}>
+        <a href={`#focus/${task.id}`} className="now-do">
           Do it
-        </button>
+        </a>
         {timed && (
           <button type="button" className="secondary" onClick={() => setOpen(open === 'later' ? null : 'later')}>
             Later

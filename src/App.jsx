@@ -12,6 +12,8 @@ import { EVENTS_KEY, loadEvents, makeEvent } from './history.js'
 import TimerBar from './TimerBar.jsx'
 import BottomBar from './BottomBar.jsx'
 import AddSheet from './AddSheet.jsx'
+import FocusPage from './FocusPage.jsx'
+import { rememberPage } from './navHistory.js'
 import SideMenu from './SideMenu.jsx'
 import { ArchivePage, ComingSoonPage, HistoryPage } from './MenuPages.jsx'
 import {
@@ -41,6 +43,7 @@ const STORAGE_KEY = 'planner-items'
 function screenFromAddress() {
   const address = window.location.hash.slice(1)
   if (['history', 'archive', 'views', 'settings'].includes(address)) return { name: address }
+  if (address.startsWith('focus/')) return { name: 'focus', goalId: address.slice(6) }
   if (address === 'day') return { name: 'day', dateKey: todayKey() }
   if (address === 'week') return { name: 'week', mondayKey: mondayOf(todayKey()) }
   if (address === 'month') return { name: 'month', monthKey: todayKey().slice(0, 7) }
@@ -118,7 +121,9 @@ function App() {
   // When the address changes (a link is tapped, or Back is pressed),
   // show the matching screen and start at the top of the page.
   useEffect(() => {
+    rememberPage(window.location.hash)
     function onAddressChange() {
+      rememberPage(window.location.hash)
       setScreen(screenFromAddress())
       window.scrollTo(0, 0)
     }
@@ -205,6 +210,18 @@ function App() {
     page = <WeekPage key={screen.mondayKey} mondayKey={screen.mondayKey} items={items} apply={apply} />
   } else if (screen.name === 'month') {
     page = <MonthPage key={screen.monthKey} monthKey={screen.monthKey} items={items} apply={apply} />
+  } else if (screen.name === 'focus') {
+    page = (
+      <FocusPage
+        key={screen.goalId}
+        goalId={screen.goalId}
+        items={items}
+        events={events}
+        apply={apply}
+        timer={timer}
+        timerControls={timerControls}
+      />
+    )
   } else if (screen.name === 'history') {
     page = <HistoryPage items={items} events={events} deleteEvents={deleteEvents} />
   } else if (screen.name === 'archive') {
@@ -244,7 +261,7 @@ function App() {
         </div>
       )}
       {page}
-      <BottomBar screen={screen.name} onAdd={() => setAdding(true)} />
+      {screen.name !== 'focus' && <BottomBar screen={screen.name} onAdd={() => setAdding(true)} />}
       <SideMenu open={menuOpen} setOpen={setMenuOpen} />
       {adding && <AddSheet items={items} apply={apply} onClose={() => setAdding(false)} />}
     </>

@@ -14,6 +14,7 @@ import { isDoneNow, repeatStats } from './repeat.js'
 import { notesLinkingTo } from './noteActions.js'
 import { colorOf } from './colors.js'
 import { whenLabel } from './calendar.js'
+import BackLink from './BackLink.jsx'
 
 // One row in the "smaller goals" or "counts toward" lists: a link to that
 // goal's page, its timeframe and how far along it is.
@@ -61,9 +62,7 @@ function GoalPage({ goalId, items, events, apply, timer, timerControls, deleteEv
     const entry = deleted && deletedEvent(events, goalId)
     return (
       <div className="app">
-        <a href="#goals" className="back">
-          ← Goals
-        </a>
+        <BackLink fallback="#goals" />
         {deleted ? (
           <>
             <p className="goal-page-timeframe">{labelOf(deleted.timeframe)} goal · deleted</p>
@@ -126,9 +125,7 @@ function GoalPage({ goalId, items, events, apply, timer, timerControls, deleteEv
 
   return (
     <div className="app">
-      <a href="#goals" className="back">
-        ← Goals
-      </a>
+      <BackLink fallback="#goals" />
       <p className="goal-page-timeframe">
         {labelOf(goal.timeframe)} goal
         {goal.date && ` · 📅 ${whenLabel(goal)}`}

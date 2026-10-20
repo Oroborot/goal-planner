@@ -4,6 +4,7 @@ import { addDaysKey, dayCounts, mondayOf, parseKey, tasksOn, habitsOn, todayKey 
 import { colorOf } from './colors.js'
 import DayList from './DayList.jsx'
 import ViewSwitch from './ViewSwitch.jsx'
+import BackLink from './BackLink.jsx'
 
 // One week of the calendar, Monday to Sunday, stacked. Each day folds open
 // or closed, so the page never becomes a huge list. Today starts open.
@@ -34,9 +35,7 @@ function WeekPage({ mondayKey, items, apply }) {
 
   return (
     <div className="app">
-      <a href="#" className="back">
-        ← Home
-      </a>
+      <BackLink fallback="#" />
       <ViewSwitch view="week" dateKey={thisWeek ? today : mondayKey} />
 
       <div className="day-nav">

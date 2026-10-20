@@ -122,6 +122,15 @@ li.done .goal-title { text-decoration: line-through; opacity: 0.5; }
 .now-label { flex-shrink: 0; font-size: 0.8em; color: var(--text); }
 .now-actions { display: flex; gap: 0.35rem; margin-top: 0.35rem; }
 .now-actions button { flex: 1; min-height: 36px; padding: 0 0.4rem; font-size: 0.85em; }
+.now-do { flex: 1; display: flex; align-items: center; justify-content: center; min-height: 36px; border: 1px solid var(--accent-border); border-radius: 8px; background: var(--accent-bg); color: var(--text-h); font-size: 0.85em; text-decoration: none; }
+
+/* Focus mode: one task, big and calm. */
+.focus-card { display: flex; flex-direction: column; align-items: center; gap: 0.5rem; margin: 2rem 0 1rem; text-align: center; }
+.focus-card h1 { margin: 0; }
+.focus-why { margin: 0; font-size: 1.05em; color: var(--text-h); font-style: italic; }
+.focus-why.muted { color: var(--text); font-size: 0.9em; }
+.focus .timer-panel h2 { display: none; }
+.focus-done { width: 100%; min-height: 52px; margin-top: 1rem; font-size: 1.1em; }
 .now-choices { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-top: 0.35rem; }
 
 /* Day page: ← title →, the day's summary, and the task list with times. */

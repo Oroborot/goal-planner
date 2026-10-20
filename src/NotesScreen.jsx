@@ -9,6 +9,7 @@ import {
 } from './categoryActions.js'
 import CategorySelect from './CategorySelect.jsx'
 import ManageCategories from './ManageCategories.jsx'
+import BackLink from './BackLink.jsx'
 
 const FILTERS = [
   { value: 'all', label: 'All' },
@@ -76,9 +77,7 @@ function NotesScreen({ items, apply }) {
 
   return (
     <div className="app">
-      <a href="#" className="back">
-        ← Home
-      </a>
+      <BackLink fallback="#" />
       <h1>Notes</h1>
 
       <form className="goal-form" onSubmit={submit}>

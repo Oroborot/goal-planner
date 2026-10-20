@@ -6,6 +6,7 @@ import { WEEKDAYS } from './repeat.js'
 import DayList from './DayList.jsx'
 import ProgressBar from './ProgressBar.jsx'
 import ViewSwitch from './ViewSwitch.jsx'
+import BackLink from './BackLink.jsx'
 
 // How many colored dots fit in one day of the grid before "+2".
 const MAX_DOTS = 3
@@ -41,9 +42,7 @@ function MonthPage({ monthKey, items, apply }) {
 
   return (
     <div className="app">
-      <a href="#" className="back">
-        ← Home
-      </a>
+      <BackLink fallback="#" />
       <ViewSwitch view="month" dateKey={selected} />
 
       <div className="day-nav">

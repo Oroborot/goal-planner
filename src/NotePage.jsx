@@ -6,6 +6,7 @@ import { deleteNote, notesLinkingTo, restoreNote, saveNote, toggleNote } from '.
 import { formatTime } from './history.js'
 import { labelOf } from './timeframes.js'
 import { categoryPath } from './categoryActions.js'
+import BackLink from './BackLink.jsx'
 
 // A link to a note or a goal, shown as "N3 Title" or "Title (Week goal)".
 function ItemLink({ item }) {
@@ -32,9 +33,7 @@ function NotePage({ noteId, items, events, apply, timer, timerControls, deleteEv
   if (!note) {
     return (
       <div className="app">
-        <a href="#notes" className="back">
-          ← Notes
-        </a>
+        <BackLink fallback="#notes" />
         <p className="empty">This note doesn't exist.</p>
       </div>
     )
@@ -48,9 +47,7 @@ function NotePage({ noteId, items, events, apply, timer, timerControls, deleteEv
 
   return (
     <div className="app">
-      <a href="#notes" className="back">
-        ← Notes
-      </a>
+      <BackLink fallback="#notes" />
       <p className="goal-page-timeframe">
         <span className="short-id">{note.shortId}</span>
         {note.isTask ? 'Task' : 'Note'}
