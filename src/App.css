@@ -389,3 +389,32 @@ li.done { opacity: 0.75; }
 .leftovers-list li { display: flex; align-items: center; gap: 0.5rem; padding: 0.35rem 0; border-top: 1px solid var(--border); }
 .leftovers-list .goal-link { flex: 1; color: var(--text-h); }
 .leftovers-list button { min-height: 30px; padding: 0 0.7rem; font-size: 0.85em; }
+
+/* Stats: number cards, day bars, lists (Menu → Stats and the goal page). */
+.stats-range { margin: -0.5rem 0 0.75rem; }
+.stat-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(95px, 1fr)); gap: 0.5rem; margin: 0.5rem 0 1rem; }
+.stat-card { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.15rem; padding: 0.7rem 0.4rem; border: 1px solid var(--border); border-radius: 14px; background: var(--surface, transparent); text-align: center; }
+.stat-card strong { font-size: 1.3em; color: var(--text-h); }
+.stat-card span { font-size: 0.78em; line-height: 1.25; overflow-wrap: anywhere; }
+.stats-section { margin: 1.25rem 0; }
+.stats-section h2 { font-size: 1em; margin: 0 0 0.6rem; }
+.day-bars { display: flex; align-items: flex-end; gap: 6px; height: 140px; }
+.day-bars.many { gap: 2px; }
+.day-bar { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: center; height: 100%; }
+.day-bar-value { font-size: 0.7em; min-height: 1.1em; white-space: nowrap; }
+.day-bar-track { flex: 1; width: 100%; display: flex; align-items: flex-end; border-radius: 6px; background: var(--border); overflow: hidden; }
+.day-bar-fill { width: 100%; border-radius: 6px; background: var(--accent); box-shadow: 0 0 8px var(--glow, transparent); }
+.day-bar-label { font-size: 0.7em; min-height: 1.2em; margin-top: 0.25rem; }
+.stats-list { list-style: none; margin: 0; padding: 0; }
+.stats-list li { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; padding: 0.5rem 0; border-top: 1px solid var(--border); }
+.stats-list .goal-link { color: var(--text-h); }
+.stats-list li.stats-goal { flex-direction: column; align-items: stretch; }
+.stats-goal-head { display: flex; justify-content: space-between; gap: 0.5rem; }
+.goal-stats { margin: 1rem 0; }
+.goal-stats-toggle { padding-left: 0; color: var(--text-h); font-size: 1em; font-weight: 600; }
+.done-grid { display: grid; grid-template-rows: repeat(7, 1fr); grid-auto-flow: column; grid-auto-columns: 1fr; gap: 3px; max-width: 360px; margin-bottom: 0.4rem; }
+.done-square { aspect-ratio: 1; border-radius: 3px; background: var(--border); }
+.done-square.level-1 { background: var(--accent); opacity: 0.4; }
+.done-square.level-2 { background: var(--accent); opacity: 0.7; }
+.done-square.level-3 { background: var(--accent); }
+.done-square.level-future { background: transparent; }

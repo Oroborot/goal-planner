@@ -1,13 +1,14 @@
 import { useEffect, useRef } from 'react'
 
 const LINKS = [
+  { href: '#stats', label: 'Stats' },
   { href: '#views', label: 'Views' },
   { href: '#settings', label: 'Settings' },
   { href: '#history', label: 'History' },
   { href: '#archive', label: 'Archive' },
   { href: '#notes', label: 'Note categories' },
 ]
-const LATER = ['Statistics', 'Folders', 'Backup', 'Help and about']
+const LATER = ['Folders', 'Backup', 'Help and about']
 
 // How close to the left edge a swipe must start, and how far it must go.
 const EDGE = 24

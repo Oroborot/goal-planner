@@ -120,6 +120,25 @@ export function repeatStats(goal) {
   }
 }
 
+// The longest run of planned days done in a row, ever.
+export function bestStreak(goal) {
+  const done = new Set(goal.doneDates)
+  const today = startOfDay(new Date())
+  let day = startOfDay(new Date(goal.repeatSince || goal.createdAt))
+  let best = 0
+  let run = 0
+  for (; day <= today; day = addDays(day, 1)) {
+    if (!isScheduled(goal, day)) continue
+    if (done.has(dateKey(day))) {
+      run++
+      best = Math.max(best, run)
+    } else if (dateKey(day) !== dateKey(today)) {
+      run = 0
+    }
+  }
+  return best
+}
+
 // The last `n` days, oldest first, for the little strip on the goal page:
 // each day is 'done', 'missed', 'open' (today, not done yet) or 'off'
 // (not planned).
