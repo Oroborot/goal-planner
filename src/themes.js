@@ -99,6 +99,13 @@ export function applyTheme(themeId, mode) {
   root.setProperty('--accent-bg', alpha(p.accent, 0.14))
   root.setProperty('--accent-border', alpha(p.accent, 0.5))
   root.setProperty('--fill', p.fill || p.accent)
+  // Cards: a slightly lighter layer on dark themes, a whiter layer on
+  // tinted light themes (or a faint grey on pure white).
+  const dark = currentMode(mode) === 'dark'
+  root.setProperty(
+    '--surface',
+    dark ? 'rgba(255, 255, 255, 0.045)' : p.bg === '#ffffff' ? 'rgba(0, 0, 0, 0.03)' : 'rgba(255, 255, 255, 0.7)',
+  )
   root.setProperty('--glow', p.glow || 'none')
   root.colorScheme = currentMode(mode)
   document.querySelector('meta[name="theme-color"]')?.setAttribute('content', p.bg)

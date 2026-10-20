@@ -324,3 +324,50 @@ button.full { width: 100%; margin: 0.5rem 0; }
 .button-like { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 1rem; box-sizing: border-box; border: 1px solid var(--accent-border); border-radius: 8px; color: var(--text-h); cursor: pointer; }
 .button-like.secondary { border-color: var(--border); }
 .danger-button { border-color: #e5484d; background: rgba(229, 72, 77, 0.15); }
+
+/* ------------------------------------------------------------------
+   Roomy look (Tiimo style): rounder corners, more space, list items as
+   soft cards. Placed last so it refines the rules above.
+   ------------------------------------------------------------------ */
+.app { padding: 1.75rem 1.1rem 7rem; }
+.app h2 { margin-top: 1.75rem; margin-bottom: 0.6rem; }
+input, select { border-radius: 12px; background: var(--surface, var(--bg)); }
+button { border-radius: 12px; transition: transform 0.12s ease, background 0.2s ease; }
+button:active { transform: scale(0.97); }
+.tab { border-radius: 12px; }
+.tile { padding: 1.15rem 1.2rem; border-radius: 18px; }
+
+/* List items become cards. */
+li { padding: 0.65rem 0.8rem; margin-bottom: 0.5rem; border: 1px solid var(--border); border-radius: 14px; background: var(--surface, transparent); transition: opacity 0.2s ease; }
+li.done { opacity: 0.75; }
+.day-list.compact li { padding: 0.4rem 0.6rem; margin-bottom: 0.35rem; }
+.day-list li.chained { border-left: 2px dotted var(--accent); border-radius: 0 14px 14px 0; }
+
+/* Lists that should stay plain (not cards). */
+.history-list li, .combo-list li, .tree .tree-item, .now-box li.now-row { margin-bottom: 0; background: transparent; border-radius: 0; }
+.history-list li { padding: 0.45rem 0.1rem; border: 0; border-bottom: 1px solid var(--border); }
+.combo-list li { border: 0; border-radius: 8px; }
+.combo-list li.match, .combo-list li:hover { background: var(--accent-bg); }
+.tree .tree-item { padding: 0; border: 0; }
+.now-box li.now-row { padding: 0.45rem 0; border: 0; border-bottom: 1px solid var(--accent-border); }
+.now-box li.now-row:last-child { border-bottom: 0; }
+
+/* Boxes and panels. */
+.now-box { border-radius: 18px; padding: 0.75rem 1rem; }
+.week-day { border-radius: 16px; background: var(--surface, transparent); }
+.link-list, .combo-list { border-radius: 14px; }
+.month-day { border-radius: 12px; }
+.repeat-stats div { border-radius: 14px; background: var(--surface, transparent); }
+.sheet { border-radius: 22px 22px 0 0; }
+.side-menu a { border-radius: 12px; }
+.bottom-bar { background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+.timeline-block { border-radius: 10px; }
+.now-box h2 { margin: 0 0 0.25rem; }
+
+/* Checklist inside a task (Things 3 style). */
+.checklist-items li { padding: 0.35rem 0.6rem; margin-bottom: 0.3rem; }
+.checklist-text { flex: 1; min-width: 0; color: var(--text-h); overflow-wrap: anywhere; }
+.checklist-items li.done .checklist-text { text-decoration: line-through; opacity: 0.6; }
+.checklist-add input { width: 100%; }
+.checklist h2 .goal-meta { margin-left: 0.4rem; font-weight: 400; }
+.checklist-add { margin-bottom: 0.75rem; }

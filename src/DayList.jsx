@@ -40,6 +40,11 @@ function Row({ entry, goals, onToggle }) {
           <ImportanceIcon importance={goal.importance} color={colorOf(goals, goal)} />
         </a>
         {anchor && <span className="goal-meta chain-note">⛓ after {anchor.title}</span>}
+        {goal.checklist?.length > 0 && (
+          <span className="goal-meta">
+            ☑ {goal.checklist.filter(c => c.done).length}/{goal.checklist.length}
+          </span>
+        )}
         {goal.plannedDate && (
           <span className="goal-meta">Done early · planned for {dayLabel(goal.plannedDate)}</span>
         )}

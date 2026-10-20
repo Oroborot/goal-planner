@@ -9,6 +9,7 @@ import { deletedEvent, formatTime } from './history.js'
 import GoalHistory from './GoalHistory.jsx'
 import RepeatPanel from './RepeatPanel.jsx'
 import TimerPanel from './TimerPanel.jsx'
+import Checklist from './Checklist.jsx'
 import RepeatSummary from './RepeatSummary.jsx'
 import { isDoneNow, repeatStats } from './repeat.js'
 import { notesLinkingTo } from './noteActions.js'
@@ -151,6 +152,8 @@ function GoalPage({ goalId, items, events, apply, timer, timerControls, deleteEv
       </section>
 
       {goal.repeat && <RepeatPanel goal={goal} />}
+
+      <Checklist goal={goal} items={items} apply={apply} />
 
       {mode === 'edit' ? (
         <GoalEditForm

@@ -51,6 +51,8 @@ function makeGoal(title, timeframe, parentIds, why = '') {
     // Chain: the id of the task or habit this one comes right after
     // ("shower after workout"), or null.
     after: null,
+    // Checklist inside the task: [{ id, text, done }].
+    checklist: [],
   }
 }
 
@@ -95,6 +97,48 @@ export function snoozeTask(items, id, minutes) {
     items: items.map(item => (item.id === id ? { ...item, time } : item)),
     events: [makeEvent('snoozed', task, { minutes, time })],
   }
+}
+
+// Checklist inside a task (Things 3 style): "Buy food" → milk, eggs, …
+// Each item is { id, text, done }. Ticking items doesn't tick the task;
+// you tick the task yourself when you're done.
+function updateChecklist(items, goalId, change, event) {
+  const goal = items.find(item => item.id === goalId)
+  return {
+    items: items.map(item =>
+      item.id === goalId ? { ...item, checklist: change(item.checklist || []) } : item,
+    ),
+    events: [makeEvent(event.type, goal, { text: event.text })],
+  }
+}
+
+export function addChecklistItem(items, goalId, text) {
+  return updateChecklist(
+    items,
+    goalId,
+    list => [...list, { id: crypto.randomUUID(), text, done: false }],
+    { type: 'subitem-added', text },
+  )
+}
+
+export function toggleChecklistItem(items, goalId, itemId) {
+  const goal = items.find(item => item.id === goalId)
+  const entry = (goal.checklist || []).find(c => c.id === itemId)
+  return updateChecklist(
+    items,
+    goalId,
+    list => list.map(c => (c.id === itemId ? { ...c, done: !c.done } : c)),
+    { type: entry.done ? 'subitem-unticked' : 'subitem-ticked', text: entry.text },
+  )
+}
+
+export function removeChecklistItem(items, goalId, itemId) {
+  const goal = items.find(item => item.id === goalId)
+  const entry = (goal.checklist || []).find(c => c.id === itemId)
+  return updateChecklist(items, goalId, list => list.filter(c => c.id !== itemId), {
+    type: 'subitem-removed',
+    text: entry.text,
+  })
 }
 
 // Timeline ↑ ↓: move a timed task earlier (negative) or later by `minutes`,

@@ -158,7 +158,7 @@ Inspiration: Google Calendar (week/month overview), Todoist (daily list), Sunsam
 ### Part 3: find the vibe
 
 - [ ] **Better look:** a design pass, based on how you actually use the app. Pick ideas from `DESIGN-IDEAS.md`.
-- [ ] **Themes (built, waiting for OK):** Settings → Look: Dark / Light / Auto (phone) and 9 themes (Violet, Black hole, Gold, Iridescent, Clean, Spring, Summer, Autumn, Winter), each with a dark and a light version and its own glow; the whole app changes at once. Next: roomier, rounder Tiimo-style cards; then checklists inside tasks (Things 3 style). Later: Streaks-style habit view.
+- [ ] **Themes (built, waiting for OK):** Settings → Look: Dark / Light / Auto (phone) and 9 themes (Violet, Black hole, Gold, Iridescent, Clean, Spring, Summer, Autumn, Winter), each with a dark and a light version and its own glow; the whole app changes at once. Also built (waiting for OK): roomier, rounder Tiimo-style cards and spacing; checklists inside tasks (Things 3 style) on the goal page, with "☑ 1/2" shown in lists. Later: Streaks-style habit view.
 - [ ] **Customize:** in Settings, pick icon set, all colors (one-color themes like all blue or all pink), font, text size, light/dark, with a live preview screen. Theme templates: four seasons, gold, iridescent, violet, black hole, star rupture. Details in `DESIGN-IDEAS.md` → Customize.
 - [ ] **Home screen design:** an inspirational quote instead of "What do you want to do?" (ideas in `DESIGN-IDEAS.md`), background of the user's choice, date and time, custom or chosen imagery, a small bar at the top showing tasks done today, and a button at the bottom that takes you to the main area.
 

@@ -195,6 +195,11 @@ function GoalsScreen({ items, events, apply, timeframe, setTimeframe }) {
                       </button>
                     )}
                     {goal.repeat && <RepeatSummary goal={goal} />}
+                    {goal.checklist?.length > 0 && (
+                      <span className="goal-meta">
+                        ☑ {goal.checklist.filter(c => c.done).length}/{goal.checklist.length}
+                      </span>
+                    )}
                     {children > 0 && (
                       <>
                         <span className="goal-children">
