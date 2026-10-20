@@ -13,11 +13,12 @@ import TimerBar from './TimerBar.jsx'
 import BottomBar from './BottomBar.jsx'
 import AddSheet from './AddSheet.jsx'
 import FocusPage from './FocusPage.jsx'
+import GoalTree from './GoalTree.jsx'
 import SettingsPage from './SettingsPage.jsx'
 import { loadSettings, saveSettings } from './settings.js'
 import { rememberPage } from './navHistory.js'
 import SideMenu from './SideMenu.jsx'
-import { ArchivePage, ComingSoonPage, HistoryPage } from './MenuPages.jsx'
+import { ArchivePage, HistoryPage } from './MenuPages.jsx'
 import {
   alarm,
   elapsedMs,
@@ -245,7 +246,13 @@ function App() {
   } else if (screen.name === 'archive') {
     page = <ArchivePage items={items} events={events} apply={apply} />
   } else if (screen.name === 'views') {
-    page = <ComingSoonPage title="Views" text="Tree, table and map views of your goals are coming later." />
+    page = (
+      <div className="app">
+        <h1>Goal tree</h1>
+        <p className="goal-meta">More views (table, map, big tree) come with the design pass.</p>
+        <GoalTree items={items} />
+      </div>
+    )
   } else if (screen.name === 'settings') {
     page = (
       <SettingsPage

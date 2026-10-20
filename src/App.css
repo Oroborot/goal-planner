@@ -133,6 +133,13 @@ li.done .goal-title { text-decoration: line-through; opacity: 0.5; }
 .focus-done { width: 100%; min-height: 52px; margin-top: 1rem; font-size: 1.1em; }
 .now-choices { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-top: 0.35rem; }
 
+/* Goal tree: a foldable outline. */
+.tree { list-style: none; margin: 0; padding: 0; }
+.tree .tree-item { display: block; padding: 0; border: 0; }
+.tree-row { display: flex; align-items: flex-start; gap: 0.35rem; padding: 0.35rem 0; border-bottom: 1px solid var(--border); }
+.tree-toggle { flex: 0 0 28px; width: 28px; min-height: 28px; padding: 0; border: 0; background: none; color: var(--text); }
+.tree-actions { justify-content: flex-end; }
+
 /* Day timeline: hours down the left, tasks as blocks, "Anytime" on top. */
 .day-view-switch { margin-top: 0.75rem; }
 .add-toggle { width: 100%; border-style: dashed; color: var(--text); }
