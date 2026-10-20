@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import { skipTask, snoozeTask, swapTasks } from './goalActions.js'
-import { tasksOn, todayKey } from './calendar.js'
+import { dayEntries, todayKey } from './calendar.js'
 import { colorOf } from './colors.js'
 import { ImportanceIcon } from './TaskExtras.jsx'
+import { showTime } from './settings.js'
 
 // The time right now as '14:05', to compare with task times.
 function nowTime() {
@@ -14,7 +15,8 @@ function nowTime() {
 // small row of choices under it.
 function NowRow({ task, label, goals, items, apply, swapOptions }) {
   const [open, setOpen] = useState(null) // 'later' | 'swap' | null
-  const timed = Boolean(task.time)
+  // Later and Swap only for tasks with their own time (not habits or chained).
+  const timed = Boolean(task.time) && task.movable !== false
 
   return (
     <li className="now-row">
@@ -63,7 +65,7 @@ function NowRow({ task, label, goals, items, apply, swapOptions }) {
               onClick={() => apply(swapTasks(items, task.id, other.id))}
             >
               <span className="goal-dot" style={{ background: colorOf(goals, other) }} />
-              {other.time} {other.title}
+              {showTime(other.time)} {other.title}
               <ImportanceIcon importance={other.importance} color={colorOf(goals, other)} />
             </button>
           ))}
@@ -78,8 +80,13 @@ function NowRow({ task, label, goals, items, apply, swapOptions }) {
 function NowBox({ goals, items, apply }) {
   const today = todayKey()
   const now = nowTime()
-  const open = tasksOn(goals, today).filter(t => !t.done)
-  const timed = open.filter(t => t.time)
+  // Today's timed tasks and habits (chained ones get their time from what
+  // they follow), not done and not skipped for today.
+  const timed = dayEntries(goals, today)
+    .filter(e => e.time && !e.done && !(e.goal.hiddenUntil && e.goal.hiddenUntil > today))
+    // `time` here is the real time (chains included); `movable` = it has its
+    // own time, so Later and Swap can change it.
+    .map(e => ({ ...e.goal, time: e.time, movable: !e.habit && !e.goal.after }))
   const due = timed.filter(t => t.time <= now)
   const next = timed.find(t => t.time > now)
   // ASAP tasks: only the ones you marked "Show in Now (ASAP)".
@@ -99,7 +106,7 @@ function NowBox({ goals, items, apply }) {
       items={items}
       apply={apply}
       // Swap suggests the most important tasks first.
-      swapOptions={timed.filter(t => t.id !== task.id).sort(byImportance)}
+      swapOptions={timed.filter(t => t.id !== task.id && t.movable).sort(byImportance)}
     />
   )
 
@@ -107,8 +114,8 @@ function NowBox({ goals, items, apply }) {
     <section className="now-box" aria-label="Now">
       <h2>Now</h2>
       <ul>
-        {due.map(t => row(t, t.time === now ? `${t.time} · now` : `${t.time} · overdue`))}
-        {next && row(next, `next · ${next.time}`)}
+        {due.map(t => row(t, t.time === now ? `${showTime(t.time)} · now` : `${showTime(t.time)} · overdue`))}
+        {next && row(next, `next · ${showTime(next.time)}`)}
         {asap.map(t => row(t, 'ASAP'))}
       </ul>
     </section>

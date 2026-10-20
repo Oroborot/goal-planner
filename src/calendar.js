@@ -1,6 +1,7 @@
 // Dates for the calendar. Days are saved as text like '2026-10-21'
 // (see dateKey in repeat.js) and times as '07:00', in your own time zone.
 import { dateKey, todayKey } from './repeat.js'
+import { showTime } from './settings.js'
 
 export { dateKey, todayKey }
 
@@ -82,19 +83,81 @@ export function formatMinutes(minutes) {
   return m === 0 ? `${h}h` : `${h}h ${m}m`
 }
 
+// Is a task or habit on this day? Tasks by their date, habits by weekday.
+function occursOn(goal, key) {
+  if (goal.repeat) return habitsOn([goal], key).length > 0
+  return goal.date === key
+}
+
+// The time a task or habit happens on a day.
+// - Chained ("do after X"): right after X ends, if X is on that day and has
+//   a time (and its expected time, if set, is added).
+// - Otherwise: the task's own time (habits have none of their own).
+// `depth` stops endless loops if chains ever go in a circle.
+export function timeOn(goals, goal, key, depth = 0) {
+  if (goal.after && depth < 10) {
+    const anchor = goals.find(g => g.id === goal.after)
+    if (anchor && occursOn(anchor, key)) {
+      const start = timeOn(goals, anchor, key, depth + 1)
+      if (start) return anchor.duration ? endTime(start, anchor.duration) : start
+    }
+  }
+  return goal.date === key ? goal.time : null
+}
+
+// Everything on a day, as one list: tasks and habits, each with the time it
+// happens (chains included) and whether it's done that day. Timed first,
+// earliest first; then untimed tasks; then untimed habits.
+export function dayEntries(goals, key) {
+  const entries = [...tasksOn(goals, key), ...habitsOn(goals, key)].map(goal => ({
+    goal,
+    time: timeOn(goals, goal, key),
+    habit: Boolean(goal.repeat),
+    done: goal.repeat ? goal.doneDates.includes(key) : goal.done,
+  }))
+  entries.sort((a, b) => {
+    if (a.time && b.time) return a.time.localeCompare(b.time)
+    if (a.time !== b.time) return a.time ? -1 : 1
+    if (a.habit !== b.habit) return a.habit ? 1 : -1
+    return a.goal.createdAt.localeCompare(b.goal.createdAt)
+  })
+
+  // Chained entries go right under what they follow (indented one level
+  // per link), even when that has no time.
+  const onDay = new Set(entries.map(e => e.goal.id))
+  const isRoot = e => !e.goal.after || !onDay.has(e.goal.after)
+  const ordered = []
+  const placed = new Set()
+  const place = (entry, level) => {
+    if (placed.has(entry.goal.id) || level > 10) return
+    placed.add(entry.goal.id)
+    ordered.push({ ...entry, level })
+    entries.filter(e => e.goal.after === entry.goal.id).forEach(e => place(e, level + 1))
+  }
+  entries.filter(isRoot).forEach(e => place(e, 0))
+  // Anything left (only possible if links go in a circle) goes at the end.
+  entries.filter(e => !placed.has(e.goal.id)).forEach(e => ordered.push({ ...e, level: 0 }))
+  return ordered
+}
+
 // A day's planned time and its problems:
 // - total: all expected minutes of that day's tasks and habits
-// - overlaps: pairs of timed tasks where one starts before the other ends
+// - overlaps: pairs of timed entries where one starts before the other ends
 export function dayLoad(goals, key) {
-  const all = [...tasksOn(goals, key), ...habitsOn(goals, key)]
-  const total = all.reduce((sum, g) => sum + (g.duration || 0), 0)
-  const timed = tasksOn(goals, key).filter(t => t.time && t.duration)
+  const entries = dayEntries(goals, key)
+  const total = entries.reduce((sum, e) => sum + (e.goal.duration || 0), 0)
+  const timed = entries.filter(e => e.time && e.goal.duration)
   const overlaps = []
   for (let i = 0; i < timed.length; i++) {
     for (let j = i + 1; j < timed.length; j++) {
       const a = timed[i]
       const b = timed[j]
-      if (toMinutes(b.time) < toMinutes(a.time) + a.duration) overlaps.push([a, b])
+      if (toMinutes(b.time) < toMinutes(a.time) + a.goal.duration) {
+        overlaps.push([
+          { ...a.goal, time: a.time },
+          { ...b.goal, time: b.time },
+        ])
+      }
     }
   }
   return { total, overlaps }
@@ -114,6 +177,6 @@ export function dayCounts(goals, key) {
 // Adds "(done early, planned for Tue 28 Oct)" for tasks done before their day.
 export function whenLabel(goal) {
   if (!goal.date) return ''
-  const when = goal.time ? `${dayLabel(goal.date)} · ${goal.time}` : dayLabel(goal.date)
+  const when = goal.time ? `${dayLabel(goal.date)} · ${showTime(goal.time)}` : dayLabel(goal.date)
   return goal.plannedDate ? `${when} (done early, planned for ${dayLabel(goal.plannedDate)})` : when
 }

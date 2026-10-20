@@ -3,6 +3,7 @@ import { TIMEFRAMES, labelOf, biggerGoals, smallerGoals } from './timeframes.js'
 import { EVERY_DAY } from './repeat.js'
 import WhenFields from './WhenFields.jsx'
 import { TaskExtrasFields } from './TaskExtras.jsx'
+import Combo from './Combo.jsx'
 import RepeatFields from './RepeatFields.jsx'
 import ColorPicker from './ColorPicker.jsx'
 import { colorOf } from './colors.js'
@@ -49,6 +50,14 @@ function GoalEditForm({ goal, goals, onSave, onCancel }) {
   const [timeframe, setTimeframe] = useState(goal.timeframe)
   const [why, setWhy] = useState(goal.why || '')
   const [color, setColor] = useState(goal.color ?? null)
+  // Chain: "Do after" another Day task or habit. Leave out this goal and
+  // anything already chained after it, so a chain can't go in a circle.
+  const [after, setAfter] = useState(goal.after || '')
+  const chainsBackTo = (g, depth = 0) =>
+    depth < 10 && g.after && (g.after === goal.id || chainsBackTo(goals.find(x => x.id === g.after) || {}, depth + 1))
+  const afterOptions = goals.filter(
+    g => g.timeframe === 'day' && g.id !== goal.id && !chainsBackTo(g),
+  )
   const [extras, setExtras] = useState({
     importance: goal.importance || 0,
     duration: goal.duration || '',
@@ -99,6 +108,7 @@ function GoalEditForm({ goal, goals, onSave, onCancel }) {
         asap: onCalendar && !when.date ? Boolean(when.asap) : false,
         importance: extras.importance,
         duration: timeframe === 'day' && extras.duration ? Number(extras.duration) : null,
+        after: timeframe === 'day' && after ? after : null,
         repeat: repeats ? { days: repeat.mode === 'daily' ? EVERY_DAY : repeat.days } : null,
         target: repeats
           ? { per: repeat.per, times: repeat.per === 'day' ? 1 : Number(repeat.times) || 1 }
@@ -141,6 +151,29 @@ function GoalEditForm({ goal, goals, onSave, onCancel }) {
       <RepeatFields value={repeat} onChange={setRepeat} />
       {onCalendar && <WhenFields when={when} onChange={setWhen} />}
       <TaskExtrasFields value={extras} onChange={setExtras} showDuration={timeframe === 'day'} />
+      {timeframe === 'day' && afterOptions.length > 0 && (
+        <div className="chain-picker">
+          <span className="goal-meta">⛓ Do after (search, or leave empty)</span>
+          {/* A search box: type to narrow the list of tasks and habits. */}
+          <Combo
+            value={after}
+            onChange={setAfter}
+            options={afterOptions.map(g => ({
+              value: g.id,
+              label: `${g.title}${g.repeat ? ' ↻' : ''}`,
+            }))}
+            format={id => afterOptions.find(g => g.id === id)?.title ?? ''}
+            parse={text => {
+              if (!text.trim()) return ''
+              const found = afterOptions.find(g => g.title.toLowerCase() === text.trim().toLowerCase())
+              return found ? found.id : undefined
+            }}
+            placeholder="Not chained"
+            label="Do after"
+            filter
+          />
+        </div>
+      )}
       <LinkList
         legend="Counts toward"
         goals={parentOptions}

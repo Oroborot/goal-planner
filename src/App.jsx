@@ -13,6 +13,8 @@ import TimerBar from './TimerBar.jsx'
 import BottomBar from './BottomBar.jsx'
 import AddSheet from './AddSheet.jsx'
 import FocusPage from './FocusPage.jsx'
+import SettingsPage from './SettingsPage.jsx'
+import { loadSettings, saveSettings } from './settings.js'
 import { rememberPage } from './navHistory.js'
 import SideMenu from './SideMenu.jsx'
 import { ArchivePage, ComingSoonPage, HistoryPage } from './MenuPages.jsx'
@@ -74,6 +76,7 @@ function loadItems() {
       plannedDate: null,
       importance: 0,
       duration: null,
+      after: null,
       repeat: null,
       target: null,
       repeatSince: null,
@@ -135,6 +138,13 @@ function App() {
 
   // The timer (see timer.js), saved so a refresh keeps it running.
   const [timer, setTimer] = useState(loadTimer)
+  // Your preferences (12/24-hour clock, …). Changing them redraws every
+  // screen, so times show the new way right away.
+  const [settings, setSettings] = useState(loadSettings)
+  function changeSettings(next) {
+    saveSettings(next)
+    setSettings(next)
+  }
   // True while the ＋ add sheet is open.
   const [adding, setAdding] = useState(false)
   // True while the side menu is open.
@@ -231,7 +241,7 @@ function App() {
   } else if (screen.name === 'views') {
     page = <ComingSoonPage title="Views" text="Tree, table and map views of your goals are coming later." />
   } else if (screen.name === 'settings') {
-    page = <ComingSoonPage title="Settings" text="Customize (colors, icons, fonts, themes) is coming later." />
+    page = <SettingsPage settings={settings} onChange={changeSettings} />
   } else if (screen.name === 'notes') {
     page = <NotesScreen items={items} apply={apply} />
   } else if (screen.name === 'note') {

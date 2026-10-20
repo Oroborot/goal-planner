@@ -13,6 +13,8 @@ import {
   todayKey,
 } from './calendar.js'
 import { TaskExtrasFields } from './TaskExtras.jsx'
+import TimePicker from './TimePicker.jsx'
+import { showTime } from './settings.js'
 import { biggerGoals, labelOf } from './timeframes.js'
 import DayList from './DayList.jsx'
 import ViewSwitch from './ViewSwitch.jsx'
@@ -91,7 +93,7 @@ function DayPage({ dateKey, items, apply }) {
       )}
       {load.overlaps.map(([a, b]) => (
         <p key={`${a.id}-${b.id}`} className="day-warning">
-          ⚠ {a.title} ({a.time}–{endTime(a.time, a.duration)}) overlaps {b.title} ({b.time})
+          ⚠ {a.title} ({showTime(a.time)}–{showTime(endTime(a.time, a.duration))}) overlaps {b.title} ({showTime(b.time)})
         </p>
       ))}
 
@@ -102,8 +104,8 @@ function DayPage({ dateKey, items, apply }) {
           placeholder={`Add a task for ${dayLabel(dateKey).toLowerCase()}…`}
           aria-label="New task"
         />
+        <TimePicker value={time} onChange={setTime} label="Time" />
         <div className="row">
-          <input type="time" value={time} onChange={e => setTime(e.target.value)} aria-label="Time (optional)" />
           <select value={parentId} onChange={e => setParentId(e.target.value)} aria-label="Goal">
             <option value="">No goal</option>
             {biggerGoals(goals, 'day').map(g => (

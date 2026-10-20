@@ -140,10 +140,27 @@ li.done .goal-title { text-decoration: line-through; opacity: 0.5; }
 .day-nav .icon-button { width: 44px; font-size: 1.3em; border-color: var(--border); }
 .today-link { display: flex; justify-content: center; }
 .day-summary { text-align: center; margin: 0.25rem 0 0.75rem; }
+/* Chained rows: a dotted link line on the left, like a chain hanging down. */
+.day-list li.chained { position: relative; border-left: 2px dotted var(--accent); }
+.day-list li.chained::before { content: ''; position: absolute; left: -2px; top: 50%; width: 0.5rem; border-top: 2px dotted var(--accent); }
+.chain-note { color: var(--accent); }
+.chain-picker { display: flex; flex-direction: column; gap: 0.25rem; }
+
+/* Type-or-pick box: a short scrollable list under the text box. */
+.combo { position: relative; display: flex; flex-direction: column; min-width: 0; }
+.combo input { width: 100%; }
+.combo-list { max-height: 9.5rem; overflow-y: auto; margin: 0.25rem 0 0; padding: 0.25rem; list-style: none; border: 1px solid var(--accent-border); border-radius: 8px; background: var(--bg); }
+.combo-list li { display: block; min-height: 0; padding: 0.4rem 0.6rem; border: 0; border-radius: 6px; color: var(--text-h); cursor: pointer; }
+.combo-list li.match, .combo-list li:hover { background: var(--accent-bg); }
+.day-list li.level-1 { padding-left: 0.75rem; }
+.day-list li.level-2 { padding-left: 1.5rem; }
+.day-list li.level-3 { padding-left: 2.25rem; }
 .day-duration { display: block; font-size: 0.8em; opacity: 0.8; }
 .importance { margin-left: 0.35rem; font-size: 0.6em; letter-spacing: 1px; vertical-align: middle; }
 .day-warning { margin: 0 0 0.4rem; padding: 0.35rem 0.6rem; border-radius: 8px; background: rgba(255, 197, 61, 0.12); color: var(--text-h); font-size: 0.85em; }
 .task-extras > * { flex: 1; min-width: 0; }
+.time-picker { display: flex; gap: 0.5rem; }
+.time-picker select { flex: 1; min-width: 0; }
 .day-time { flex: 0 0 3.2em; font-family: var(--mono); font-size: 0.85em; color: var(--text); }
 .habit-mark { flex: 0 0 22px; margin-left: 0.25rem; text-align: center; color: var(--accent); }
 

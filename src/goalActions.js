@@ -48,6 +48,9 @@ function makeGoal(title, timeframe, parentIds, why = '') {
     // in minutes (null = not set).
     importance: 0,
     duration: null,
+    // Chain: the id of the task or habit this one comes right after
+    // ("shower after workout"), or null.
+    after: null,
   }
 }
 
@@ -198,7 +201,7 @@ export function saveGoal(items, id, changes, childIds) {
 
   // Which fields changed.
   const same = (a, b) => JSON.stringify(a) === JSON.stringify(b)
-  const fields = ['title', 'timeframe', 'why', 'repeat', 'target', 'color', 'date', 'time', 'asap', 'importance', 'duration'].filter(
+  const fields = ['title', 'timeframe', 'why', 'repeat', 'target', 'color', 'date', 'time', 'asap', 'importance', 'duration', 'after'].filter(
     field => !same(before[field], after[field]),
   )
   if (fields.length > 0) events.push(makeEvent('edited', after, { fields }))

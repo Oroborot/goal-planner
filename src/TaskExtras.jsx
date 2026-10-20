@@ -1,3 +1,5 @@
+import Combo from './Combo.jsx'
+
 // Importance and expected time: the input fields, and the small icon.
 // The icon is kept simple on purpose; themes can change it later.
 
@@ -8,10 +10,29 @@ const IMPORTANCE = [
   { value: 3, label: 'High' },
 ]
 
-const DURATIONS = [15, 30, 45, 60, 90, 120]
+const DURATIONS = [5, 10, 15, 20, 30, 45, 60, 90, 120, 180]
+
+// 90 -> "1h 30m" for the dropdown.
+function durationLabel(m) {
+  if (m < 60) return `${m} min`
+  return m % 60 ? `${Math.floor(m / 60)}h ${m % 60}m` : `${m / 60}h`
+}
+
+// Reads what you type as minutes: "25", "1h", "1h 30", "1:30", "90m".
+// Returns minutes, '' for an empty box, or undefined if it makes no sense.
+function parseDuration(text) {
+  const t = text.trim().toLowerCase().replace(/\s+/g, '')
+  if (!t) return ''
+  let m = t.match(/^(\d+)(m|min)?$/)
+  if (m) return Math.min(720, Math.max(1, Number(m[1])))
+  m = t.match(/^(\d+)(?:h|:)(\d{1,2})?m?$/)
+  if (m) return Math.min(720, Math.max(1, Number(m[1]) * 60 + Number(m[2] || 0)))
+  return undefined
+}
 
 // The two fields side by side. `value` is { importance, duration } where
-// duration is minutes or '' while empty.
+// duration is minutes or '' while empty. Expected time: type any length,
+// or pick from the short list under the box.
 export function TaskExtrasFields({ value, onChange, showDuration = true }) {
   return (
     <div className="row task-extras">
@@ -27,25 +48,15 @@ export function TaskExtrasFields({ value, onChange, showDuration = true }) {
         ))}
       </select>
       {showDuration && (
-        <>
-          <input
-            type="number"
-            min="1"
-            max="720"
-            list="duration-options"
-            value={value.duration}
-            onChange={e =>
-              onChange({ ...value, duration: e.target.value === '' ? '' : Math.min(720, Math.max(1, Number(e.target.value))) })
-            }
-            placeholder="Time (min)"
-            aria-label="Expected time in minutes"
-          />
-          <datalist id="duration-options">
-            {DURATIONS.map(d => (
-              <option key={d} value={d} />
-            ))}
-          </datalist>
-        </>
+        <Combo
+          value={value.duration}
+          onChange={duration => onChange({ ...value, duration })}
+          options={DURATIONS.map(d => ({ value: d, label: durationLabel(d) }))}
+          format={d => (d ? durationLabel(Number(d)) : '')}
+          parse={parseDuration}
+          placeholder="Expected time"
+          label="Expected time"
+        />
       )}
     </div>
   )

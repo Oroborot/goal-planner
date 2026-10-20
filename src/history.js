@@ -1,3 +1,5 @@
+import { showTime } from './settings.js'
+
 // The history log: a diary of everything that happens to goals.
 // Each entry ("event") looks like:
 // { id, at, type, itemId, title, ...extra }
@@ -64,7 +66,7 @@ const EVENT_TEXT = {
   'auto-uncompleted': () => 'Un-completed automatically',
   deleted: () => 'Deleted',
   restored: () => 'Restored',
-  snoozed: e => `Later: moved ${e.minutes} min, to ${e.time}`,
+  snoozed: e => `Later: moved ${e.minutes} min, to ${showTime(e.time)}`,
   skipped: e => (e.asap ? 'Skipped for today' : 'Skipped: moved to tomorrow'),
   swapped: e => `Swapped time with “${e.withTitle}”`,
   timed: e => `Timer: ${formatSeconds(e.seconds)} (${e.mode === 'down' ? 'countdown' : 'count up'})`,

@@ -10,11 +10,15 @@ import {
 import CategorySelect from './CategorySelect.jsx'
 import ManageCategories from './ManageCategories.jsx'
 import BackLink from './BackLink.jsx'
+import { activeGoals } from './progress.js'
+import { colorOf } from './colors.js'
+import { labelOf } from './timeframes.js'
 
 const FILTERS = [
   { value: 'all', label: 'All' },
   { value: 'tasks', label: 'Tasks' },
   { value: 'notes', label: 'Notes' },
+  { value: 'goals', label: 'Goals' },
 ]
 
 // The first line of a note's text, as a short preview.
@@ -67,6 +71,10 @@ function NotesScreen({ items, apply }) {
       return b.updatedAt.localeCompare(a.updatedAt)
     })
   const deleted = items.filter(item => item.list === 'notes' && item.deletedAt)
+  // The Goals chip: search your goals here too (title and "why").
+  const goalsFound = activeGoals(items).filter(
+    g => !query || `${g.title} ${g.why}`.toLowerCase().includes(query),
+  )
 
   function submit(e) {
     e.preventDefault()
@@ -161,7 +169,27 @@ function NotesScreen({ items, apply }) {
         ))}
       </div>
 
-      {visible.length === 0 ? (
+      {filter === 'goals' ? (
+        goalsFound.length === 0 ? (
+          <p className="empty">No goals match.</p>
+        ) : (
+          <ul>
+            {goalsFound.map(goal => (
+              <li key={goal.id}>
+                <div className="goal-text">
+                  <a href={`#goal/${goal.id}`} className="goal-title goal-link">
+                    <span className="goal-dot" style={{ background: colorOf(activeGoals(items), goal) }} />
+                    {goal.title}
+                  </a>
+                  <span className="goal-meta">
+                    {labelOf(goal.timeframe)} goal{goal.why && ` · ${goal.why}`}
+                  </span>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )
+      ) : visible.length === 0 ? (
         <p className="empty">{notes.length === 0 ? 'No notes yet.' : 'Nothing matches.'}</p>
       ) : (
         <ul>

@@ -1,4 +1,5 @@
 import { todayKey } from './repeat.js'
+import TimePicker from './TimePicker.jsx'
 
 // "Add to calendar" for a Day goal: off = no date or time;
 // on = a date (today to start) and an optional time.
@@ -28,13 +29,10 @@ function WhenFields({ when, onChange }) {
             aria-label="Date"
             required
           />
-          <input
-            type="time"
-            value={when.time}
-            onChange={e => onChange({ ...when, time: e.target.value })}
-            aria-label="Time (optional)"
-          />
         </div>
+      ) : null}
+      {onCalendar ? (
+        <TimePicker value={when.time} onChange={time => onChange({ ...when, time })} label="Time" />
       ) : (
         <label className="done-toggle">
           <input
