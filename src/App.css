@@ -303,4 +303,7 @@ button.full { width: 100%; margin: 0.5rem 0; }
 .confirm-all { margin-top: 1rem; padding: 0.75rem; border: 1px solid rgba(229, 72, 77, 0.5); border-radius: 10px; color: var(--text-h); }
 .confirm-all p { margin: 0 0 0.75rem; font-size: 0.9em; }
 .confirm-all .row button { flex: 1; }
+.backup .row > * { flex: 1; }
+.button-like { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 1rem; box-sizing: border-box; border: 1px solid var(--accent-border); border-radius: 8px; color: var(--text-h); cursor: pointer; }
+.button-like.secondary { border-color: var(--border); }
 .danger-button { border-color: #e5484d; background: rgba(229, 72, 77, 0.15); }

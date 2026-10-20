@@ -1,6 +1,8 @@
-// Settings: your preferences. For now the clock; colors, icons, fonts and
+import BackupSection from './BackupSection.jsx'
+
+// Settings: your preferences and the backup. Colors, icons, fonts and
 // themes come with "Customize" later.
-function SettingsPage({ settings, onChange }) {
+function SettingsPage({ settings, onChange, items, events, onRestore }) {
   const clocks = [
     { value: '24', label: '24-hour', example: '18:30' },
     { value: '12', label: '12-hour', example: '6:30 PM' },
@@ -23,6 +25,8 @@ function SettingsPage({ settings, onChange }) {
           </button>
         ))}
       </div>
+
+      <BackupSection items={items} events={events} settings={settings} onRestore={onRestore} />
 
       <h2>Customize</h2>
       <p className="empty">Colors, icons, fonts and themes are coming later.</p>

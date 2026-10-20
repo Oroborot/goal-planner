@@ -150,7 +150,7 @@ Inspiration: Google Calendar (week/month overview), Todoist (daily list), Sunsam
 - [ ] **Stats:** how many times, how much time, progress toward goals. Rewards are user-defined (see "Reward system").
 
 - [ ] **Installable app (PWA):** add the app to your phone's home screen so you can use it every day. Works on iPhone (Safari → Share → Add to Home Screen) and Android. Data stays on the phone; notifications later (need a server).
-- [ ] **Backup (later, after the basics):** one button downloads all data as a file, one loads it back. Important because data lives only on the phone: deleting the app icon or losing the phone loses it. ~30 min, free.
+- [ ] **Backup (built, waiting for OK):** in Settings: Download backup (one .json file) and Load backup (asks first, replaces everything); shows the last backup date. one button downloads all data as a file, one loads it back. Important because data lives only on the phone: deleting the app icon or losing the phone loses it. ~30 min, free.
 
 - [x] **Navigation menu:** built: bottom bar, ＋ sheet, side menu with History and Archive. Decided (see `DESIGN-IDEAS.md` → Navigation): bottom bar with icons only (Home, Calendar, round ＋ in the accent color, Goals, Notes), ＋ opens Task / Habit / Goal / Note; side menu by swiping from the left (Views, Settings, History, Archive, Note categories). Build in two parts: bottom bar + ＋ sheet (~60 min), then side menu + History + Archive (~60 min).
 - [x] **History cleanup:** delete single history entries (e.g. mistakes) or the whole history, each with a confirmation. Keep it discreet: history folded away or reached from the menu, not always open. Note: deleting entries also changes the counts built from them (times ticked, timer totals).
@@ -174,7 +174,7 @@ Inspiration: Google Calendar (week/month overview), Todoist (daily list), Sunsam
 - [ ] **Routines:** guided morning planning; evening shutdown/reflection (also the daily review); weekly review; energy tracker (how drained or energetic a day is).
 - [ ] **Reminders before a task.** Warn before building: phone notifications while the app is closed may need a server (possible cost).
 
-**Not wanted:** karma points or streak scoring, an inbox collecting tasks from other apps, a vertical timeline with icons.
+**Not wanted:** karma points or streak scoring (decided: habits keep "N in a row" as plain info, no points or scores), an inbox collecting tasks from other apps, a vertical timeline with icons.
 
 **AI (parked until the end):** e.g. "plan my tomorrow from text". Only when actually needed, and only after explaining the cost.
 

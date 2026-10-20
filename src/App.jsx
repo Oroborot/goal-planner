@@ -145,6 +145,12 @@ function App() {
     saveSettings(next)
     setSettings(next)
   }
+  // Load a backup: everything on this device is replaced by the file's data.
+  function restoreBackup(backup) {
+    setItems(backup.items)
+    setEvents(backup.events)
+    changeSettings({ ...loadSettings(), ...backup.settings })
+  }
   // True while the ＋ add sheet is open.
   const [adding, setAdding] = useState(false)
   // True while the side menu is open.
@@ -241,7 +247,15 @@ function App() {
   } else if (screen.name === 'views') {
     page = <ComingSoonPage title="Views" text="Tree, table and map views of your goals are coming later." />
   } else if (screen.name === 'settings') {
-    page = <SettingsPage settings={settings} onChange={changeSettings} />
+    page = (
+      <SettingsPage
+        settings={settings}
+        onChange={changeSettings}
+        items={items}
+        events={events}
+        onRestore={restoreBackup}
+      />
+    )
   } else if (screen.name === 'notes') {
     page = <NotesScreen items={items} apply={apply} />
   } else if (screen.name === 'note') {
