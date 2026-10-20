@@ -44,6 +44,10 @@ function makeGoal(title, timeframe, parentIds, why = '') {
     // a task was skipped from, shown as "Skipped from Tue".
     asap: false,
     skippedFrom: null,
+    // How important (0 none, 1 low, 2 medium, 3 high) and the expected time
+    // in minutes (null = not set).
+    importance: 0,
+    duration: null,
   }
 }
 
@@ -58,7 +62,8 @@ function finish(items, events, idsToCheck) {
 }
 
 // Add a goal. A new, unfinished goal can un-complete its bigger goals.
-// `when` can put a Day goal on the calendar: { date, time } (both optional).
+// `when` can put a Day goal on the calendar: { date, time } (both optional),
+// and set { importance, duration } for any goal.
 export function addGoal(items, title, timeframe, parentIds, why = '', when = {}) {
   const goal = makeGoal(title, timeframe, parentIds, why)
   if (timeframe === 'day') {
@@ -66,6 +71,8 @@ export function addGoal(items, title, timeframe, parentIds, why = '', when = {})
     goal.time = (when.date && when.time) || null
     goal.asap = !when.date && Boolean(when.asap)
   }
+  if (when.importance) goal.importance = when.importance
+  if (when.duration) goal.duration = when.duration
   const events = [
     makeEvent('created', goal, { timeframe }),
     ...parentIds.map(parentId =>
@@ -114,8 +121,9 @@ export function swapTasks(items, id, otherId) {
 }
 
 // Quick add from the ＋ sheet: a Day goal that repeats every day.
-export function addHabit(items, title) {
-  const result = addGoal(items, title, 'day', [])
+// `more` can set { importance, duration }.
+export function addHabit(items, title, more = {}) {
+  const result = addGoal(items, title, 'day', [], '', more)
   const habit = result.items[result.items.length - 1]
   Object.assign(habit, {
     repeat: { days: [0, 1, 2, 3, 4, 5, 6] },
@@ -190,7 +198,7 @@ export function saveGoal(items, id, changes, childIds) {
 
   // Which fields changed.
   const same = (a, b) => JSON.stringify(a) === JSON.stringify(b)
-  const fields = ['title', 'timeframe', 'why', 'repeat', 'target', 'color', 'date', 'time', 'asap'].filter(
+  const fields = ['title', 'timeframe', 'why', 'repeat', 'target', 'color', 'date', 'time', 'asap', 'importance', 'duration'].filter(
     field => !same(before[field], after[field]),
   )
   if (fields.length > 0) events.push(makeEvent('edited', after, { fields }))

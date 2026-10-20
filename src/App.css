@@ -140,6 +140,10 @@ li.done .goal-title { text-decoration: line-through; opacity: 0.5; }
 .day-nav .icon-button { width: 44px; font-size: 1.3em; border-color: var(--border); }
 .today-link { display: flex; justify-content: center; }
 .day-summary { text-align: center; margin: 0.25rem 0 0.75rem; }
+.day-duration { display: block; font-size: 0.8em; opacity: 0.8; }
+.importance { margin-left: 0.35rem; font-size: 0.6em; letter-spacing: 1px; vertical-align: middle; }
+.day-warning { margin: 0 0 0.4rem; padding: 0.35rem 0.6rem; border-radius: 8px; background: rgba(255, 197, 61, 0.12); color: var(--text-h); font-size: 0.85em; }
+.task-extras > * { flex: 1; min-width: 0; }
 .day-time { flex: 0 0 3.2em; font-family: var(--mono); font-size: 0.85em; color: var(--text); }
 .habit-mark { flex: 0 0 22px; margin-left: 0.25rem; text-align: center; color: var(--accent); }
 

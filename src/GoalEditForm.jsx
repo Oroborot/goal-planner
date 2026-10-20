@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { TIMEFRAMES, labelOf, biggerGoals, smallerGoals } from './timeframes.js'
 import { EVERY_DAY } from './repeat.js'
 import WhenFields from './WhenFields.jsx'
+import { TaskExtrasFields } from './TaskExtras.jsx'
 import RepeatFields from './RepeatFields.jsx'
 import ColorPicker from './ColorPicker.jsx'
 import { colorOf } from './colors.js'
@@ -48,6 +49,10 @@ function GoalEditForm({ goal, goals, onSave, onCancel }) {
   const [timeframe, setTimeframe] = useState(goal.timeframe)
   const [why, setWhy] = useState(goal.why || '')
   const [color, setColor] = useState(goal.color ?? null)
+  const [extras, setExtras] = useState({
+    importance: goal.importance || 0,
+    duration: goal.duration || '',
+  })
   const [parentIds, setParentIds] = useState(goal.parentIds)
   // The smaller goals that currently list this goal as a parent.
   const [childIds, setChildIds] = useState(
@@ -92,6 +97,8 @@ function GoalEditForm({ goal, goals, onSave, onCancel }) {
         date: onCalendar ? when.date || null : null,
         time: onCalendar && when.date ? when.time || null : null,
         asap: onCalendar && !when.date ? Boolean(when.asap) : false,
+        importance: extras.importance,
+        duration: timeframe === 'day' && extras.duration ? Number(extras.duration) : null,
         repeat: repeats ? { days: repeat.mode === 'daily' ? EVERY_DAY : repeat.days } : null,
         target: repeats
           ? { per: repeat.per, times: repeat.per === 'day' ? 1 : Number(repeat.times) || 1 }
@@ -133,6 +140,7 @@ function GoalEditForm({ goal, goals, onSave, onCancel }) {
       />
       <RepeatFields value={repeat} onChange={setRepeat} />
       {onCalendar && <WhenFields when={when} onChange={setWhen} />}
+      <TaskExtrasFields value={extras} onChange={setExtras} showDuration={timeframe === 'day'} />
       <LinkList
         legend="Counts toward"
         goals={parentOptions}

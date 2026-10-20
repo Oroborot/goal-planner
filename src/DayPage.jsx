@@ -1,7 +1,18 @@
 import { useState } from 'react'
 import { activeGoals } from './progress.js'
 import { addGoal } from './goalActions.js'
-import { addDaysKey, dayCounts, dayLabel, parseKey, todayKey } from './calendar.js'
+import {
+  addDaysKey,
+  dayCounts,
+  dayLabel,
+  dayLoad,
+  endTime,
+  formatMinutes,
+  OVERLOAD_MINUTES,
+  parseKey,
+  todayKey,
+} from './calendar.js'
+import { TaskExtrasFields } from './TaskExtras.jsx'
 import { biggerGoals, labelOf } from './timeframes.js'
 import DayList from './DayList.jsx'
 import ViewSwitch from './ViewSwitch.jsx'
@@ -14,11 +25,13 @@ function DayPage({ dateKey, items, apply }) {
   const [title, setTitle] = useState('')
   const [time, setTime] = useState('')
   const [parentId, setParentId] = useState('')
+  const [extras, setExtras] = useState({ importance: 0, duration: '' })
 
   const today = todayKey()
   const day = parseKey(dateKey)
   const goals = activeGoals(items)
   const { done, total } = dayCounts(goals, dateKey)
+  const load = dayLoad(goals, dateKey)
 
   function go(n) {
     window.location.hash = `#day/${addDaysKey(dateKey, n)}`
@@ -27,9 +40,17 @@ function DayPage({ dateKey, items, apply }) {
   function submit(e) {
     e.preventDefault()
     if (!title.trim()) return
-    apply(addGoal(items, title.trim(), 'day', parentId ? [parentId] : [], '', { date: dateKey, time }))
+    apply(
+      addGoal(items, title.trim(), 'day', parentId ? [parentId] : [], '', {
+        date: dateKey,
+        time,
+        importance: extras.importance,
+        duration: Number(extras.duration) || null,
+      }),
+    )
     setTitle('')
     setTime('')
+    setExtras({ importance: 0, duration: '' })
   }
 
   return (
@@ -61,7 +82,18 @@ function DayPage({ dateKey, items, apply }) {
 
       <p className="goal-meta day-summary">
         {total === 0 ? 'Nothing planned yet.' : `${done} of ${total} done`}
+        {load.total > 0 && ` · Planned ${formatMinutes(load.total)}`}
       </p>
+      {load.total > OVERLOAD_MINUTES && (
+        <p className="day-warning">
+          ⚠ Over {formatMinutes(OVERLOAD_MINUTES)} planned. Maybe move something to another day.
+        </p>
+      )}
+      {load.overlaps.map(([a, b]) => (
+        <p key={`${a.id}-${b.id}`} className="day-warning">
+          ⚠ {a.title} ({a.time}–{endTime(a.time, a.duration)}) overlaps {b.title} ({b.time})
+        </p>
+      ))}
 
       <form className="goal-form" onSubmit={submit}>
         <input
@@ -81,6 +113,7 @@ function DayPage({ dateKey, items, apply }) {
             ))}
           </select>
         </div>
+        <TaskExtrasFields value={extras} onChange={setExtras} />
         <button type="submit">Add</button>
       </form>
 

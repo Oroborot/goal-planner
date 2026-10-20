@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { addGoal, addHabit } from './goalActions.js'
 import { addNote } from './noteActions.js'
 import { todayKey } from './calendar.js'
+import { TaskExtrasFields } from './TaskExtras.jsx'
 
 // The sheet that slides up from the ＋ button: type something, then pick
 // what it is. Task = today, Habit = every day, Note = Notes.
@@ -9,6 +10,7 @@ import { todayKey } from './calendar.js'
 function AddSheet({ items, apply, onClose }) {
   const [title, setTitle] = useState('')
   const [error, setError] = useState('')
+  const [extras, setExtras] = useState({ importance: 0, duration: '' })
 
   function add(kind) {
     if (kind === 'goal') {
@@ -21,11 +23,12 @@ function AddSheet({ items, apply, onClose }) {
       return
     }
     const text = title.trim()
+    const more = { importance: extras.importance, duration: Number(extras.duration) || null }
     if (kind === 'task') {
-      apply(addGoal(items, text, 'day', [], '', { date: todayKey() }))
+      apply(addGoal(items, text, 'day', [], '', { date: todayKey(), ...more }))
       window.location.hash = '#day'
     } else if (kind === 'habit') {
-      apply(addHabit(items, text))
+      apply(addHabit(items, text, more))
       window.location.hash = '#day'
     } else {
       apply(addNote(items, text, false))
@@ -54,6 +57,7 @@ function AddSheet({ items, apply, onClose }) {
           autoFocus
         />
         {error && <p className="sheet-error">{error}</p>}
+        <TaskExtrasFields value={extras} onChange={setExtras} />
         <div className="sheet-choices">
           <button type="button" onClick={() => add('task')}>
             Task <span>today</span>

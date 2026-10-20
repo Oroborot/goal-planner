@@ -59,6 +59,47 @@ export function habitsOn(goals, key) {
   )
 }
 
+// A day counts as overloaded above this many planned minutes (8 hours).
+// Later this can become a setting.
+export const OVERLOAD_MINUTES = 8 * 60
+
+function toMinutes(time) {
+  const [h, m] = time.split(':').map(Number)
+  return h * 60 + m
+}
+
+// '09:00' + 30 -> '09:30'.
+export function endTime(time, duration) {
+  const total = Math.min(24 * 60 - 1, toMinutes(time) + duration)
+  return `${String(Math.floor(total / 60)).padStart(2, '0')}:${String(total % 60).padStart(2, '0')}`
+}
+
+// 90 -> "1h 30m", 45 -> "45m", 120 -> "2h".
+export function formatMinutes(minutes) {
+  const h = Math.floor(minutes / 60)
+  const m = minutes % 60
+  if (h === 0) return `${m}m`
+  return m === 0 ? `${h}h` : `${h}h ${m}m`
+}
+
+// A day's planned time and its problems:
+// - total: all expected minutes of that day's tasks and habits
+// - overlaps: pairs of timed tasks where one starts before the other ends
+export function dayLoad(goals, key) {
+  const all = [...tasksOn(goals, key), ...habitsOn(goals, key)]
+  const total = all.reduce((sum, g) => sum + (g.duration || 0), 0)
+  const timed = tasksOn(goals, key).filter(t => t.time && t.duration)
+  const overlaps = []
+  for (let i = 0; i < timed.length; i++) {
+    for (let j = i + 1; j < timed.length; j++) {
+      const a = timed[i]
+      const b = timed[j]
+      if (toMinutes(b.time) < toMinutes(a.time) + a.duration) overlaps.push([a, b])
+    }
+  }
+  return { total, overlaps }
+}
+
 // How many of a day's tasks and habits are done.
 export function dayCounts(goals, key) {
   const tasks = tasksOn(goals, key)

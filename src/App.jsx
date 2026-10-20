@@ -72,6 +72,8 @@ function loadItems() {
       date: null,
       time: null,
       plannedDate: null,
+      importance: 0,
+      duration: null,
       repeat: null,
       target: null,
       repeatSince: null,

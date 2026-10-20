@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { skipTask, snoozeTask, swapTasks } from './goalActions.js'
 import { tasksOn, todayKey } from './calendar.js'
 import { colorOf } from './colors.js'
+import { ImportanceIcon } from './TaskExtras.jsx'
 
 // The time right now as '14:05', to compare with task times.
 function nowTime() {
@@ -21,6 +22,7 @@ function NowRow({ task, label, goals, items, apply, swapOptions }) {
         <a href={`#goal/${task.id}`} className="goal-link goal-title">
           <span className="goal-dot" style={{ background: colorOf(goals, task) }} />
           {task.title}
+          <ImportanceIcon importance={task.importance} color={colorOf(goals, task)} />
         </a>
         <span className="now-label">{label}</span>
       </div>
@@ -60,7 +62,9 @@ function NowRow({ task, label, goals, items, apply, swapOptions }) {
               className="chip"
               onClick={() => apply(swapTasks(items, task.id, other.id))}
             >
+              <span className="goal-dot" style={{ background: colorOf(goals, other) }} />
               {other.time} {other.title}
+              <ImportanceIcon importance={other.importance} color={colorOf(goals, other)} />
             </button>
           ))}
         </div>
@@ -79,9 +83,10 @@ function NowBox({ goals, items, apply }) {
   const due = timed.filter(t => t.time <= now)
   const next = timed.find(t => t.time > now)
   // ASAP tasks: only the ones you marked "Show in Now (ASAP)".
-  const asap = goals.filter(
-    g => g.asap && !g.date && !g.done && !(g.hiddenUntil && g.hiddenUntil > today),
-  )
+  const byImportance = (a, b) => (b.importance || 0) - (a.importance || 0)
+  const asap = goals
+    .filter(g => g.asap && !g.date && !g.done && !(g.hiddenUntil && g.hiddenUntil > today))
+    .sort(byImportance)
 
   if (due.length === 0 && !next && asap.length === 0) return null
 
@@ -93,7 +98,8 @@ function NowBox({ goals, items, apply }) {
       goals={goals}
       items={items}
       apply={apply}
-      swapOptions={timed.filter(t => t.id !== task.id)}
+      // Swap suggests the most important tasks first.
+      swapOptions={timed.filter(t => t.id !== task.id).sort(byImportance)}
     />
   )
 

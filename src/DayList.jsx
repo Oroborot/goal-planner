@@ -1,5 +1,6 @@
 import { toggleGoal } from './goalActions.js'
-import { dayLabel, habitsOn, tasksOn, todayKey } from './calendar.js'
+import { dayLabel, endTime, formatMinutes, habitsOn, tasksOn, todayKey } from './calendar.js'
+import { ImportanceIcon } from './TaskExtras.jsx'
 import { colorOf } from './colors.js'
 
 // One row: tick box (or a mark), time, color dot and title.
@@ -13,11 +14,19 @@ function Row({ goal, goals, time, done, onToggle, label }) {
           {done ? '✓' : '·'}
         </span>
       )}
-      <span className="day-time">{time}</span>
+      <span className="day-time">
+        {time}
+        {goal.duration && (
+          <span className="day-duration">
+            {goal.time ? `–${endTime(goal.time, goal.duration)}` : formatMinutes(goal.duration)}
+          </span>
+        )}
+      </span>
       <div className="goal-text">
         <a href={`#goal/${goal.id}`} className="goal-title goal-link">
           <span className="goal-dot" style={{ background: colorOf(goals, goal) }} />
           {goal.title}
+          <ImportanceIcon importance={goal.importance} color={colorOf(goals, goal)} />
         </a>
         {goal.plannedDate && (
           <span className="goal-meta">Done early · planned for {dayLabel(goal.plannedDate)}</span>
