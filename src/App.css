@@ -368,6 +368,8 @@ li.done { opacity: 0.75; }
 .checklist-items li { padding: 0.35rem 0.6rem; margin-bottom: 0.3rem; }
 .checklist-text { flex: 1; min-width: 0; color: var(--text-h); overflow-wrap: anywhere; }
 .checklist-items li.done .checklist-text { text-decoration: line-through; opacity: 0.6; }
-.checklist-add input { width: 100%; }
+.checklist-add { display: flex; align-items: center; gap: 0.6rem; padding: 0.2rem 0.6rem; border: 1px dashed var(--border); border-radius: 14px; }
+.checklist-add input { flex: 1; min-width: 0; border: 0; background: transparent; padding: 0; }
+.checklist-new-box { flex: 0 0 22px; width: 22px; height: 22px; margin-left: 0.25rem; box-sizing: border-box; border: 2px solid var(--border); border-radius: 5px; }
 .checklist h2 .goal-meta { margin-left: 0.4rem; font-weight: 400; }
 .checklist-add { margin-bottom: 0.75rem; }

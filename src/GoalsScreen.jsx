@@ -30,6 +30,8 @@ function GoalsScreen({ items, events, apply, timeframe, setTimeframe }) {
   // Only one of these is open at a time; null means none.
   const [editingId, setEditingId] = useState(null)
   const [addingUnderId, setAddingUnderId] = useState(null)
+  // The add form is folded until you tap "＋ Add a goal".
+  const [showAdd, setShowAdd] = useState(false)
 
   const goals = activeGoals(items)
   const visibleGoals = goals.filter(goal => goal.timeframe === timeframe)
@@ -110,6 +112,11 @@ function GoalsScreen({ items, events, apply, timeframe, setTimeframe }) {
         ))}
       </div>
 
+      {!showAdd ? (
+        <button type="button" className="secondary add-toggle" onClick={() => setShowAdd(true)}>
+          ＋ Add a {labelOf(timeframe).toLowerCase()} goal
+        </button>
+      ) : (
       <form className="goal-form" onSubmit={submitNewGoal}>
         <input
           value={title}
@@ -150,8 +157,14 @@ function GoalsScreen({ items, events, apply, timeframe, setTimeframe }) {
           aria-label="Why"
         />
         {timeframe === 'day' && <WhenFields when={when} onChange={setWhen} />}
-        <button type="submit">Add</button>
+        <div className="row">
+          <button type="button" className="secondary" onClick={() => setShowAdd(false)}>
+            Close
+          </button>
+          <button type="submit">Add</button>
+        </div>
       </form>
+      )}
 
       {visibleGoals.length === 0 ? (
         <p className="empty">No {labelOf(timeframe).toLowerCase()} goals yet.</p>
