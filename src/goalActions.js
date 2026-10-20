@@ -8,6 +8,7 @@ import { activeGoals, percent, progressOf, settleCompletion } from './progress.j
 import { makeEvent } from './history.js'
 import { sizeOf } from './timeframes.js'
 import { todayKey } from './repeat.js'
+import { addDaysKey } from './calendar.js'
 
 // A new goal with all its fields filled in.
 function makeGoal(title, timeframe, parentIds, why = '') {
@@ -39,6 +40,10 @@ function makeGoal(title, timeframe, parentIds, why = '') {
     // Set when a task is done before its planned day: the day it was
     // planned for (it then moves to the day it was actually done).
     plannedDate: null,
+    // Show in the Now box as ASAP (only for tasks with no date); and the day
+    // a task was skipped from, shown as "Skipped from Tue".
+    asap: false,
+    skippedFrom: null,
   }
 }
 
@@ -59,6 +64,7 @@ export function addGoal(items, title, timeframe, parentIds, why = '', when = {})
   if (timeframe === 'day') {
     goal.date = when.date || null
     goal.time = (when.date && when.time) || null
+    goal.asap = !when.date && Boolean(when.asap)
   }
   const events = [
     makeEvent('created', goal, { timeframe }),
@@ -67,6 +73,44 @@ export function addGoal(items, title, timeframe, parentIds, why = '', when = {})
     ),
   ]
   return finish([...items, goal], events, parentIds)
+}
+
+// "Now" box: push a timed task later today by `minutes` (stops at 23:59).
+export function snoozeTask(items, id, minutes) {
+  const task = items.find(item => item.id === id)
+  const [h, m] = task.time.split(':').map(Number)
+  const total = Math.min(23 * 60 + 59, h * 60 + m + minutes)
+  const time = `${String(Math.floor(total / 60)).padStart(2, '0')}:${String(total % 60).padStart(2, '0')}`
+  return {
+    items: items.map(item => (item.id === id ? { ...item, time } : item)),
+    events: [makeEvent('snoozed', task, { minutes, time })],
+  }
+}
+
+// "Now" box: not today. A dated task moves to tomorrow; an ASAP task (no
+// date) is hidden from the Now box until tomorrow.
+export function skipTask(items, id) {
+  const task = items.find(item => item.id === id)
+  const tomorrow = addDaysKey(todayKey(), 1)
+  const changes = task.date ? { date: tomorrow, skippedFrom: task.date } : { hiddenUntil: tomorrow }
+  return {
+    items: items.map(item => (item.id === id ? { ...item, ...changes } : item)),
+    events: [makeEvent('skipped', task, { asap: !task.date })],
+  }
+}
+
+// "Now" box: two of today's timed tasks trade their time slots.
+export function swapTasks(items, id, otherId) {
+  const a = items.find(item => item.id === id)
+  const b = items.find(item => item.id === otherId)
+  return {
+    items: items.map(item => {
+      if (item.id === a.id) return { ...item, time: b.time }
+      if (item.id === b.id) return { ...item, time: a.time }
+      return item
+    }),
+    events: [makeEvent('swapped', a, { withId: b.id, withTitle: b.title })],
+  }
 }
 
 // Quick add from the ＋ sheet: a Day goal that repeats every day.
@@ -140,11 +184,13 @@ export function saveGoal(items, id, changes, childIds) {
   // Only one-time Day goals sit on a calendar date; repeating goals use
   // their repeat days instead. Being on the calendar is optional.
   if (after.timeframe !== 'day' || after.repeat || !after.date) Object.assign(after, { date: null, time: null })
+  // ASAP is only for one-time Day tasks without a date.
+  if (after.timeframe !== 'day' || after.repeat || after.date) after.asap = false
   const events = []
 
   // Which fields changed.
   const same = (a, b) => JSON.stringify(a) === JSON.stringify(b)
-  const fields = ['title', 'timeframe', 'why', 'repeat', 'target', 'color', 'date', 'time'].filter(
+  const fields = ['title', 'timeframe', 'why', 'repeat', 'target', 'color', 'date', 'time', 'asap'].filter(
     field => !same(before[field], after[field]),
   )
   if (fields.length > 0) events.push(makeEvent('edited', after, { fields }))

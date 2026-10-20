@@ -62,7 +62,7 @@ function GoalEditForm({ goal, goals, onSave, onCancel }) {
   })
   const noDaysPicked = repeat.mode === 'days' && repeat.days.length === 0
   // Date and optional time, for one-time Day goals (calendar tasks).
-  const [when, setWhen] = useState({ date: goal.date || '', time: goal.time || '' })
+  const [when, setWhen] = useState({ date: goal.date || '', time: goal.time || '', asap: Boolean(goal.asap) })
   const onCalendar = timeframe === 'day' && repeat.mode === 'none'
 
   const parentOptions = biggerGoals(goals, timeframe, goal.id)
@@ -91,6 +91,7 @@ function GoalEditForm({ goal, goals, onSave, onCancel }) {
         color,
         date: onCalendar ? when.date || null : null,
         time: onCalendar && when.date ? when.time || null : null,
+        asap: onCalendar && !when.date ? Boolean(when.asap) : false,
         repeat: repeats ? { days: repeat.mode === 'daily' ? EVERY_DAY : repeat.days } : null,
         target: repeats
           ? { per: repeat.per, times: repeat.per === 'day' ? 1 : Number(repeat.times) || 1 }

@@ -24,7 +24,7 @@ function GoalsScreen({ items, events, apply, timeframe, setTimeframe }) {
   // More parents can be added later with the ✎ button.
   const [parentId, setParentId] = useState('')
   // Date and optional time for a new Day goal (a calendar task).
-  const [when, setWhen] = useState({ date: '', time: '' })
+  const [when, setWhen] = useState({ date: '', time: '', asap: false })
   // The goal being edited (✎), and the goal getting a new smaller goal (＋).
   // Only one of these is open at a time; null means none.
   const [editingId, setEditingId] = useState(null)
@@ -70,7 +70,7 @@ function GoalsScreen({ items, events, apply, timeframe, setTimeframe }) {
     if (!title.trim()) return
     apply(addGoal(items, title.trim(), timeframe, parentId ? [parentId] : [], why.trim(), when))
     // Keep the date for the next task; the time is usually different.
-    setWhen({ ...when, time: '' })
+    setWhen({ ...when, time: '', asap: false })
     setTitle('')
     setWhy('')
     setParentId('')

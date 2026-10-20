@@ -22,6 +22,9 @@ function Row({ goal, goals, time, done, onToggle, label }) {
         {goal.plannedDate && (
           <span className="goal-meta">Done early · planned for {dayLabel(goal.plannedDate)}</span>
         )}
+        {goal.skippedFrom && !goal.done && (
+          <span className="goal-meta">Skipped from {dayLabel(goal.skippedFrom)}</span>
+        )}
       </div>
     </li>
   )

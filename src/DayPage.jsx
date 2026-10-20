@@ -5,6 +5,7 @@ import { addDaysKey, dayCounts, dayLabel, parseKey, todayKey } from './calendar.
 import { biggerGoals, labelOf } from './timeframes.js'
 import DayList from './DayList.jsx'
 import ViewSwitch from './ViewSwitch.jsx'
+import NowBox from './NowBox.jsx'
 
 // One day of the calendar: the tasks planned for it (Day goals with that
 // date) and the habits planned for that weekday. ← → move day by day.
@@ -56,6 +57,8 @@ function DayPage({ dateKey, items, apply }) {
           Back to today
         </a>
       )}
+
+      {dateKey === today && <NowBox goals={goals} items={items} apply={apply} />}
 
       <p className="goal-meta day-summary">
         {total === 0 ? 'Nothing planned yet.' : `${done} of ${total} done`}

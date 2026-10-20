@@ -114,6 +114,16 @@ li.done .goal-title { text-decoration: line-through; opacity: 0.5; }
 .plain-links { margin-bottom: 0.5rem; }
 .plain-links li { min-height: 44px; }
 
+/* Now box at the top of Today: due/overdue, next up, ASAP; buttons per task. */
+.now-box { margin: 0.5rem 0; padding: 0.5rem 0.75rem; border: 1px solid var(--accent-border); border-radius: 12px; background: var(--accent-bg); }
+.now-box h2 { margin: 0.25rem 0; font-size: 16px; }
+.now-box li.now-row { display: block; padding: 0.4rem 0; }
+.now-main { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
+.now-label { flex-shrink: 0; font-size: 0.8em; color: var(--text); }
+.now-actions { display: flex; gap: 0.35rem; margin-top: 0.35rem; }
+.now-actions button { flex: 1; min-height: 36px; padding: 0 0.4rem; font-size: 0.85em; }
+.now-choices { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-top: 0.35rem; }
+
 /* Day page: ← title →, the day's summary, and the task list with times. */
 .day-nav { display: flex; align-items: center; gap: 0.5rem; }
 .day-nav-title { flex: 1; text-align: center; }

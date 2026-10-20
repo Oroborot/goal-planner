@@ -2,7 +2,8 @@ import { todayKey } from './repeat.js'
 
 // "Add to calendar" for a Day goal: off = no date or time;
 // on = a date (today to start) and an optional time.
-// `when` is { date, time } with '' meaning "not set".
+// When it's off, "Show in Now (ASAP)" puts it in the Now box on Today.
+// `when` is { date, time, asap } with '' meaning "not set".
 function WhenFields({ when, onChange }) {
   const onCalendar = Boolean(when.date)
   return (
@@ -11,12 +12,14 @@ function WhenFields({ when, onChange }) {
         <input
           type="checkbox"
           checked={onCalendar}
-          onChange={e => onChange(e.target.checked ? { date: todayKey(), time: '' } : { date: '', time: '' })}
+          onChange={e =>
+            onChange(e.target.checked ? { date: todayKey(), time: '', asap: false } : { date: '', time: '', asap: when.asap })
+          }
           aria-label="Add to calendar"
         />
         <span>📅 Add to calendar</span>
       </label>
-      {onCalendar && (
+      {onCalendar ? (
         <div className="row">
           <input
             type="date"
@@ -32,6 +35,16 @@ function WhenFields({ when, onChange }) {
             aria-label="Time (optional)"
           />
         </div>
+      ) : (
+        <label className="done-toggle">
+          <input
+            type="checkbox"
+            checked={Boolean(when.asap)}
+            onChange={e => onChange({ ...when, asap: e.target.checked })}
+            aria-label="Show in Now (ASAP)"
+          />
+          <span>⚡ Show in Now (ASAP)</span>
+        </label>
       )}
     </div>
   )

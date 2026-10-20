@@ -44,6 +44,11 @@ A place to collect visual ideas for later. Nothing here is being built yet. Add 
 - Side menu by swiping from the left edge (no Menu button): Views, Settings, History, Archive, Note categories; later Statistics, Folders, Backup, Help.
 - Icons live in one place so they can be swapped for other sets or custom-made icons.
 
+## Focus mode
+
+- One task fills the screen: title, its "why", the timer, Done / Back.
+- Room for design: calm visuals (one of the timer looks: liquid, hourglass, dominoes, burning wood), maybe soft background sounds or a sound when time is up.
+
 ## Customize (user preferences)
 
 - A **Customize** section (in Settings) where the user picks:
