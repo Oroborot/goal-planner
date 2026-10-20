@@ -23,6 +23,7 @@ import { biggerGoals, labelOf } from './timeframes.js'
 import DayList from './DayList.jsx'
 import ViewSwitch from './ViewSwitch.jsx'
 import NowBox from './NowBox.jsx'
+import Leftovers from './Leftovers.jsx'
 import BackLink from './BackLink.jsx'
 
 // One day of the calendar: the tasks planned for it (Day goals with that
@@ -102,6 +103,7 @@ function DayPage({ dateKey, items, apply }) {
         </a>
       )}
 
+      {dateKey === today && <Leftovers goals={goals} items={items} apply={apply} />}
       {dateKey === today && <NowBox goals={goals} items={items} apply={apply} />}
 
       <p className="goal-meta day-summary">

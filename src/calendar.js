@@ -49,6 +49,14 @@ export function tasksOn(goals, key) {
     })
 }
 
+// Unfinished tasks from earlier days (not habits), oldest first.
+export function leftovers(goals) {
+  const today = todayKey()
+  return goals
+    .filter(g => g.date && g.date < today && !g.done && !g.repeat)
+    .sort((a, b) => a.date.localeCompare(b.date))
+}
+
 // Habits planned for that weekday, from the day they started repeating.
 export function habitsOn(goals, key) {
   const day = parseKey(key)

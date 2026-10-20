@@ -1,4 +1,6 @@
+import { useState } from 'react'
 import { toggleGoal } from './goalActions.js'
+import MoveMenu from './MoveMenu.jsx'
 import { dayEntries, dayLabel, endTime, formatMinutes, todayKey } from './calendar.js'
 import { colorOf } from './colors.js'
 import { ImportanceIcon } from './TaskExtras.jsx'
@@ -6,8 +8,11 @@ import { showTime } from './settings.js'
 
 // One row: tick box (or a mark), time (and end time), color dot, title.
 // Habits get a ↻; chained ones say what they come after.
-function Row({ entry, goals, onToggle }) {
+function Row({ entry, goals, items, apply, onToggle }) {
   const { goal, time, done, habit, level } = entry
+  // The Move menu under the title, open or folded.
+  const [moving, setMoving] = useState(false)
+  const canMove = !habit && !done && apply
   const anchor = goal.after && goals.find(g => g.id === goal.after)
   const classes = [done ? 'done' : '', level ? `chained level-${Math.min(level, 3)}` : '']
   return (
@@ -51,7 +56,21 @@ function Row({ entry, goals, onToggle }) {
         {goal.skippedFrom && !goal.done && (
           <span className="goal-meta">Skipped from {dayLabel(goal.skippedFrom)}</span>
         )}
+        {moving && (
+          <MoveMenu goal={goal} items={items} apply={apply} onDone={() => setMoving(false)} />
+        )}
       </div>
+      {canMove && (
+        <button
+          type="button"
+          className="icon-button move-button"
+          onClick={() => setMoving(!moving)}
+          aria-label={moving ? 'Close move' : `Move "${goal.title}" to another day`}
+          aria-expanded={moving}
+        >
+          {moving ? '✕' : '↷'}
+        </button>
+      )}
     </li>
   )
 }
@@ -74,6 +93,8 @@ function DayList({ dateKey, goals, items, apply, compact = false }) {
           key={entry.goal.id}
           entry={entry}
           goals={goals}
+          items={items}
+          apply={compact ? null : apply}
           onToggle={
             entry.habit && !isToday ? null : () => apply(toggleGoal(items, entry.goal.id))
           }

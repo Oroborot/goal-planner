@@ -371,3 +371,19 @@ li.done { opacity: 0.75; }
 .checklist-add input { width: 100%; }
 .checklist h2 .goal-meta { margin-left: 0.4rem; font-weight: 400; }
 .checklist-add { margin-bottom: 0.75rem; }
+
+/* Move a task to another day (↷ on a Day row). */
+.move-button { margin-left: auto; align-self: center; opacity: 0.7; }
+.move-menu { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.5rem; }
+.move-menu button { min-height: 32px; padding: 0 0.7rem; font-size: 0.85em; }
+.move-menu input[type='date'] { flex: 1 1 8rem; min-height: 32px; font-size: 0.85em; }
+
+/* "3 left from earlier · Move all to today" on Today. */
+.leftovers { margin: 0 0 1rem; padding: 0.75rem; border: 1px solid var(--accent-border); border-radius: 12px; background: var(--accent-bg); }
+.leftovers-head { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
+.leftovers-head .link-button { color: var(--text-h); font-size: 0.95em; padding-left: 0; }
+.leftovers-head > button:last-child { min-height: 36px; padding: 0 0.8rem; font-size: 0.85em; }
+.leftovers-list { list-style: none; margin: 0.5rem 0 0; padding: 0; }
+.leftovers-list li { display: flex; align-items: center; gap: 0.5rem; padding: 0.35rem 0; border-top: 1px solid var(--border); }
+.leftovers-list .goal-link { flex: 1; color: var(--text-h); }
+.leftovers-list button { min-height: 30px; padding: 0 0.7rem; font-size: 0.85em; }

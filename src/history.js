@@ -72,6 +72,7 @@ const EVENT_TEXT = {
   'subitem-unticked': e => `Checklist: unticked “${e.text}”`,
   'subitem-removed': e => `Checklist: removed “${e.text}”`,
   moved: e => `Moved ${e.minutes < 0 ? 'earlier' : 'later'} to ${showTime(e.time)}`,
+  rescheduled: e => `Moved from ${e.from ? shortDate(e.from) : 'no date'} to ${shortDate(e.to)}`,
   skipped: e => (e.asap ? 'Skipped for today' : 'Skipped: moved to tomorrow'),
   swapped: e => `Swapped time with “${e.withTitle}”`,
   timed: e => `Timer: ${formatSeconds(e.seconds)} (${e.mode === 'down' ? 'countdown' : 'count up'})`,

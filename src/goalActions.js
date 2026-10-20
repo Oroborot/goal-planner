@@ -166,6 +166,18 @@ export function skipTask(items, id) {
   }
 }
 
+// Move: put tasks on another day (Today / Tomorrow / Next week / a date).
+// Works for one task or many ("Move all to today").
+export function moveToDay(items, ids, date) {
+  const moving = items.filter(item => ids.includes(item.id))
+  return {
+    items: items.map(item =>
+      ids.includes(item.id) ? { ...item, date, skippedFrom: null } : item,
+    ),
+    events: moving.map(task => makeEvent('rescheduled', task, { from: task.date, to: date })),
+  }
+}
+
 // "Now" box: two of today's timed tasks trade their time slots.
 export function swapTasks(items, id, otherId) {
   const a = items.find(item => item.id === id)
