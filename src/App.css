@@ -133,6 +133,31 @@ li.done .goal-title { text-decoration: line-through; opacity: 0.5; }
 .focus-done { width: 100%; min-height: 52px; margin-top: 1rem; font-size: 1.1em; }
 .now-choices { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-top: 0.35rem; }
 
+/* Day timeline: hours down the left, tasks as blocks, "Anytime" on top. */
+.day-view-switch { margin-top: 0.75rem; }
+.add-toggle { width: 100%; border-style: dashed; color: var(--text); }
+.goal-form .row > button { flex: 1; }
+.anytime { display: flex; flex-wrap: wrap; align-items: center; gap: 0.35rem; margin-bottom: 0.5rem; }
+.anytime-chip { display: inline-flex; align-items: center; gap: 0.3rem; min-height: 32px; padding: 0 0.6rem; border: 1px solid var(--border); border-radius: 999px; font-size: 0.85em; }
+.anytime-chip input, .timeline-block input { width: 16px; height: 16px; min-height: 0; margin: 0; accent-color: var(--accent); }
+.anytime-chip .goal-dot { margin-right: 0; }
+.anytime-chip.done a, .timeline-block.done .timeline-title { text-decoration: line-through; opacity: 0.6; }
+.timeline { position: relative; margin-bottom: 1rem; }
+.timeline-hour { position: absolute; left: 0; right: 0; height: 56px; border-top: 1px solid var(--border); }
+.timeline-hour span { position: absolute; top: -0.6em; left: 0; width: 3.2rem; padding-right: 0.3rem; background: var(--bg); font-family: var(--mono); font-size: 0.7em; color: var(--text); }
+.timeline-now { position: absolute; left: 3.2rem; right: 0; z-index: 2; border-top: 2px solid #e5484d; }
+.timeline-block { position: absolute; z-index: 1; display: flex; flex-direction: column; overflow: hidden; padding: 2px 0.4rem; box-sizing: border-box; border: 1px solid var(--border); border-left: 4px solid; border-radius: 6px; background: var(--accent-bg); font-size: 0.85em; }
+.timeline-block.no-duration { border-style: dashed; border-left-style: solid; background: transparent; }
+.timeline-block.chained { border-top-style: dotted; }
+.timeline-block-main { display: flex; align-items: center; gap: 0.35rem; min-width: 0; }
+.timeline-block { cursor: pointer; }
+.timeline-block.selected { z-index: 3; border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+.timeline-block.selected .timeline-block-main { padding-right: 3.4rem; }
+.timeline-title { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text-h); text-decoration: none; }
+.timeline-time { font-size: 0.8em; color: var(--text); }
+.timeline-move { position: absolute; top: 1px; right: 2px; display: flex; gap: 2px; }
+.timeline-move button { width: 26px; min-height: 24px; padding: 0; border-color: var(--border); background: var(--bg); font-size: 0.85em; }
+
 /* Day page: ← title →, the day's summary, and the task list with times. */
 .day-nav { display: flex; align-items: center; gap: 0.5rem; }
 .day-nav-title { flex: 1; text-align: center; }

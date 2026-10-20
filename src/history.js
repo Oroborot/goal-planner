@@ -67,6 +67,7 @@ const EVENT_TEXT = {
   deleted: () => 'Deleted',
   restored: () => 'Restored',
   snoozed: e => `Later: moved ${e.minutes} min, to ${showTime(e.time)}`,
+  moved: e => `Moved ${e.minutes < 0 ? 'earlier' : 'later'} to ${showTime(e.time)}`,
   skipped: e => (e.asap ? 'Skipped for today' : 'Skipped: moved to tomorrow'),
   swapped: e => `Swapped time with “${e.withTitle}”`,
   timed: e => `Timer: ${formatSeconds(e.seconds)} (${e.mode === 'down' ? 'countdown' : 'count up'})`,

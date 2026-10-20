@@ -14,6 +14,10 @@ import {
 } from './calendar.js'
 import { TaskExtrasFields } from './TaskExtras.jsx'
 import TimePicker from './TimePicker.jsx'
+import DayTimeline from './DayTimeline.jsx'
+
+// Where the List / Timeline choice is remembered.
+const VIEW_KEY = 'planner-day-view'
 import { showTime } from './settings.js'
 import { biggerGoals, labelOf } from './timeframes.js'
 import DayList from './DayList.jsx'
@@ -28,6 +32,24 @@ function DayPage({ dateKey, items, apply }) {
   const [time, setTime] = useState('')
   const [parentId, setParentId] = useState('')
   const [extras, setExtras] = useState({ importance: 0, duration: '' })
+  // The add form is folded until you open it.
+  const [adding, setAdding] = useState(false)
+  // List or Timeline, remembered on this device.
+  const [view, setView] = useState(() => {
+    try {
+      return localStorage.getItem(VIEW_KEY) || 'list'
+    } catch {
+      return 'list'
+    }
+  })
+  function changeView(next) {
+    setView(next)
+    try {
+      localStorage.setItem(VIEW_KEY, next)
+    } catch {
+      // Not saved; the switch still works for now.
+    }
+  }
 
   const today = todayKey()
   const day = parseKey(dateKey)
@@ -97,12 +119,19 @@ function DayPage({ dateKey, items, apply }) {
         </p>
       ))}
 
+      {/* The add form stays folded until you tap "＋ Add a task". */}
+      {!adding ? (
+        <button type="button" className="secondary add-toggle" onClick={() => setAdding(true)}>
+          ＋ Add a task for {dayLabel(dateKey).toLowerCase()}
+        </button>
+      ) : (
       <form className="goal-form" onSubmit={submit}>
         <input
           value={title}
           onChange={e => setTitle(e.target.value)}
           placeholder={`Add a task for ${dayLabel(dateKey).toLowerCase()}…`}
           aria-label="New task"
+          autoFocus
         />
         <TimePicker value={time} onChange={setTime} label="Time" />
         <div className="row">
@@ -116,10 +145,37 @@ function DayPage({ dateKey, items, apply }) {
           </select>
         </div>
         <TaskExtrasFields value={extras} onChange={setExtras} />
-        <button type="submit">Add</button>
+        <div className="row">
+          <button type="button" className="secondary" onClick={() => setAdding(false)}>
+            Close
+          </button>
+          <button type="submit">Add</button>
+        </div>
       </form>
+      )}
 
-      {total > 0 && <DayList dateKey={dateKey} goals={goals} items={items} apply={apply} />}
+      <div className="tabs day-view-switch">
+        {[
+          { value: 'list', label: 'List' },
+          { value: 'timeline', label: 'Timeline' },
+        ].map(v => (
+          <button
+            key={v.value}
+            type="button"
+            className={view === v.value ? 'tab active' : 'tab'}
+            aria-pressed={view === v.value}
+            onClick={() => changeView(v.value)}
+          >
+            {v.label}
+          </button>
+        ))}
+      </div>
+
+      {view === 'timeline' ? (
+        <DayTimeline dateKey={dateKey} goals={goals} items={items} apply={apply} />
+      ) : (
+        total > 0 && <DayList dateKey={dateKey} goals={goals} items={items} apply={apply} />
+      )}
     </div>
   )
 }

@@ -97,6 +97,19 @@ export function snoozeTask(items, id, minutes) {
   }
 }
 
+// Timeline ↑ ↓: move a timed task earlier (negative) or later by `minutes`,
+// staying within the day (00:00–23:59).
+export function moveTask(items, id, minutes) {
+  const task = items.find(item => item.id === id)
+  const [h, m] = task.time.split(':').map(Number)
+  const total = Math.min(23 * 60 + 59, Math.max(0, h * 60 + m + minutes))
+  const time = `${String(Math.floor(total / 60)).padStart(2, '0')}:${String(total % 60).padStart(2, '0')}`
+  return {
+    items: items.map(item => (item.id === id ? { ...item, time } : item)),
+    events: [makeEvent('moved', task, { minutes, time })],
+  }
+}
+
 // "Now" box: not today. A dated task moves to tomorrow; an ASAP task (no
 // date) is hidden from the Now box until tomorrow.
 export function skipTask(items, id) {
