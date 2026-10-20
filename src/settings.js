@@ -1,9 +1,9 @@
 // Your preferences, saved in localStorage. More (colors, icons, fonts,
 // themes) come with "Customize" later.
-// { clock: '24' | '12' }
+// { clock: '24' | '12', theme: 'violet' | 'gold' | …, mode: 'dark' | 'light' | 'auto' }
 
 const SETTINGS_KEY = 'planner-settings'
-const DEFAULTS = { clock: '24' }
+const DEFAULTS = { clock: '24', theme: 'violet', mode: 'dark' }
 
 export function loadSettings() {
   try {

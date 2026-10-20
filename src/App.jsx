@@ -16,6 +16,7 @@ import FocusPage from './FocusPage.jsx'
 import GoalTree from './GoalTree.jsx'
 import SettingsPage from './SettingsPage.jsx'
 import { loadSettings, saveSettings } from './settings.js'
+import { applyTheme } from './themes.js'
 import { rememberPage } from './navHistory.js'
 import SideMenu from './SideMenu.jsx'
 import { ArchivePage, HistoryPage } from './MenuPages.jsx'
@@ -146,6 +147,17 @@ function App() {
     saveSettings(next)
     setSettings(next)
   }
+
+  // Put the chosen theme on the whole app. In Auto mode, also follow the
+  // phone when it switches between light and dark.
+  useEffect(() => {
+    applyTheme(settings.theme, settings.mode)
+    if (settings.mode !== 'auto' || !window.matchMedia) return
+    const query = window.matchMedia('(prefers-color-scheme: light)')
+    const follow = () => applyTheme(settings.theme, settings.mode)
+    query.addEventListener('change', follow)
+    return () => query.removeEventListener('change', follow)
+  }, [settings.theme, settings.mode])
   // Load a backup: everything on this device is replaced by the file's data.
   function restoreBackup(backup) {
     setItems(backup.items)

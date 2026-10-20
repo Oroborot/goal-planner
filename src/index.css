@@ -52,9 +52,13 @@
 
 /* On iPhones with a notch and a home bar, keep content out from under them
    (env(...) is 0 on screens without them). */
+/* The theme's soft glow (--glow) sits on top of its background color. */
 body {
   margin: 0;
   background: var(--bg);
+  background-image: var(--glow, none);
+  background-repeat: no-repeat;
+  min-height: 100vh;
   padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom)
     env(safe-area-inset-left);
 }
