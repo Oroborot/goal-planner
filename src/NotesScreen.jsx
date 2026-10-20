@@ -38,6 +38,8 @@ function NotesScreen({ items, apply }) {
   // new notes, so a note added while viewing "Ideas" lands in Ideas.
   const [categoryId, setCategoryId] = useState(null)
   const [newCategoryId, setNewCategoryId] = useState(null)
+  // The add form is folded until you tap "＋ Add a note".
+  const [showAdd, setShowAdd] = useState(false)
 
   const categories = activeCategories(items)
   const selected = categories.find(c => c.id === categoryId)
@@ -88,8 +90,14 @@ function NotesScreen({ items, apply }) {
       <BackLink fallback="#" />
       <h1>Notes</h1>
 
+      {!showAdd ? (
+        <button type="button" className="secondary add-toggle" onClick={() => setShowAdd(true)}>
+          ＋ Add a note
+        </button>
+      ) : (
       <form className="goal-form" onSubmit={submit}>
         <input
+          autoFocus
           value={title}
           onChange={e => setTitle(e.target.value)}
           placeholder="Write a note or a task…"
@@ -108,9 +116,15 @@ function NotesScreen({ items, apply }) {
             />
             <span>It's a task (has a tick box)</span>
           </label>
+        </div>
+        <div className="row">
+          <button type="button" className="secondary" onClick={() => setShowAdd(false)}>
+            Close
+          </button>
           <button type="submit">Add</button>
         </div>
       </form>
+      )}
 
       <input
         className="search"

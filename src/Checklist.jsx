@@ -8,8 +8,10 @@ function Checklist({ goal, items, apply }) {
   const list = goal.checklist || []
   const done = list.filter(c => c.done).length
 
+  // Adds what's typed. Runs on Enter, on ＋, and when you tap elsewhere,
+  // so typed text never sits there without becoming an item.
   function add(e) {
-    e.preventDefault()
+    e?.preventDefault()
     if (!text.trim()) return
     apply(addChecklistItem(items, goal.id, text.trim()))
     setText('')
@@ -44,12 +46,18 @@ function Checklist({ goal, items, apply }) {
         </ul>
       )}
       <form onSubmit={add} className="checklist-add">
+        <span className="checklist-new-box" aria-hidden="true" />
         <input
           value={text}
           onChange={e => setText(e.target.value)}
-          placeholder="Add an item and press Enter"
+          onBlur={() => add()}
+          placeholder="Add an item"
           aria-label="New checklist item"
+          enterKeyHint="done"
         />
+        <button type="submit" className="icon-button" aria-label="Add item">
+          ＋
+        </button>
       </form>
     </section>
   )
