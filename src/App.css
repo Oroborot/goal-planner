@@ -225,4 +225,17 @@ button.full { width: 100%; margin: 0.5rem 0; }
 .history-list li { display: flex; align-items: baseline; gap: 0.75rem; padding: 0.35rem 0; border-bottom: 1px solid var(--border); font-size: 0.9em; }
 .history-list time { flex-shrink: 0; min-width: 7.5em; font-size: 0.9em; color: var(--text); }
 .history-list span { color: var(--text-h); overflow-wrap: anywhere; }
-.history button { width: 100%; }
+.history > button { width: 100%; }
+
+/* History cleanup: a quiet Edit link, a small ✕ per entry, inline confirm. */
+.history-head { display: flex; align-items: center; justify-content: space-between; }
+.link-button { min-height: 32px; padding: 0 0.4rem; border: 0; background: none; color: var(--accent); font-size: 0.9em; }
+.link-button.danger, .row-confirm .danger { color: #e5484d; }
+.entry-delete { margin-left: auto; flex-shrink: 0; width: 32px; min-height: 28px; padding: 0; border: 0; background: none; color: var(--text); }
+.history-list li.confirming { background: rgba(229, 72, 77, 0.08); }
+.row-confirm { display: flex; align-items: center; gap: 0.25rem; color: var(--text-h); }
+.delete-all { margin-top: 1rem; }
+.confirm-all { margin-top: 1rem; padding: 0.75rem; border: 1px solid rgba(229, 72, 77, 0.5); border-radius: 10px; color: var(--text-h); }
+.confirm-all p { margin: 0 0 0.75rem; font-size: 0.9em; }
+.confirm-all .row button { flex: 1; }
+.danger-button { border-color: #e5484d; background: rgba(229, 72, 77, 0.15); }

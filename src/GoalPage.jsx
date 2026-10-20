@@ -48,7 +48,7 @@ function LinkedGoal({ goal, goals, onToggle }) {
 // bigger goals it counts toward. This is where goals are tracked.
 // `apply` saves a change and records it in the history log; `events` is the
 // history log itself.
-function GoalPage({ goalId, items, events, apply, timer, timerControls }) {
+function GoalPage({ goalId, items, events, apply, timer, timerControls, deleteEvents }) {
   // 'edit' while the ✎ form is open, 'add' while the ＋ form is open.
   const [mode, setMode] = useState(null)
 
@@ -88,7 +88,7 @@ function GoalPage({ goalId, items, events, apply, timer, timerControls }) {
             >
               Restore this goal
             </button>
-            <GoalHistory goalId={goalId} events={events} />
+            <GoalHistory goalId={goalId} events={events} deleteEvents={deleteEvents} />
           </>
         ) : (
           <p className="empty">This goal doesn't exist.</p>
@@ -236,7 +236,7 @@ function GoalPage({ goalId, items, events, apply, timer, timerControls }) {
         </>
       )}
 
-      <GoalHistory goalId={goal.id} events={events} />
+      <GoalHistory goalId={goal.id} events={events} deleteEvents={deleteEvents} />
     </div>
   )
 }

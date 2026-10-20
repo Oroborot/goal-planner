@@ -109,6 +109,12 @@ function App() {
     if (newEvents.length > 0) setEvents(previous => [...previous, ...newEvents])
   }
 
+  // History cleanup: remove some entries by id, or 'all' of them.
+  // Only the diary changes; goals and notes stay as they are.
+  function deleteEvents(ids) {
+    setEvents(previous => (ids === 'all' ? [] : previous.filter(e => !ids.includes(e.id))))
+  }
+
   // When the address changes (a link is tapped, or Back is pressed),
   // show the matching screen and start at the top of the page.
   useEffect(() => {
@@ -190,6 +196,7 @@ function App() {
         apply={apply}
         timer={timer}
         timerControls={timerControls}
+        deleteEvents={deleteEvents}
       />
     )
   } else if (screen.name === 'day') {
@@ -199,7 +206,7 @@ function App() {
   } else if (screen.name === 'month') {
     page = <MonthPage key={screen.monthKey} monthKey={screen.monthKey} items={items} apply={apply} />
   } else if (screen.name === 'history') {
-    page = <HistoryPage items={items} events={events} />
+    page = <HistoryPage items={items} events={events} deleteEvents={deleteEvents} />
   } else if (screen.name === 'archive') {
     page = <ArchivePage items={items} events={events} apply={apply} />
   } else if (screen.name === 'views') {
@@ -218,6 +225,7 @@ function App() {
         apply={apply}
         timer={timer}
         timerControls={timerControls}
+        deleteEvents={deleteEvents}
       />
     )
   } else {

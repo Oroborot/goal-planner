@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { childEventText, eventText, formatTime } from './history.js'
+import { childEventText, eventText } from './history.js'
+import EventRow from './EventRow.jsx'
 
 // How many entries to show before "Show all".
 const SHORT_LIST = 10
@@ -15,8 +16,10 @@ function times(n) {
 // The "History" section on a goal page: a few counts, then the diary of
 // everything that happened to this goal, newest first. It also shows smaller
 // goals being linked under it or unlinked from it.
-function GoalHistory({ goalId, events }) {
+// `deleteEvents` (optional) turns on the discreet Edit button for cleanup.
+function GoalHistory({ goalId, events, deleteEvents }) {
   const [showAll, setShowAll] = useState(false)
+  const [editing, setEditing] = useState(false)
 
   const own = events.filter(e => e.itemId === goalId)
   const fromChildren = events.filter(
@@ -34,7 +37,14 @@ function GoalHistory({ goalId, events }) {
 
   return (
     <section className="history">
-      <h2>History</h2>
+      <div className="history-head">
+        <h2>History</h2>
+        {deleteEvents && entries.length > 0 && (
+          <button type="button" className="link-button" onClick={() => setEditing(!editing)}>
+            {editing ? 'Done' : 'Edit'}
+          </button>
+        )}
+      </div>
       <p className="goal-meta">
         Ticked {times(ticked)} · Unticked {times(unticked)}
         {auto > 0 && ` · Completed automatically ${times(auto)}`}
@@ -44,10 +54,14 @@ function GoalHistory({ goalId, events }) {
       ) : (
         <ol className="history-list">
           {shown.map(({ event, text }) => (
-            <li key={event.id}>
-              <time dateTime={event.at}>{formatTime(event.at)}</time>
-              <span>{text}</span>
-            </li>
+            <EventRow
+              key={event.id}
+              event={event}
+              editing={editing}
+              onDelete={() => deleteEvents([event.id])}
+            >
+              {text}
+            </EventRow>
           ))}
         </ol>
       )}

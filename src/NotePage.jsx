@@ -25,7 +25,7 @@ function ItemLink({ item }) {
 }
 
 // The page for one note: its text, its links both ways, and its history.
-function NotePage({ noteId, items, events, apply, timer, timerControls }) {
+function NotePage({ noteId, items, events, apply, timer, timerControls, deleteEvents }) {
   const [editing, setEditing] = useState(false)
   const note = items.find(item => item.id === noteId && item.list === 'notes')
 
@@ -139,7 +139,7 @@ function NotePage({ noteId, items, events, apply, timer, timerControls }) {
         </>
       )}
 
-      <GoalHistory goalId={note.id} events={events} />
+      <GoalHistory goalId={note.id} events={events} deleteEvents={deleteEvents} />
     </div>
   )
 }

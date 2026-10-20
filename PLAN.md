@@ -147,7 +147,7 @@ Inspiration: Google Calendar (week/month overview), Todoist (daily list), Sunsam
 - [ ] **Backup (later, after the basics):** one button downloads all data as a file, one loads it back. Important because data lives only on the phone: deleting the app icon or losing the phone loses it. ~30 min, free.
 
 - [x] **Navigation menu:** built: bottom bar, ＋ sheet, side menu with History and Archive. Decided (see `DESIGN-IDEAS.md` → Navigation): bottom bar with icons only (Home, Calendar, round ＋ in the accent color, Goals, Notes), ＋ opens Task / Habit / Goal / Note; side menu by swiping from the left (Views, Settings, History, Archive, Note categories). Build in two parts: bottom bar + ＋ sheet (~60 min), then side menu + History + Archive (~60 min).
-- [ ] **History cleanup:** delete single history entries (e.g. mistakes) or the whole history, each with a confirmation. Keep it discreet: history folded away or reached from the menu, not always open. Note: deleting entries also changes the counts built from them (times ticked, timer totals).
+- [ ] **History cleanup (built, waiting for your OK):** delete single history entries (e.g. mistakes) or the whole history, each with a confirmation. Keep it discreet: history folded away or reached from the menu, not always open. Note: deleting entries also changes the counts built from them (times ticked, timer totals).
 
 ### Part 3: find the vibe
 
