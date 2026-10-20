@@ -172,6 +172,7 @@ Inspiration: Google Calendar (week/month overview), Todoist (daily list), Sunsam
 - [ ] **Task details:** notes, location or links inside a task; sub-tasks inside a task; a time estimate per task with a warning when a day is overloaded; task durations shown as block heights in the day/week views.
 - [ ] **Organizing:** several color-coded calendars (e.g. Work, Fitness) that can be shown/hidden; labels and filters; an Inbox for tasks with no date yet; time-blocking: drag a task from the Inbox onto a time in the calendar.
 - [ ] **Speed:** quick add by typing a sentence (e.g. "run tomorrow 7am") using a free date-parsing library, not AI; a typing shortcut/command bar.
+- [x] **Plan your day / Wrap up (built):** two views, picked in Settings or on the page: **Stepped** (Sunsama style, one step per screen) and **Compact** (everything on one page). Morning: left from earlier → today's list → ★ top 3 (shown in lists, first in the Now box) → load check → Start the day. Evening: what got done → not done (move) → energy 1–5 + note → tomorrow → Done. A card on Today (plan before 17:00, wrap-up after) until done; also in the side menu. Saved as a day record (in the backup) and in history; average energy in Stats.
 - [ ] **Routines:** guided morning planning; evening shutdown/reflection (also the daily review); weekly review; energy tracker (how drained or energetic a day is).
 - [ ] **Reminders before a task.** Warn before building: phone notifications while the app is closed may need a server (possible cost).
 

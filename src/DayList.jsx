@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { toggleGoal } from './goalActions.js'
 import MoveMenu from './MoveMenu.jsx'
+import { topIds } from './routine.js'
 import { dayEntries, dayLabel, endTime, formatMinutes, todayKey } from './calendar.js'
 import { colorOf } from './colors.js'
 import { ImportanceIcon } from './TaskExtras.jsx'
@@ -8,7 +9,7 @@ import { showTime } from './settings.js'
 
 // One row: tick box (or a mark), time (and end time), color dot, title.
 // Habits get a ↻; chained ones say what they come after.
-function Row({ entry, goals, items, apply, onToggle }) {
+function Row({ entry, goals, items, apply, onToggle, top }) {
   const { goal, time, done, habit, level } = entry
   // The Move menu under the title, open or folded.
   const [moving, setMoving] = useState(false)
@@ -42,6 +43,7 @@ function Row({ entry, goals, items, apply, onToggle }) {
           <span className="goal-dot" style={{ background: colorOf(goals, goal) }} />
           {goal.title}
           {habit && <span className="habit-tag"> ↻</span>}
+          {top && <span className="top-star" aria-label="Top task"> ★</span>}
           <ImportanceIcon importance={goal.importance} color={colorOf(goals, goal)} />
         </a>
         {anchor && <span className="goal-meta chain-note">⛓ after {anchor.title}</span>}
@@ -81,6 +83,8 @@ function Row({ entry, goals, items, apply, onToggle }) {
 function DayList({ dateKey, goals, items, apply, compact = false }) {
   const entries = dayEntries(goals, dateKey)
   const isToday = dateKey === todayKey()
+  // The day's ★ top tasks, picked in "Plan your day".
+  const top = topIds(items, dateKey)
 
   if (entries.length === 0) {
     return <p className="empty">Nothing planned.</p>
@@ -95,6 +99,7 @@ function DayList({ dateKey, goals, items, apply, compact = false }) {
           goals={goals}
           items={items}
           apply={compact ? null : apply}
+          top={top.includes(entry.goal.id)}
           onToggle={
             entry.habit && !isToday ? null : () => apply(toggleGoal(items, entry.goal.id))
           }

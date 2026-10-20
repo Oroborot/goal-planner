@@ -14,6 +14,11 @@ function SettingsPage({ settings, onChange, items, events, onRestore }) {
     { value: '12', label: '12-hour', example: '6:30 PM' },
   ]
 
+  const routineViews = [
+    { value: 'stepped', label: 'Stepped' },
+    { value: 'compact', label: 'Compact' },
+  ]
+
   // A row of choices where one is picked (dark/light/auto, 24h/12h).
   const choices = (list, key) => (
     <div className="tabs">
@@ -46,6 +51,10 @@ function SettingsPage({ settings, onChange, items, events, onRestore }) {
 
       <h2>Clock</h2>
       {choices(clocks, 'clock')}
+
+      <h2>Plan and wrap-up</h2>
+      {choices(routineViews, 'routineView')}
+      <p className="goal-meta">Stepped: one step per screen. Compact: everything on one page.</p>
 
       <BackupSection items={items} events={events} settings={settings} onRestore={onRestore} />
     </div>

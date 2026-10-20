@@ -418,3 +418,31 @@ li.done { opacity: 0.75; }
 .done-square.level-2 { background: var(--accent); opacity: 0.7; }
 .done-square.level-3 { background: var(--accent); }
 .done-square.level-future { background: transparent; }
+
+/* Plan your day / Wrap up (stepped and compact views). */
+.routine-start { display: flex; flex-direction: column; gap: 0.15rem; margin: 0 0 1rem; padding: 0.8rem 1rem; border: 1px solid var(--accent-border); border-radius: 14px; background: var(--accent-bg); color: var(--text-h); text-decoration: none; font-weight: 600; }
+.routine-view-switch { margin-bottom: 0.75rem; }
+.routine-progress { display: flex; gap: 4px; margin: 0 0 0.25rem; }
+.routine-progress span { flex: 1; height: 4px; border-radius: 2px; background: var(--border); }
+.routine-progress span.on { background: var(--accent); }
+.routine-card { margin: 0.5rem 0 1rem; padding: 1rem; border: 1px solid var(--border); border-radius: 16px; background: var(--surface, transparent); }
+.routine-card h2 { margin: 0 0 0.6rem; font-size: 1.1em; }
+.routine-list { list-style: none; margin: 0; padding: 0; }
+.routine-row { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem; padding: 0.45rem 0; border-top: 1px solid var(--border); }
+.routine-row:first-child { border-top: 0; }
+.routine-row-main { flex: 1; min-width: 0; display: flex; flex-direction: column; color: var(--text-h); text-align: left; }
+.routine-row-actions { display: flex; align-items: center; gap: 0.3rem; }
+.routine-row-actions .secondary { min-height: 32px; padding: 0 0.7rem; font-size: 0.85em; }
+.routine-row .move-menu { flex-basis: 100%; }
+.star-button { display: flex; align-items: center; width: 100%; gap: 0.5rem; border: 0; background: none; padding: 0.2rem 0; color: var(--text-h); }
+.star-button .star { font-size: 1.3em; color: var(--text); }
+.star-button.on .star, .top-star { color: #f5b301; }
+.routine-big { margin: 0; font-size: 1.8em; font-weight: 700; color: var(--text-h); }
+.routine-add { margin-top: 0.75rem; }
+.energy-picker { display: flex; gap: 0.3rem; margin: 0.4rem 0 0.6rem; }
+.energy-picker .tab { flex: 1; }
+.routine-note { width: 100%; box-sizing: border-box; padding: 0.6rem; border: 1px solid var(--border); border-radius: 10px; background: transparent; color: var(--text-h); font: inherit; resize: vertical; }
+.routine-nav { margin-top: 0.5rem; }
+.routine-finish { width: 100%; margin-top: 0.5rem; }
+.routine-start .goal-meta { font-weight: 400; }
+.routine-nav button { flex: 1; }

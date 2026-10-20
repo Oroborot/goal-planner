@@ -4,6 +4,7 @@ import ProgressBar from './ProgressBar.jsx'
 import { activeGoals, progressOf, percent } from './progress.js'
 import { repeatStats, bestStreak } from './repeat.js'
 import { labelOf } from './timeframes.js'
+import { energyByDay } from './routine.js'
 import { parseKey } from './calendar.js'
 import { countEvents, doneByDay, lastDays, shortDuration, sumOver, timeByDay, timeByGoal } from './stats.js'
 
@@ -53,6 +54,9 @@ function StatsPage({ items, events }) {
   const time = timeByDay(events)
   const skipped = countEvents(events, ['skipped'], from)
   const moved = countEvents(events, ['rescheduled', 'snoozed'], from)
+  // Energy from the evening wrap-up (1–5), on the days you rated it.
+  const energy = energyByDay(items)
+  const energyDays = days.filter(d => energy[d])
 
   // The habit with the longest streak going right now, and the best ever.
   const habits = goals.filter(g => g.repeat)
@@ -103,6 +107,10 @@ function StatsPage({ items, events }) {
         <div className="stat-card">
           <strong>{best}</strong>
           <span>best streak ever</span>
+        </div>
+        <div className="stat-card">
+          <strong>{energyDays.length > 0 ? (energyDays.reduce((s, d) => s + energy[d], 0) / energyDays.length).toFixed(1) : '–'}</strong>
+          <span>average energy (wrap-up)</span>
         </div>
         <div className="stat-card">
           <strong>{skipped}</strong>

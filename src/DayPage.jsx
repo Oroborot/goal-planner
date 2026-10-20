@@ -24,6 +24,21 @@ import DayList from './DayList.jsx'
 import ViewSwitch from './ViewSwitch.jsx'
 import NowBox from './NowBox.jsx'
 import Leftovers from './Leftovers.jsx'
+import { dayRecord, EVENING_HOUR } from './routine.js'
+
+// On Today: "☀ Plan your day" in the morning, "🌙 Wrap up" from 17:00,
+// until you've done it. Both are also in the side menu any time.
+function RoutineCard({ items, today }) {
+  const record = dayRecord(items, today)
+  const evening = new Date().getHours() >= EVENING_HOUR
+  if (evening ? record.wrappedAt : record.plannedAt) return null
+  return (
+    <a href={evening ? '#wrapup' : '#plan'} className="routine-start">
+      <span>{evening ? '🌙 Wrap up your day' : '☀ Plan your day'}</span>
+      <span className="goal-meta">{evening ? 'Review, move leftovers, rate energy' : 'Leftovers, top 3, check the load'} →</span>
+    </a>
+  )
+}
 import BackLink from './BackLink.jsx'
 
 // One day of the calendar: the tasks planned for it (Day goals with that
@@ -103,6 +118,7 @@ function DayPage({ dateKey, items, apply }) {
         </a>
       )}
 
+      {dateKey === today && <RoutineCard items={items} today={today} />}
       {dateKey === today && <Leftovers goals={goals} items={items} apply={apply} />}
       {dateKey === today && <NowBox goals={goals} items={items} apply={apply} />}
 

@@ -14,6 +14,7 @@ import BottomBar from './BottomBar.jsx'
 import AddSheet from './AddSheet.jsx'
 import FocusPage from './FocusPage.jsx'
 import StatsPage from './StatsPage.jsx'
+import RoutinePage from './RoutinePage.jsx'
 import GoalTree from './GoalTree.jsx'
 import SettingsPage from './SettingsPage.jsx'
 import { loadSettings, saveSettings } from './settings.js'
@@ -47,7 +48,7 @@ const STORAGE_KEY = 'planner-items'
 //   anything else -> the home screen
 function screenFromAddress() {
   const address = window.location.hash.slice(1)
-  if (['history', 'archive', 'views', 'settings', 'stats'].includes(address)) return { name: address }
+  if (['history', 'archive', 'views', 'settings', 'stats', 'plan', 'wrapup'].includes(address)) return { name: address }
   if (address.startsWith('focus/')) return { name: 'focus', goalId: address.slice(6) }
   if (address === 'day') return { name: 'day', dateKey: todayKey() }
   if (address === 'week') return { name: 'week', mondayKey: mondayOf(todayKey()) }
@@ -252,6 +253,18 @@ function App() {
         apply={apply}
         timer={timer}
         timerControls={timerControls}
+      />
+    )
+  } else if (screen.name === 'plan' || screen.name === 'wrapup') {
+    page = (
+      <RoutinePage
+        key={screen.name}
+        kind={screen.name}
+        items={items}
+        events={events}
+        apply={apply}
+        settings={settings}
+        onChangeSettings={changeSettings}
       />
     )
   } else if (screen.name === 'stats') {

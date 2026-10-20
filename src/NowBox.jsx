@@ -4,6 +4,7 @@ import { dayEntries, todayKey } from './calendar.js'
 import { colorOf } from './colors.js'
 import { ImportanceIcon } from './TaskExtras.jsx'
 import { showTime } from './settings.js'
+import { topIds } from './routine.js'
 
 // The time right now as '14:05', to compare with task times.
 function nowTime() {
@@ -95,7 +96,14 @@ function NowBox({ goals, items, apply }) {
     .filter(g => g.asap && !g.date && !g.done && !(g.hiddenUntil && g.hiddenUntil > today))
     .sort(byImportance)
 
-  if (due.length === 0 && !next && asap.length === 0) return null
+  // ★ Top tasks from "Plan your day" that aren't already shown above
+  // (untimed ones, or timed ones later today).
+  const shown = new Set([...due, next].filter(Boolean).map(t => t.id))
+  const top = topIds(items, today)
+    .map(id => goals.find(g => g.id === id))
+    .filter(g => g && !g.done && !shown.has(g.id) && !(g.hiddenUntil && g.hiddenUntil > today))
+
+  if (due.length === 0 && !next && asap.length === 0 && top.length === 0) return null
 
   const row = (task, label) => (
     <NowRow
@@ -115,6 +123,7 @@ function NowBox({ goals, items, apply }) {
       <h2>Now</h2>
       <ul>
         {due.map(t => row(t, t.time === now ? `${showTime(t.time)} · now` : `${showTime(t.time)} · overdue`))}
+        {top.map(t => row(t, t.time ? `★ top · ${showTime(t.time)}` : '★ top'))}
         {next && row(next, `next · ${showTime(next.time)}`)}
         {asap.map(t => row(t, 'ASAP'))}
       </ul>
