@@ -10,8 +10,9 @@ import { ImportanceIcon } from './TaskExtras.jsx'
 const HOUR_PX = 56
 const PX_PER_MIN = HOUR_PX / 60
 const NO_DURATION = 30
-// How far ↑ ↓ move a task. (Drag and drop may replace this later.)
+// How far ↑ ↓ move a task, and what dragging snaps to.
 const STEP = 30
+const SNAP = 15
 // The hours shown at least; earlier or later tasks stretch the range.
 const FIRST_HOUR = 6
 const LAST_HOUR = 22
@@ -23,11 +24,29 @@ const toMin = t => {
 
 // The day as a timeline (a simple day calendar): hours down the left, tasks
 // as blocks sized by their expected time, untimed ones in "Anytime" on top.
-// Tap a block to show ↑ ↓, which move it 30 minutes; chained items follow
+// Tap a block to show ⠿ (drag it up or down, snaps to 15 min) and ↑ ↓
+// (30 minutes); chained items follow
 // what they come after (they move with it).
 function DayTimeline({ dateKey, goals, items, apply }) {
   // The block you tapped: it shows its ↑ ↓ buttons (others stay clean).
   const [selectedId, setSelectedId] = useState(null)
+  // While dragging the ⠿ handle: { id, startY, minutes } (how far it moved).
+  const [drag, setDrag] = useState(null)
+
+  function startDrag(ev, id) {
+    ev.preventDefault()
+    ev.currentTarget.setPointerCapture(ev.pointerId)
+    setDrag({ id, startY: ev.clientY, minutes: 0 })
+  }
+  function moveDrag(ev) {
+    if (!drag) return
+    const minutes = Math.round((ev.clientY - drag.startY) / PX_PER_MIN / SNAP) * SNAP
+    if (minutes !== drag.minutes) setDrag({ ...drag, minutes })
+  }
+  function endDrag() {
+    if (drag && drag.minutes !== 0) apply(moveTask(items, drag.id, drag.minutes))
+    setDrag(null)
+  }
   const entries = dayEntries(goals, dateKey)
   const isToday = dateKey === todayKey()
   const timed = entries.filter(e => e.time)
@@ -122,6 +141,8 @@ function DayTimeline({ dateKey, goals, items, apply }) {
           if (e.goal.after) classes.push('chained')
           const selected = selectedId === e.goal.id
           if (selected) classes.push('selected')
+          const offset = drag?.id === e.goal.id ? drag.minutes : 0
+          if (offset) classes.push('dragging')
           return (
             <div
               key={e.goal.id}
@@ -132,7 +153,7 @@ function DayTimeline({ dateKey, goals, items, apply }) {
                 setSelectedId(selected ? null : e.goal.id)
               }}
               style={{
-                top: (e.start - first * 60) * PX_PER_MIN + 1,
+                top: (e.start + offset - first * 60) * PX_PER_MIN + 1,
                 height,
                 left: `calc(3.6rem + (100% - 3.6rem) * ${e.lane / e.lanes})`,
                 width: `calc((100% - 3.6rem) / ${e.lanes} - 4px)`,
@@ -156,12 +177,23 @@ function DayTimeline({ dateKey, goals, items, apply }) {
               </div>
               {height > 34 && (
                 <span className="timeline-time">
-                  {showTime(e.time)}
-                  {e.goal.duration && `–${showTime(endTime(e.time, e.goal.duration))}`}
+                  {showTime(offset ? endTime(e.time, offset) : e.time)}
+                  {e.goal.duration && `–${showTime(endTime(e.time, e.goal.duration + offset))}`}
                 </span>
               )}
               {movable && selected && (
                 <span className="timeline-move">
+                  <button
+                    type="button"
+                    className="timeline-drag"
+                    onPointerDown={ev => startDrag(ev, e.goal.id)}
+                    onPointerMove={moveDrag}
+                    onPointerUp={endDrag}
+                    onPointerCancel={() => setDrag(null)}
+                    aria-label={`Drag "${e.goal.title}" up or down`}
+                  >
+                    ⠿
+                  </button>
                   <button
                     type="button"
                     onClick={() => apply(moveTask(items, e.goal.id, -STEP))}

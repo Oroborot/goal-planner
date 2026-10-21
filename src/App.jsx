@@ -16,6 +16,8 @@ import FocusPage from './FocusPage.jsx'
 import StatsPage from './StatsPage.jsx'
 import RoutinePage from './RoutinePage.jsx'
 import CoverScreen from './CoverScreen.jsx'
+import FoldersPage from './FoldersPage.jsx'
+import RewardsPage from './RewardsPage.jsx'
 import GoalTree from './GoalTree.jsx'
 import SettingsPage from './SettingsPage.jsx'
 import { loadSettings, saveSettings } from './settings.js'
@@ -49,7 +51,7 @@ const STORAGE_KEY = 'planner-items'
 //   anything else -> the home screen
 function screenFromAddress() {
   const address = window.location.hash.slice(1)
-  if (['history', 'archive', 'views', 'settings', 'stats', 'plan', 'wrapup', 'cover'].includes(address)) return { name: address }
+  if (['history', 'archive', 'views', 'settings', 'stats', 'plan', 'wrapup', 'cover', 'folders', 'rewards'].includes(address)) return { name: address }
   if (address.startsWith('focus/')) return { name: 'focus', goalId: address.slice(6) }
   if (address === 'day') return { name: 'day', dateKey: todayKey() }
   if (address === 'week') return { name: 'week', mondayKey: mondayOf(todayKey()) }
@@ -265,6 +267,10 @@ function App() {
         timerControls={timerControls}
       />
     )
+  } else if (screen.name === 'rewards') {
+    page = <RewardsPage items={items} events={events} apply={apply} />
+  } else if (screen.name === 'folders') {
+    page = <FoldersPage items={items} />
   } else if (screen.name === 'cover') {
     page = <CoverScreen items={items} settings={settings} />
   } else if (screen.name === 'plan' || screen.name === 'wrapup') {

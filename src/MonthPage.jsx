@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { activeGoals, progressOf, percent } from './progress.js'
-import { addDaysKey, dateKey as toKey, dayLabel, habitsOn, mondayOf, parseKey, tasksOn, todayKey } from './calendar.js'
+import { addDaysKey, dateKey as toKey, dayCounts, dayLabel, habitsOn, mondayOf, parseKey, tasksOn, todayKey } from './calendar.js'
+import { addGoal } from './goalActions.js'
 import { colorOf } from './colors.js'
 import { WEEKDAYS } from './repeat.js'
 import DayList from './DayList.jsx'
@@ -36,6 +37,31 @@ function MonthPage({ monthKey, items, apply }) {
     const date = parseKey(first)
     date.setMonth(date.getMonth() + n)
     window.location.hash = `#month/${toKey(date).slice(0, 7)}`
+  }
+
+  // Each week row of the grid: done / planned and %, Monday to Sunday.
+  const weeks = []
+  for (let i = 0; i < cells.length; i += 7) {
+    const counts = cells.slice(i, i + 7).map(key => dayCounts(goals, key))
+    const done = counts.reduce((s, c) => s + c.done, 0)
+    const total = counts.reduce((s, c) => s + c.total, 0)
+    weeks.push({ monday: cells[i], done, total })
+  }
+
+  // Quick add: a task on the selected day, or a Month goal.
+  const [taskTitle, setTaskTitle] = useState('')
+  const [goalTitle, setGoalTitle] = useState('')
+  function addTask(e) {
+    e.preventDefault()
+    if (!taskTitle.trim()) return
+    apply(addGoal(items, taskTitle.trim(), 'day', [], '', { date: selected }))
+    setTaskTitle('')
+  }
+  function addMonthGoal(e) {
+    e.preventDefault()
+    if (!goalTitle.trim()) return
+    apply(addGoal(items, goalTitle.trim(), 'month', []))
+    setGoalTitle('')
   }
 
   const title = parseKey(first).toLocaleDateString(undefined, { month: 'long', year: 'numeric' })
@@ -85,6 +111,10 @@ function MonthPage({ monthKey, items, apply }) {
             })}
           </ul>
         )}
+        <form className="inline-add" onSubmit={addMonthGoal}>
+          <input value={goalTitle} onChange={e => setGoalTitle(e.target.value)} placeholder="＋ Add a Month goal" aria-label="New Month goal" />
+          {goalTitle.trim() && <button type="submit">Add</button>}
+        </form>
       </section>
 
       <div className="month-grid" role="grid" aria-label={title}>
@@ -120,9 +150,27 @@ function MonthPage({ monthKey, items, apply }) {
         })}
       </div>
 
+      <ul className="month-weeks" aria-label="Weeks">
+        {weeks.map(w => (
+          <li key={w.monday}>
+            <a href={`#week/${w.monday}`} className="goal-link">
+              Week of {parseKey(w.monday).toLocaleDateString(undefined, { day: 'numeric', month: 'short' })}
+            </a>
+            <span className="goal-meta">
+              {w.total === 0 ? '–' : `${w.done}/${w.total} · ${Math.round((w.done / w.total) * 100)}%`}
+            </span>
+            <ProgressBar progress={w.total === 0 ? 0 : w.done / w.total} />
+          </li>
+        ))}
+      </ul>
+
       <section className="month-selected">
         <h2>{dayLabel(selected)}</h2>
         <DayList dateKey={selected} goals={goals} items={items} apply={apply} compact />
+        <form className="inline-add" onSubmit={addTask}>
+          <input value={taskTitle} onChange={e => setTaskTitle(e.target.value)} placeholder={`＋ Add a task for ${dayLabel(selected).toLowerCase()}`} aria-label="New task" />
+          {taskTitle.trim() && <button type="submit">Add</button>}
+        </form>
         <a href={`#day/${selected}`} className="back">
           Open day →
         </a>

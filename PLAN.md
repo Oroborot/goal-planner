@@ -165,7 +165,10 @@ Inspiration: Google Calendar (week/month overview), Todoist (daily list), Sunsam
 
 ### Part 4: extras
 
-- [ ] **Folders:** a separate section with folders such as "Achieved" (finished goals, with their "why" and date) and "Reasons to try" (your "why"s, to remind you why you do things). You can create, rename and delete folders, and move goals and "why"s between them.
+- [x] **Built 2026-10-21, waiting for review:** Month view: each week's done/planned and %, quick add of a task on the tapped day, quick add of a Month goal. Timeline: ⠿ drag handle on a tapped block (snaps to 15 min). Rewards (Menu → Rewards): your own reward for X times done / X timer minutes / X-day habit streak, for one goal or everything, counted from the day it was set; Claim when reached; in history.
+
+- [x] **Folders (built, first version, 2026-10-21):** Menu → Folders and the Home tile: 🏆 Achieved (finished Week+ goals with their why and date) and 💭 Reasons to try (every why). Later: your own folders (create, rename, delete, move goals).
+- [ ] **Folders (original note):** a separate section with folders such as "Achieved" (finished goals, with their "why" and date) and "Reasons to try" (your "why"s, to remind you why you do things). You can create, rename and delete folders, and move goals and "why"s between them.
 - [ ] **Liquid tube timer look:** the animated version of the timer. Good CSS animation practice.
 - [ ] **More goal views:** a table view (like a spreadsheet), a link view and a big tree view. See `DESIGN-IDEAS.md`.
 - [ ] **Suggestions:** start with simple rules, such as "you skipped push-ups twice, do them first today", and add AI later.

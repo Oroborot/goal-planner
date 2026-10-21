@@ -79,7 +79,7 @@ function toMinutes(time) {
 
 // '09:00' + 30 -> '09:30'.
 export function endTime(time, duration) {
-  const total = Math.min(24 * 60 - 1, toMinutes(time) + duration)
+  const total = Math.max(0, Math.min(24 * 60 - 1, toMinutes(time) + duration))
   return `${String(Math.floor(total / 60)).padStart(2, '0')}:${String(total % 60).padStart(2, '0')}`
 }
 

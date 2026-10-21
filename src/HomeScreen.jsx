@@ -64,10 +64,10 @@ function HomeScreen({ items }) {
           <span className="tile-title">Notes</span>
           <span className="tile-sub">{notesSummary}</span>
         </a>
-        <div className="tile disabled" aria-disabled="true">
+        <a href="#folders" className="tile">
           <span className="tile-title">Folders</span>
-          <span className="tile-sub">Coming soon</span>
-        </div>
+          <span className="tile-sub">Achieved · Reasons to try</span>
+        </a>
       </nav>
     </div>
   )

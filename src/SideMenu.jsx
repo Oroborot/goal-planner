@@ -4,13 +4,15 @@ const LINKS = [
   { href: '#plan', label: '☀ Plan my day' },
   { href: '#wrapup', label: '🌙 Wrap up' },
   { href: '#stats', label: 'Stats' },
+  { href: '#folders', label: 'Folders' },
+  { href: '#rewards', label: 'Rewards' },
   { href: '#views', label: 'Views' },
   { href: '#settings', label: 'Settings' },
   { href: '#history', label: 'History' },
   { href: '#archive', label: 'Archive' },
   { href: '#notes', label: 'Note categories' },
 ]
-const LATER = ['Folders', 'Backup', 'Help and about']
+const LATER = ['Backup', 'Help and about']
 
 // How close to the left edge a swipe must start, and how far it must go.
 const EDGE = 24

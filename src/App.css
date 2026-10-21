@@ -467,3 +467,31 @@ li.done { opacity: 0.75; }
 .cover-author { font-family: inherit; font-size: 0.8em; opacity: 0.75; }
 .cover-open { margin-top: 0.8rem; width: 100%; padding: 0.75rem; border-radius: 14px; background: color-mix(in srgb, var(--bg) 72%, transparent); border: 1px solid var(--accent-border); color: var(--text-h); text-decoration: none; font-weight: 600; }
 .cover-sections { margin-top: 0.4rem; font-size: 0.85em; color: var(--text-h); opacity: 0.8; }
+
+/* Month: week rows with % and small inline add boxes. */
+.month-weeks { list-style: none; margin: 0.75rem 0; padding: 0; }
+.month-weeks li { display: grid; grid-template-columns: 1fr auto; gap: 0.2rem 0.5rem; padding: 0.4rem 0; border-top: 1px solid var(--border); }
+.month-weeks .progress { grid-column: 1 / -1; }
+.inline-add { display: flex; gap: 0.4rem; margin-top: 0.5rem; }
+.inline-add input { flex: 1; }
+
+/* Folders. */
+.folder-tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 1rem; }
+.folder-tile { display: flex; flex-direction: column; align-items: flex-start; gap: 0.2rem; padding: 0.9rem; border-radius: 14px; text-align: left; }
+.folder-tile.active { border-color: var(--accent); background: var(--accent-bg); color: var(--text-h); }
+.folder-list { list-style: none; margin: 0; padding: 0; }
+.folder-list li { display: flex; flex-direction: column; gap: 0.2rem; padding: 0.7rem 0; border-top: 1px solid var(--border); }
+.folder-why { margin: 0.2rem 0 0; font-family: Georgia, 'Times New Roman', serif; color: var(--text-h); }
+.folder-why.big { font-size: 1.1em; }
+
+/* Timeline drag handle. */
+.timeline-drag { touch-action: none; cursor: grab; }
+.timeline-block.dragging { z-index: 5; opacity: 0.85; box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35); }
+
+/* Rewards. */
+.reward-list { list-style: none; margin: 1rem 0 0; padding: 0; }
+.reward-list li { display: flex; flex-direction: column; gap: 0.35rem; margin-bottom: 0.6rem; padding: 0.8rem; border: 1px solid var(--border); border-radius: 14px; background: var(--surface, transparent); }
+.reward-list li.reached { border-color: var(--accent); background: var(--accent-bg); }
+.reward-list li.claimed { opacity: 0.8; }
+.reward-head { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; color: var(--text-h); }
+.reward-target { max-width: 5.5rem; }
