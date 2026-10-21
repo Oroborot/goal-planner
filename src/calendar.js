@@ -64,7 +64,9 @@ export function habitsOn(goals, key) {
     g =>
       g.repeat &&
       g.repeat.days.includes(day.getDay()) &&
-      key >= (g.repeatSince || g.createdAt).slice(0, 10),
+      // Local day, not .slice(0, 10): that's the UTC day, which can be a
+      // day early or late depending on your time zone.
+      key >= dateKey(new Date(g.repeatSince || g.createdAt)),
   )
 }
 
@@ -154,7 +156,11 @@ export function dayEntries(goals, key) {
 export function dayLoad(goals, key) {
   const entries = dayEntries(goals, key)
   const total = entries.reduce((sum, e) => sum + (e.goal.duration || 0), 0)
-  const timed = entries.filter(e => e.time && e.goal.duration)
+  // Earliest first: chained entries sit under what they follow in `entries`,
+  // not in time order, which made back-to-back tasks look like overlaps.
+  const timed = entries
+    .filter(e => e.time && e.goal.duration)
+    .sort((a, b) => a.time.localeCompare(b.time))
   const overlaps = []
   for (let i = 0; i < timed.length; i++) {
     for (let j = i + 1; j < timed.length; j++) {
