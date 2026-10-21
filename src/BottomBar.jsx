@@ -3,6 +3,7 @@ import AppIcon from './icons.jsx'
 // Which bottom-bar button each screen belongs to.
 const SECTION = {
   home: 'home',
+  cover: 'home',
   day: 'calendar',
   week: 'calendar',
   month: 'calendar',
@@ -14,7 +15,8 @@ const SECTION = {
 
 // The bar at the bottom of every screen: Home, Calendar, ＋, Goals, Notes.
 // Icons only. ＋ opens the add sheet (Task / Habit / Note / Goal).
-function BottomBar({ screen, onAdd }) {
+// Home goes to the cover or the sections list, as set in Settings.
+function BottomBar({ screen, homeHref, onAdd }) {
   const active = SECTION[screen]
   const item = (name, href) => (
     <a
@@ -28,7 +30,7 @@ function BottomBar({ screen, onAdd }) {
 
   return (
     <nav className="bottom-bar" aria-label="Main">
-      {item('home', '#')}
+      {item('home', homeHref)}
       {item('calendar', '#day')}
       <button type="button" className="bar-add" onClick={onAdd}>
         <AppIcon name="add" />

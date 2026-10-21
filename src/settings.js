@@ -1,10 +1,19 @@
 // Your preferences, saved in localStorage. More (colors, icons, fonts,
 // themes) come with "Customize" later.
 // { clock: '24' | '12', theme: 'violet' | 'gold' | …, mode: 'dark' | 'light' | 'auto',
-//   routineView: 'stepped' | 'compact' (plan and wrap-up) }
+//   routineView: 'stepped' | 'compact' (plan and wrap-up),
+//   coverStyle: 'tree' | 'liquid' | 'plank', coverOnOpen / coverOnHome: show the cover }
 
 const SETTINGS_KEY = 'planner-settings'
-const DEFAULTS = { clock: '24', theme: 'violet', mode: 'dark', routineView: 'stepped' }
+const DEFAULTS = {
+  clock: '24',
+  theme: 'violet',
+  mode: 'dark',
+  routineView: 'stepped',
+  coverStyle: 'tree',
+  coverOnOpen: true,
+  coverOnHome: true,
+}
 
 export function loadSettings() {
   try {

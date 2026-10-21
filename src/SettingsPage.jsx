@@ -14,6 +14,11 @@ function SettingsPage({ settings, onChange, items, events, onRestore }) {
     { value: '12', label: '12-hour', example: '6:30 PM' },
   ]
 
+  const coverStyles = [
+    { value: 'tree', label: 'Tree' },
+    { value: 'liquid', label: 'Liquid' },
+    { value: 'plank', label: 'Burning plank' },
+  ]
   const routineViews = [
     { value: 'stepped', label: 'Stepped' },
     { value: 'compact', label: 'Compact' },
@@ -51,6 +56,26 @@ function SettingsPage({ settings, onChange, items, events, onRestore }) {
 
       <h2>Clock</h2>
       {choices(clocks, 'clock')}
+
+      <h2>Cover screen</h2>
+      {choices(coverStyles, 'coverStyle')}
+      <label className="done-toggle">
+        <input
+          type="checkbox"
+          checked={settings.coverOnOpen}
+          onChange={e => onChange({ ...settings, coverOnOpen: e.target.checked })}
+        />
+        <span>Show when the app opens</span>
+      </label>
+      <label className="done-toggle">
+        <input
+          type="checkbox"
+          checked={settings.coverOnHome}
+          onChange={e => onChange({ ...settings, coverOnHome: e.target.checked })}
+        />
+        <span>Show when tapping Home</span>
+      </label>
+      <p className="goal-meta">It fills up as today gets done. Pictures and more quotes come later.</p>
 
       <h2>Plan and wrap-up</h2>
       {choices(routineViews, 'routineView')}

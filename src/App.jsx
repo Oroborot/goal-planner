@@ -15,6 +15,7 @@ import AddSheet from './AddSheet.jsx'
 import FocusPage from './FocusPage.jsx'
 import StatsPage from './StatsPage.jsx'
 import RoutinePage from './RoutinePage.jsx'
+import CoverScreen from './CoverScreen.jsx'
 import GoalTree from './GoalTree.jsx'
 import SettingsPage from './SettingsPage.jsx'
 import { loadSettings, saveSettings } from './settings.js'
@@ -48,7 +49,7 @@ const STORAGE_KEY = 'planner-items'
 //   anything else -> the home screen
 function screenFromAddress() {
   const address = window.location.hash.slice(1)
-  if (['history', 'archive', 'views', 'settings', 'stats', 'plan', 'wrapup'].includes(address)) return { name: address }
+  if (['history', 'archive', 'views', 'settings', 'stats', 'plan', 'wrapup', 'cover'].includes(address)) return { name: address }
   if (address.startsWith('focus/')) return { name: 'focus', goalId: address.slice(6) }
   if (address === 'day') return { name: 'day', dateKey: todayKey() }
   if (address === 'week') return { name: 'week', mondayKey: mondayOf(todayKey()) }
@@ -93,6 +94,15 @@ function loadItems() {
   }
 }
 
+// When the app opens with no address, show the cover first if that's on
+// in Settings (it can be turned off).
+function firstScreen() {
+  if (!window.location.hash && loadSettings().coverOnOpen) {
+    window.history.replaceState(null, '', '#cover')
+  }
+  return screenFromAddress()
+}
+
 function App() {
   // Every item in the planner. Each one looks like:
   // { id, title, list, timeframe, done, createdAt, completedAt, completedBy,
@@ -101,7 +111,7 @@ function App() {
   const [items, setItems] = useState(loadItems)
   // The history log: one entry for everything that happened (see history.js).
   const [events, setEvents] = useState(loadEvents)
-  const [screen, setScreen] = useState(screenFromAddress)
+  const [screen, setScreen] = useState(firstScreen)
   // The goals list's selected tab, kept here so it's remembered when you
   // open a goal page and come back.
   const [goalsTab, setGoalsTab] = useState('day')
@@ -255,6 +265,8 @@ function App() {
         timerControls={timerControls}
       />
     )
+  } else if (screen.name === 'cover') {
+    page = <CoverScreen items={items} settings={settings} />
   } else if (screen.name === 'plan' || screen.name === 'wrapup') {
     page = (
       <RoutinePage
@@ -322,7 +334,11 @@ function App() {
         </div>
       )}
       {page}
-      {screen.name !== 'focus' && <BottomBar screen={screen.name} onAdd={() => setAdding(true)} />}
+      {screen.name !== 'focus' && <BottomBar
+          screen={screen.name}
+          homeHref={settings.coverOnHome ? '#cover' : '#'}
+          onAdd={() => setAdding(true)}
+        />}
       <SideMenu open={menuOpen} setOpen={setMenuOpen} />
       {adding && <AddSheet items={items} apply={apply} onClose={() => setAdding(false)} />}
     </>
