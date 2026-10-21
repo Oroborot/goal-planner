@@ -1,0 +1,719 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Goal Planner Directions</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Manrope:wght@400;500;600;700&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&family=Instrument+Serif:ital@0;1&family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ---------- Page shell (the viewer around the phones) ---------- */
+:root {
+  --page-bg: #f3f3f1;
+  --page-ink: #1c1c1f;
+  --page-sub: #55555c;
+  --page-line: #dcdcd8;
+  --page-card: #ffffff;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --page-bg: #111113;
+    --page-ink: #ededee;
+    --page-sub: #a0a0a8;
+    --page-line: #2a2a2f;
+    --page-card: #1a1a1d;
+  }
+}
+:root[data-theme="dark"] {
+  --page-bg: #111113;
+  --page-ink: #ededee;
+  --page-sub: #a0a0a8;
+  --page-line: #2a2a2f;
+  --page-card: #1a1a1d;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--page-bg);
+  color: var(--page-ink);
+  font: 16px/1.5 "Inter Tight", system-ui, sans-serif;
+}
+.shell { max-width: 1240px; margin: 0 auto; padding: 32px 16px 80px; }
+.shell > header h1 { font-size: 28px; line-height: 1.2; margin: 0 0 8px; font-weight: 700; }
+.shell > header p { margin: 0; color: var(--page-sub); max-width: 64ch; }
+.tabs { display: flex; gap: 8px; margin: 24px 0 8px; flex-wrap: wrap; }
+.tabs button {
+  min-height: 44px; padding: 0 18px; border-radius: 999px;
+  border: 1px solid var(--page-line); background: var(--page-card); color: var(--page-ink);
+  font: 600 15px "Inter Tight", sans-serif; cursor: pointer;
+}
+.tabs button[aria-selected="true"] { background: var(--page-ink); color: var(--page-bg); border-color: var(--page-ink); }
+.tabs button:focus-visible, .phone a:focus-visible, .phone button:focus-visible { outline: 3px solid #4c8dff; outline-offset: 2px; }
+.direction { display: none; }
+.direction.on { display: block; }
+.brief {
+  display: grid; gap: 16px 32px; grid-template-columns: 1fr;
+  background: var(--page-card); border: 1px solid var(--page-line); border-radius: 16px;
+  padding: 20px; margin: 16px 0 28px;
+}
+@media (min-width: 860px) { .brief { grid-template-columns: 1.3fr 1fr; } }
+.brief h2 { margin: 0 0 6px; font-size: 22px; }
+.brief p { margin: 0 0 10px; color: var(--page-sub); }
+.brief ul { margin: 0; padding-left: 18px; color: var(--page-sub); }
+.brief li { margin-bottom: 4px; }
+.brief h3 { font-size: 14px; margin: 0 0 8px; color: var(--page-ink); }
+.swatches { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+.sw { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--page-sub); }
+.sw i { width: 28px; height: 28px; border-radius: 8px; border: 1px solid var(--page-line); display: block; }
+.phones { display: grid; gap: 28px; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); justify-items: center; }
+.phone-wrap { width: 100%; max-width: 375px; }
+.phone-wrap figcaption { font-size: 14px; color: var(--page-sub); margin: 10px 4px 0; }
+.phone {
+  position: relative; width: 100%; aspect-ratio: 375 / 812; overflow: hidden;
+  border-radius: 36px; border: 1px solid var(--page-line);
+  box-shadow: 0 1px 0 rgba(0,0,0,.04), 0 24px 48px -24px rgba(0,0,0,.35);
+  container-type: inline-size;
+}
+.phone .scroll { position: absolute; inset: 0; overflow: auto; padding: 52px 20px 104px; scrollbar-width: none; }
+.phone .scroll::-webkit-scrollbar { display: none; }
+.statusbar { position: absolute; top: 0; left: 0; right: 0; height: 44px; display: flex; justify-content: space-between; align-items: center; padding: 0 26px; font-size: 14px; font-weight: 600; z-index: 3; }
+.bar {
+  position: absolute; left: 12px; right: 12px; bottom: 14px; height: 64px; z-index: 3;
+  display: grid; grid-template-columns: repeat(5, 1fr); align-items: center; justify-items: center;
+  border-radius: 22px;
+}
+.bar a { width: 48px; height: 48px; display: grid; place-items: center; border-radius: 14px; color: inherit; }
+.bar a svg { width: 24px; height: 24px; }
+.bar a.plus { width: 54px; height: 54px; border-radius: 50%; }
+.bar a.plus svg { width: 26px; height: 26px; }
+svg.i { fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+@media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+
+/* ================= A. CONSTELLATION ================= */
+.c { --bg: #070818; --ink: #eef0ff; --sub: #a3a8cf; --line: #23264a; --violet: #b79cff; --cyan: #7ee8f5; --card: #0e1030;
+  background: radial-gradient(120% 60% at 70% -10%, #1d1650 0%, transparent 60%), var(--bg); color: var(--ink); font-family: Manrope, sans-serif; }
+.c .statusbar { color: var(--ink); }
+.c h1, .c h2, .c .big { font-family: Syne, sans-serif; letter-spacing: -0.01em; }
+.c .date { color: var(--sub); font-size: 14px; margin: 4px 0 2px; }
+.c h1 { font-size: 30px; line-height: 1.1; margin: 0 0 18px; font-weight: 700; }
+.c .sky { position: relative; border: 1px solid var(--line); border-radius: 20px; background: rgba(14,16,48,.7); padding: 14px 14px 10px; margin-bottom: 20px; }
+.c .sky svg { width: 100%; height: auto; display: block; }
+.c .sky .cap { display: flex; justify-content: space-between; font-size: 13px; color: var(--sub); }
+.c .sky .cap b { color: var(--ink); font-weight: 600; }
+.c .now { border-radius: 20px; padding: 16px; background: linear-gradient(140deg, #2a1f6b, #121541); border: 1px solid #3b3480; margin-bottom: 22px; }
+.c .now small { color: var(--cyan); font-weight: 700; font-size: 12px; }
+.c .now h2 { font-size: 21px; margin: 4px 0 6px; }
+.c .now p { margin: 0 0 12px; color: #cfd2f5; font-size: 14px; }
+.c .now .row { display: flex; gap: 10px; }
+.c .btn { min-height: 44px; padding: 0 16px; border-radius: 14px; border: 0; font: 700 15px Manrope, sans-serif; display: inline-flex; align-items: center; gap: 8px; }
+.c .btn.primary { background: var(--ink); color: #0b0c24; }
+.c .btn.ghost { background: transparent; color: var(--ink); border: 1px solid #4a4590; }
+.c h3 { font: 700 15px Syne, sans-serif; margin: 0 0 10px; }
+.c .task { display: grid; grid-template-columns: 44px 1fr auto; gap: 4px 10px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--line); }
+.c .star { width: 44px; height: 44px; display: grid; place-items: center; }
+.c .star span { width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--sub); }
+.c .done .star span { border-color: var(--cyan); background: var(--cyan); box-shadow: 0 0 12px 3px rgba(126,232,245,.6); }
+.c .task b { font-weight: 600; font-size: 15px; }
+.c .done b { color: var(--sub); }
+.c .task .feeds { grid-column: 2; font-size: 13px; color: var(--violet); margin-top: -2px; }
+.c .task time { font-size: 13px; color: var(--sub); }
+.c .bar { background: rgba(14,16,48,.88); border: 1px solid var(--line); backdrop-filter: blur(12px); color: var(--sub); }
+.c .bar a.on { color: var(--ink); }
+.c .bar a.plus { background: var(--violet); color: #0b0c24; box-shadow: 0 0 24px rgba(183,156,255,.55); }
+.c .chain-map svg { width: 100%; height: auto; display: block; }
+.c .why { margin: 16px 0; padding: 16px; border-left: 3px solid var(--violet); background: rgba(183,156,255,.08); border-radius: 0 14px 14px 0; }
+.c .why small { color: var(--violet); font-weight: 700; font-size: 12px; }
+.c .why p { margin: 4px 0 0; font: 600 18px/1.35 Syne, sans-serif; }
+.c .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.c .stats div { border: 1px solid var(--line); border-radius: 14px; padding: 10px; }
+.c .stats b { display: block; font: 700 22px Syne, sans-serif; }
+.c .stats span { font-size: 12px; color: var(--sub); }
+.c.focus .scroll { display: flex; flex-direction: column; align-items: center; text-align: center; padding-top: 72px; }
+.c.focus .orbit { width: 100%; max-width: 280px; margin: 18px 0; }
+.c.focus .big { font-size: 40px; font-weight: 700; margin: -60% 0 calc(50% - 30px); }
+.c.focus p { color: var(--sub); margin: 0 0 6px; }
+.c.focus h2 { font-size: 24px; margin: 0 0 4px; }
+.c.focus .row { display: flex; gap: 10px; margin-top: auto; width: 100%; }
+.c.focus .row .btn { flex: 1; justify-content: center; }
+@keyframes twinkle { 50% { opacity: .35; } }
+.c .tw { animation: twinkle 3.2s ease-in-out infinite; }
+
+/* ================= B. TRAIL ================= */
+.t { --bg: #e6ece2; --ink: #14261c; --sub: #4a5e52; --line: #c3d0bd; --orange: #e8501a; --card: #f4f7f1; --deep: #1f3a2b;
+  background: var(--bg); color: var(--ink); font-family: "Atkinson Hyperlegible", sans-serif; }
+.t .topo { position: absolute; inset: 0; opacity: .55; pointer-events: none; }
+.t .scroll { z-index: 1; }
+.t h1, .t h2, .t .big, .t h3 { font-family: "Bricolage Grotesque", sans-serif; }
+.t .date { font-size: 14px; color: var(--sub); margin: 4px 0 0; }
+.t h1 { font-size: 34px; line-height: 1.05; font-weight: 800; margin: 2px 0 16px; letter-spacing: -0.02em; }
+.t .profile { background: var(--deep); color: #e8f0e6; border-radius: 22px; padding: 16px; margin-bottom: 18px; }
+.t .profile .head { display: flex; justify-content: space-between; align-items: baseline; }
+.t .profile .head b { font: 800 30px "Bricolage Grotesque", sans-serif; }
+.t .profile .head span { font-size: 13px; color: #a9c2b0; }
+.t .profile svg { width: 100%; height: auto; display: block; margin-top: 8px; }
+.t .profile .days { display: grid; grid-template-columns: repeat(7, 1fr); font-size: 11px; color: #a9c2b0; text-align: center; margin-top: 2px; }
+.t h3 { font-size: 17px; font-weight: 700; margin: 0 0 6px; }
+.t .trail { position: relative; padding-left: 34px; }
+.t .trail::before { content: ""; position: absolute; left: 13px; top: 14px; bottom: 14px; border-left: 2px dashed var(--sub); }
+.t .wp { position: relative; padding: 10px 12px; margin-bottom: 8px; background: var(--card); border: 1px solid var(--line); border-radius: 14px; min-height: 56px; }
+.t .wp::before { content: ""; position: absolute; left: -28px; top: 18px; width: 16px; height: 16px; border-radius: 4px; transform: rotate(45deg); background: var(--bg); border: 2px solid var(--sub); }
+.t .wp.done::before { background: var(--deep); border-color: var(--deep); }
+.t .wp.next { border: 2px solid var(--orange); }
+.t .wp.next::before { background: var(--orange); border-color: var(--orange); }
+.t .wp .top { display: flex; justify-content: space-between; gap: 8px; }
+.t .wp b { font-size: 16px; }
+.t .wp.done b { text-decoration: line-through; text-decoration-thickness: 1.5px; color: var(--sub); }
+.t .wp time { font-size: 13px; color: var(--sub); white-space: nowrap; }
+.t .wp .feeds { font-size: 13px; color: var(--sub); }
+.t .wp .feeds em { font-style: normal; color: var(--ink); font-weight: 700; }
+.t .bar { background: var(--ink); color: #9fb5a6; }
+.t .bar a.on { color: #fff; }
+.t .bar a.plus { background: var(--orange); color: #fff; }
+.t .ladder { list-style: none; margin: 0 0 16px; padding: 0; }
+.t .ladder li { display: grid; grid-template-columns: 58px 1fr; gap: 12px; align-items: stretch; }
+.t .ladder .alt { font: 700 12px "Bricolage Grotesque", sans-serif; color: var(--sub); text-align: right; padding-top: 14px; }
+.t .ladder .seg { border-left: 4px solid var(--line); padding: 10px 0 14px 14px; }
+.t .ladder .seg.reached { border-color: var(--deep); }
+.t .ladder .seg.here { border-color: var(--orange); }
+.t .ladder small { color: var(--sub); font-size: 12px; font-weight: 700; }
+.t .ladder b { display: block; font: 700 17px "Bricolage Grotesque", sans-serif; }
+.t .meter { height: 8px; background: var(--line); border-radius: 4px; margin-top: 6px; overflow: hidden; }
+.t .meter i { display: block; height: 100%; background: var(--deep); }
+.t .here .meter i { background: var(--orange); }
+.t .why { background: var(--ink); color: #f1f5ef; border-radius: 18px; padding: 16px; }
+.t .why small { color: #ff9a6e; font-weight: 700; font-size: 12px; }
+.t .why p { margin: 4px 0 0; font: 700 20px/1.3 "Bricolage Grotesque", sans-serif; }
+.t.focus .scroll { display: flex; flex-direction: column; align-items: center; text-align: center; padding-top: 70px; }
+.t.focus .rings { width: 100%; max-width: 290px; margin: 16px 0 6px; }
+.t.focus .big { font-size: 64px; font-weight: 800; letter-spacing: -0.03em; line-height: 1; }
+.t.focus h2 { font-size: 26px; margin: 0; line-height: 1.15; }
+.t.focus p { color: var(--sub); margin: 6px 0; }
+.t.focus .row { display: flex; gap: 10px; margin-top: auto; width: 100%; }
+.t .btn { flex: 1; min-height: 52px; border-radius: 16px; border: 2px solid var(--ink); background: transparent; color: var(--ink); font: 700 16px "Atkinson Hyperlegible", sans-serif; }
+.t .btn.primary { background: var(--orange); border-color: var(--orange); color: #fff; }
+
+/* ================= C. VESSEL ================= */
+.v { --bg: #e8f1f2; --ink: #0b2233; --sub: #456272; --line: #c9dadd; --water: #2a7fd4; --teal: #2bb3a3; --coral: #d9472f; --glass: rgba(255,255,255,.55);
+  background: linear-gradient(180deg, #f3f8f8, var(--bg)); color: var(--ink); font-family: "Inter Tight", sans-serif; }
+.v h1, .v .big, .v .serif { font-family: "Instrument Serif", serif; font-weight: 400; }
+.v .date { font-size: 14px; color: var(--sub); margin: 4px 0 0; }
+.v h1 { font-size: 40px; line-height: 1; margin: 2px 0 16px; letter-spacing: -0.01em; }
+.v .tank { display: grid; grid-template-columns: 110px 1fr; gap: 16px; align-items: end; margin-bottom: 20px; }
+.v .tank svg { width: 110px; height: auto; display: block; }
+.v .tank .big { font-size: 64px; line-height: .9; }
+.v .tank p { margin: 6px 0 0; color: var(--sub); font-size: 14px; }
+.v .tank .tubes { display: flex; gap: 6px; margin-top: 12px; }
+.v .tube { flex: 1; }
+.v .tube div { height: 40px; border-radius: 10px; border: 1.5px solid #9fbcc4; background: var(--glass); position: relative; overflow: hidden; }
+.v .tube div i { position: absolute; left: 0; right: 0; bottom: 0; background: linear-gradient(180deg, var(--teal), var(--water)); }
+.v .tube span { display: block; text-align: center; font-size: 11px; color: var(--sub); margin-top: 3px; font-weight: 600; }
+.v h3 { font-size: 15px; font-weight: 700; margin: 0 0 8px; }
+.v .drop { display: grid; grid-template-columns: 44px 1fr auto; gap: 10px; align-items: center; background: #fff; border-radius: 16px; padding: 8px 12px 8px 6px; margin-bottom: 8px; border: 1px solid var(--line); }
+.v .drop .tick { width: 44px; height: 44px; display: grid; place-items: center; }
+.v .drop .tick svg { width: 22px; height: 28px; }
+.v .drop b { font-weight: 600; font-size: 15px; display: block; }
+.v .drop.done b { color: var(--sub); }
+.v .drop small { font-size: 13px; color: var(--sub); }
+.v .drop small em { font-style: italic; font-family: "Instrument Serif", serif; font-size: 15px; color: var(--ink); }
+.v .drop time { font-size: 13px; color: var(--sub); }
+.v .bar { background: #fff; border: 1px solid var(--line); color: var(--sub); }
+.v .bar a.on { color: var(--ink); }
+.v .bar a.plus { background: linear-gradient(180deg, var(--teal), var(--water)); color: #fff; }
+.v .pipes { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; align-items: end; margin: 6px 0 18px; }
+.v .pipe { text-align: center; }
+.v .pipe .glass { margin: 0 auto; width: 100%; border-radius: 14px 14px 18px 18px; border: 1.5px solid #9fbcc4; background: var(--glass); position: relative; overflow: hidden; }
+.v .pipe .glass i { position: absolute; left: 0; right: 0; bottom: 0; background: linear-gradient(180deg, var(--teal), var(--water)); }
+.v .pipe b { display: block; font: 400 24px "Instrument Serif", serif; margin-top: 6px; }
+.v .pipe small { display: block; font-size: 12px; color: var(--sub); line-height: 1.3; }
+.v .pipe .lbl { font-weight: 700; color: var(--ink); }
+.v .why { padding: 18px; border-radius: 20px; background: #fff; border: 1px solid var(--line); }
+.v .why small { color: var(--coral); font-weight: 700; font-size: 12px; }
+.v .why p { margin: 2px 0 0; font: italic 400 26px/1.15 "Instrument Serif", serif; }
+.v .goal-title { font: 400 34px/1.05 "Instrument Serif", serif; margin: 6px 0 4px; }
+.v .meta { color: var(--sub); font-size: 14px; margin: 0 0 14px; }
+.v.focus .scroll { display: flex; flex-direction: column; align-items: center; text-align: center; padding-top: 70px; }
+.v.focus .bottle { width: 150px; margin: 14px 0 10px; }
+.v.focus .big { font-size: 72px; line-height: .9; }
+.v.focus h2 { font-size: 22px; margin: 0; font-weight: 600; }
+.v.focus p { color: var(--sub); margin: 6px 0; }
+.v.focus .row { display: flex; gap: 10px; margin-top: auto; width: 100%; }
+.v .btn { flex: 1; min-height: 52px; border-radius: 26px; border: 1.5px solid var(--ink); background: transparent; color: var(--ink); font: 600 16px "Inter Tight", sans-serif; }
+.v .btn.primary { background: var(--ink); color: #fff; }
+@keyframes slosh { 50% { transform: translateX(-12px); } }
+.v .wave { animation: slosh 4s ease-in-out infinite; }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="M4 11 12 4l8 7v9h-5v-6H9v6H4z"/></symbol>
+  <symbol id="i-cal" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="3"/><path d="M4 10h16M9 3v4M15 3v4"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-goal" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r=".6"/></symbol>
+  <symbol id="i-note" viewBox="0 0 24 24"><path d="M6 4h9l4 4v12H6z"/><path d="M14 4v5h5M9 13h7M9 16h5"/></symbol>
+  <symbol id="i-back" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></symbol>
+</svg>
+
+<div class="shell">
+  <header>
+    <h1>Goal Planner: three design directions</h1>
+    <p>Each direction shows the same day: Home, a goal page, and Focus mode. They all start from your own ideas (glowing link view, tree and climb, the liquid timer). Pick what you like from each one. Mixing them is fine.</p>
+  </header>
+
+  <div class="tabs" role="tablist" aria-label="Design directions">
+    <button role="tab" aria-selected="true" data-d="c">A · Constellation</button>
+    <button role="tab" aria-selected="false" data-d="t">B · Trail</button>
+    <button role="tab" aria-selected="false" data-d="v">C · Vessel</button>
+  </div>
+
+  <!-- ===================== A. CONSTELLATION ===================== -->
+  <section class="direction on" id="d-c" role="tabpanel">
+    <div class="brief">
+      <div>
+        <h2>A. Constellation</h2>
+        <p>Every goal is a star. Each finished task lights a small star, and the lines show what feeds what. Your year goal becomes a picture you fill in over time. Built from your "Link view (futuristic)" idea and the Black hole theme.</p>
+        <h3>Check these apps first</h3>
+        <ul>
+          <li><b>Sky Guide</b>: star maps, tap a star to see its lines</li>
+          <li><b>Forest</b>: progress you can see grow</li>
+          <li><b>Structured</b>: a clean day timeline</li>
+        </ul>
+      </div>
+      <div>
+        <h3>Colors</h3>
+        <div class="swatches">
+          <span class="sw"><i style="background:#070818"></i>Night</span>
+          <span class="sw"><i style="background:#eef0ff"></i>Starlight</span>
+          <span class="sw"><i style="background:#b79cff"></i>Violet</span>
+          <span class="sw"><i style="background:#7ee8f5"></i>Done glow</span>
+          <span class="sw"><i style="background:#23264a"></i>Lines</span>
+        </div>
+        <h3>Fonts</h3>
+        <p>Syne for titles (wide and unusual), Manrope for everything else.</p>
+        <h3>The one bold thing</h3>
+        <p>The sky at the top of Home. Everything else stays quiet.</p>
+      </div>
+    </div>
+
+    <div class="phones">
+      <!-- Home -->
+      <figure class="phone-wrap" style="margin:0">
+        <div class="phone c">
+          <div class="statusbar"><span>7:42</span><span>●●●</span></div>
+          <div class="scroll">
+            <p class="date">Wednesday 21 October</p>
+            <h1>Good morning</h1>
+
+            <div class="sky" role="img" aria-label="Year goal Run a half marathon: 23 of 60 stars lit">
+              <svg viewBox="0 0 300 150" aria-hidden="true">
+                <g stroke="#3a3d78" stroke-width="1">
+                  <path d="M150 22 L90 62 L46 108 M150 22 L210 60 L256 104 M90 62 L130 104 M210 60 L176 112 M150 22 L150 76"/>
+                </g>
+                <g stroke="#7ee8f5" stroke-width="1.4" opacity=".8"><path d="M150 22 L90 62 L46 108 M90 62 L130 104"/></g>
+                <circle cx="150" cy="22" r="7" fill="#eef0ff"/><circle cx="150" cy="22" r="15" fill="#b79cff" opacity=".25"/>
+                <circle cx="90" cy="62" r="5" fill="#7ee8f5"/><circle cx="90" cy="62" r="11" fill="#7ee8f5" opacity=".2"/>
+                <circle cx="210" cy="60" r="5" fill="#eef0ff" opacity=".55"/>
+                <circle cx="150" cy="76" r="4" fill="#eef0ff" opacity=".55"/>
+                <circle cx="46" cy="108" r="3.5" fill="#7ee8f5"/>
+                <circle cx="130" cy="104" r="3.5" fill="#7ee8f5"/>
+                <circle cx="256" cy="104" r="3.5" fill="none" stroke="#a3a8cf"/>
+                <circle cx="176" cy="112" r="3.5" fill="none" stroke="#a3a8cf"/>
+                <g fill="#eef0ff">
+                  <circle class="tw" cx="30" cy="30" r="1"/><circle cx="270" cy="24" r="1.2"/><circle class="tw" cx="230" cy="138" r="1"/>
+                  <circle cx="70" cy="140" r=".9"/><circle class="tw" cx="110" cy="20" r=".8"/><circle cx="290" cy="70" r="1"/>
+                  <circle cx="20" cy="80" r=".8"/><circle cx="196" cy="16" r=".9"/>
+                </g>
+              </svg>
+              <div class="cap"><span>Year · <b>Run a half marathon</b></span><span>23 / 60 lit</span></div>
+            </div>
+
+            <div class="now">
+              <small>Now · 07:00–07:40</small>
+              <h2>Easy 5 km run</h2>
+              <p>Feeds “3 runs this week”, which feeds “Build to 15 km”.</p>
+              <div class="row">
+                <button class="btn primary">Start focus</button>
+                <button class="btn ghost">Later</button>
+              </div>
+            </div>
+
+            <h3>Today</h3>
+            <div class="task done"><span class="star"><span></span></span><b>Stretch 10 min</b><time>06:50</time><span class="feeds">Habit · 12 in a row</span></div>
+            <div class="task"><span class="star"><span></span></span><b>Easy 5 km run</b><time>07:00</time><span class="feeds">3 runs this week</span></div>
+            <div class="task"><span class="star"><span></span></span><b>Read 20 pages</b><time>21:30</time><span class="feeds">Read 24 books</span></div>
+            <div class="task"><span class="star"><span></span></span><b>Book physio</b><time></time><span class="feeds">Stay injury free</span></div>
+          </div>
+          <nav class="bar" aria-label="Main">
+            <a class="on" href="#" aria-label="Home" aria-current="page"><svg class="i"><use href="#i-home"/></svg></a>
+            <a href="#" aria-label="Calendar"><svg class="i"><use href="#i-cal"/></svg></a>
+            <a class="plus" href="#" aria-label="Add"><svg class="i"><use href="#i-plus"/></svg></a>
+            <a href="#" aria-label="Goals"><svg class="i"><use href="#i-goal"/></svg></a>
+            <a href="#" aria-label="Notes"><svg class="i"><use href="#i-note"/></svg></a>
+          </nav>
+        </div>
+        <figcaption>Home. The year goal sits on top as a sky. Every task shows which goal it feeds.</figcaption>
+      </figure>
+
+      <!-- Goal page -->
+      <figure class="phone-wrap" style="margin:0">
+        <div class="phone c">
+          <div class="statusbar"><span>7:42</span><span>●●●</span></div>
+          <div class="scroll">
+            <p class="date">Month goal · October</p>
+            <h1 style="margin-bottom:12px">Build to 15 km</h1>
+            <div class="chain-map" role="img" aria-label="Chain: Run a half marathon, then Build to 15 km, then 3 runs this week, then today's run">
+              <svg viewBox="0 0 300 210" aria-hidden="true">
+                <path d="M150 24 L150 78 M150 78 L80 136 M150 78 L150 136 M150 78 L236 136 M150 136 L150 186" stroke="#3a3d78" stroke-width="1.2" fill="none"/>
+                <path d="M150 78 L80 136" stroke="#7ee8f5" stroke-width="1.6"/>
+                <circle cx="150" cy="24" r="6" fill="#eef0ff" opacity=".6"/>
+                <text x="164" y="28" fill="#a3a8cf" font-size="11" font-family="Manrope">Run a half marathon · Year</text>
+                <circle cx="150" cy="78" r="12" fill="#b79cff" opacity=".25"/><circle cx="150" cy="78" r="7" fill="#eef0ff"/>
+                <text x="168" y="82" fill="#eef0ff" font-size="12" font-weight="700" font-family="Manrope">This goal · 58%</text>
+                <circle cx="80" cy="136" r="5" fill="#7ee8f5"/><text x="34" y="158" fill="#a3a8cf" font-size="10.5" font-family="Manrope">Week 1 ✓</text>
+                <circle cx="150" cy="136" r="5" fill="#eef0ff" opacity=".7"/><text x="158" y="140" fill="#eef0ff" font-size="10.5" font-family="Manrope">3 runs this week · 1/3</text>
+                <circle cx="236" cy="136" r="4" fill="none" stroke="#a3a8cf"/><text x="200" y="120" fill="#a3a8cf" font-size="10.5" font-family="Manrope">Long run 12 km</text>
+                <circle cx="150" cy="186" r="3.5" fill="none" stroke="#eef0ff"/><text x="158" y="190" fill="#eef0ff" font-size="10.5" font-family="Manrope">Today · Easy 5 km run</text>
+              </svg>
+            </div>
+            <div class="why"><small>Why</small><p>So I can feel strong when I turn 30.</p></div>
+            <div class="stats">
+              <div><b>58%</b><span>done</span></div>
+              <div><b>11</b><span>runs so far</span></div>
+              <div><b>9</b><span>days left</span></div>
+            </div>
+          </div>
+          <nav class="bar" aria-label="Main">
+            <a href="#" aria-label="Home"><svg class="i"><use href="#i-home"/></svg></a>
+            <a href="#" aria-label="Calendar"><svg class="i"><use href="#i-cal"/></svg></a>
+            <a class="plus" href="#" aria-label="Add"><svg class="i"><use href="#i-plus"/></svg></a>
+            <a class="on" href="#" aria-label="Goals" aria-current="page"><svg class="i"><use href="#i-goal"/></svg></a>
+            <a href="#" aria-label="Notes"><svg class="i"><use href="#i-note"/></svg></a>
+          </nav>
+        </div>
+        <figcaption>Goal page. The goal sits in its constellation, with its bigger goal above and smaller ones below.</figcaption>
+      </figure>
+
+      <!-- Focus -->
+      <figure class="phone-wrap" style="margin:0">
+        <div class="phone c focus">
+          <div class="statusbar"><span>7:51</span><span>●●●</span></div>
+          <div class="scroll">
+            <p>Focus · feeds 3 runs this week</p>
+            <h2>Easy 5 km run</h2>
+            <svg class="orbit" viewBox="0 0 200 200" role="img" aria-label="40 minute timer, 11 minutes passed">
+              <circle cx="100" cy="100" r="82" fill="none" stroke="#23264a" stroke-width="1"/>
+              <g id="dots"></g>
+            </svg>
+            <div class="big" aria-hidden="true">29:12</div>
+            <p>Each star is one minute. 11 lit so far.</p>
+            <div class="row">
+              <button class="btn ghost">Back</button>
+              <button class="btn primary">Done</button>
+            </div>
+          </div>
+        </div>
+        <figcaption>Focus. A ring of 40 stars, one lights up each minute.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ===================== B. TRAIL ===================== -->
+  <section class="direction" id="d-t" role="tabpanel">
+    <div class="brief">
+      <div>
+        <h2>B. Trail</h2>
+        <p>Goals as a climb. The year goal is the summit, and each day is a waypoint on the way up. Progress is height gained, so a good week looks like a steep climb. Built from your tree idea (trunk, branches, leaves), turned into a route.</p>
+        <h3>Check these apps first</h3>
+        <ul>
+          <li><b>Strava</b>: elevation profile, weekly totals</li>
+          <li><b>AllTrails</b>: map with route and waypoints</li>
+          <li><b>Things 3</b>: calm, clear task rows</li>
+        </ul>
+      </div>
+      <div>
+        <h3>Colors</h3>
+        <div class="swatches">
+          <span class="sw"><i style="background:#e6ece2"></i>Sage</span>
+          <span class="sw"><i style="background:#14261c"></i>Forest ink</span>
+          <span class="sw"><i style="background:#1f3a2b"></i>Deep pine</span>
+          <span class="sw"><i style="background:#e8501a"></i>Trail marker</span>
+          <span class="sw"><i style="background:#c3d0bd"></i>Contour</span>
+        </div>
+        <h3>Fonts</h3>
+        <p>Bricolage Grotesque for titles (chunky, outdoorsy), Atkinson Hyperlegible for reading (made for easy reading).</p>
+        <h3>The one bold thing</h3>
+        <p>The orange trail marker: it's always on the next thing to do.</p>
+      </div>
+    </div>
+
+    <div class="phones">
+      <figure class="phone-wrap" style="margin:0">
+        <div class="phone t">
+          <svg class="topo" viewBox="0 0 375 812" aria-hidden="true" preserveAspectRatio="xMidYMid slice">
+            <g fill="none" stroke="#c3d0bd" stroke-width="1.2">
+              <path d="M-20 120 C80 80 160 160 260 110 S400 60 420 100"/>
+              <path d="M-20 160 C90 120 170 200 270 150 S400 110 420 140"/>
+              <path d="M-20 520 C60 480 150 560 250 500 S380 470 420 520"/>
+              <path d="M-20 560 C70 520 160 600 260 540 S390 510 420 560"/>
+              <path d="M-20 600 C80 560 170 640 270 580 S400 550 420 600"/>
+            </g>
+          </svg>
+          <div class="statusbar"><span>7:42</span><span>●●●</span></div>
+          <div class="scroll">
+            <p class="date">Wednesday 21 October</p>
+            <h1>Good morning</h1>
+            <div class="profile">
+              <div class="head"><b>+340 m</b><span>climbed this week</span></div>
+              <svg viewBox="0 0 280 70" aria-hidden="true">
+                <path d="M0 64 L40 56 L80 40 L120 34 L120 70 L0 70Z" fill="#2f5a43"/>
+                <path d="M0 64 L40 56 L80 40 L120 34" stroke="#e8f0e6" stroke-width="2.5" fill="none" stroke-linejoin="round"/>
+                <path d="M120 34 L160 26 L200 22 L240 14 L280 8" stroke="#a9c2b0" stroke-width="2" stroke-dasharray="4 5" fill="none"/>
+                <circle cx="120" cy="34" r="6" fill="#e8501a" stroke="#1f3a2b" stroke-width="2"/>
+              </svg>
+              <div class="days" aria-hidden="true"><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span></div>
+            </div>
+            <h3>Today's route</h3>
+            <div class="trail">
+              <div class="wp done"><div class="top"><b>Stretch 10 min</b><time>06:50</time></div><div class="feeds">Habit · 12 in a row</div></div>
+              <div class="wp next"><div class="top"><b>Easy 5 km run</b><time>07:00</time></div><div class="feeds">Climbs toward <em>3 runs this week</em></div></div>
+              <div class="wp"><div class="top"><b>Book physio</b><time>any time</time></div><div class="feeds">Climbs toward <em>Stay injury free</em></div></div>
+              <div class="wp"><div class="top"><b>Read 20 pages</b><time>21:30</time></div><div class="feeds">Climbs toward <em>Read 24 books</em></div></div>
+            </div>
+          </div>
+          <nav class="bar" aria-label="Main">
+            <a class="on" href="#" aria-label="Home" aria-current="page"><svg class="i"><use href="#i-home"/></svg></a>
+            <a href="#" aria-label="Calendar"><svg class="i"><use href="#i-cal"/></svg></a>
+            <a class="plus" href="#" aria-label="Add"><svg class="i"><use href="#i-plus"/></svg></a>
+            <a href="#" aria-label="Goals"><svg class="i"><use href="#i-goal"/></svg></a>
+            <a href="#" aria-label="Notes"><svg class="i"><use href="#i-note"/></svg></a>
+          </nav>
+        </div>
+        <figcaption>Home. The week shown as a climb, and today as a route with an orange marker on what's next.</figcaption>
+      </figure>
+
+      <figure class="phone-wrap" style="margin:0">
+        <div class="phone t">
+          <div class="statusbar"><span>7:42</span><span>●●●</span></div>
+          <div class="scroll">
+            <p class="date">Month goal · October</p>
+            <h1>Build to 15 km</h1>
+            <ol class="ladder">
+              <li><span class="alt">Summit</span><div class="seg"><small>Year</small><b>Run a half marathon</b><div class="meter"><i style="width:38%"></i></div></div></li>
+              <li><span class="alt">You are here</span><div class="seg here"><small>Month · 58%</small><b>Build to 15 km</b><div class="meter"><i style="width:58%"></i></div></div></li>
+              <li><span class="alt">Camp</span><div class="seg reached"><small>Week · 1 of 3</small><b>3 runs this week</b><div class="meter"><i style="width:33%"></i></div></div></li>
+              <li><span class="alt">Today</span><div class="seg reached"><small>Day · 07:00</small><b>Easy 5 km run</b></div></li>
+            </ol>
+            <div class="why"><small>Why</small><p>So I can feel strong when I turn 30.</p></div>
+          </div>
+          <nav class="bar" aria-label="Main">
+            <a href="#" aria-label="Home"><svg class="i"><use href="#i-home"/></svg></a>
+            <a href="#" aria-label="Calendar"><svg class="i"><use href="#i-cal"/></svg></a>
+            <a class="plus" href="#" aria-label="Add"><svg class="i"><use href="#i-plus"/></svg></a>
+            <a class="on" href="#" aria-label="Goals" aria-current="page"><svg class="i"><use href="#i-goal"/></svg></a>
+            <a href="#" aria-label="Notes"><svg class="i"><use href="#i-note"/></svg></a>
+          </nav>
+        </div>
+        <figcaption>Goal page. The goal chain shown as stages of the climb, from today up to the summit.</figcaption>
+      </figure>
+
+      <figure class="phone-wrap" style="margin:0">
+        <div class="phone t focus">
+          <div class="statusbar"><span>7:51</span><span>●●●</span></div>
+          <div class="scroll">
+            <p>Focus · climbs toward 3 runs this week</p>
+            <h2>Easy 5 km run</h2>
+            <svg class="rings" viewBox="0 0 200 200" role="img" aria-label="Timer: 29 minutes left of 40">
+              <g fill="none" stroke="#c3d0bd" stroke-width="1.5">
+                <path d="M100 8 C160 10 192 50 190 100 C188 156 150 192 100 190 C44 188 8 150 10 98 C12 46 46 8 100 8Z"/>
+                <path d="M100 30 C148 32 170 62 168 100 C166 142 140 168 100 168 C58 168 32 140 32 100 C32 58 58 30 100 30Z"/>
+              </g>
+              <g fill="none" stroke="#1f3a2b" stroke-width="2.5">
+                <path d="M100 52 C134 54 148 74 146 100 C144 128 126 146 100 146 C72 146 54 128 54 100 C54 72 70 52 100 52Z"/>
+                <path d="M100 74 C118 74 126 86 126 100 C126 116 116 126 100 126 C84 126 74 116 74 100 C74 84 84 74 100 74Z"/>
+              </g>
+              <path d="M96 92 L100 84 L104 92 Z" fill="#e8501a"/>
+              <circle cx="100" cy="100" r="5" fill="#e8501a"/>
+            </svg>
+            <div class="big">29:12</div>
+            <p>Each ring is 10 minutes. Two rings climbed.</p>
+            <div class="row">
+              <button class="btn">Back</button>
+              <button class="btn primary">Done</button>
+            </div>
+          </div>
+        </div>
+        <figcaption>Focus. Contour rings fill in toward the peak as time passes.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ===================== C. VESSEL ===================== -->
+  <section class="direction" id="d-v" role="tabpanel">
+    <div class="brief">
+      <div>
+        <h2>C. Vessel</h2>
+        <p>Every goal is a glass. Finishing a task pours into the goal it feeds, and that glass pours into the next one up. It's your liquid tube timer idea, used for the whole app: your day is a glass you fill.</p>
+        <h3>Check these apps first</h3>
+        <ul>
+          <li><b>Waterllama</b>: filling a vessel, playful but calm</li>
+          <li><b>Apple Fitness rings</b>: daily progress at a glance</li>
+          <li><b>Tiimo</b>: a soft, visual day plan</li>
+        </ul>
+      </div>
+      <div>
+        <h3>Colors</h3>
+        <div class="swatches">
+          <span class="sw"><i style="background:#e8f1f2"></i>Mist</span>
+          <span class="sw"><i style="background:#0b2233"></i>Deep water</span>
+          <span class="sw"><i style="background:#2bb3a3"></i>Teal</span>
+          <span class="sw"><i style="background:#2a7fd4"></i>Water</span>
+          <span class="sw"><i style="background:#d9472f"></i>Why (coral)</span>
+        </div>
+        <h3>Fonts</h3>
+        <p>Instrument Serif for big numbers and your "why" (soft and personal), Inter Tight for everything else.</p>
+        <h3>The one bold thing</h3>
+        <p>The big glass on Home, gently moving.</p>
+      </div>
+    </div>
+
+    <div class="phones">
+      <figure class="phone-wrap" style="margin:0">
+        <div class="phone v">
+          <div class="statusbar"><span>7:42</span><span>●●●</span></div>
+          <div class="scroll">
+            <p class="date">Wednesday 21 October</p>
+            <h1>Good morning</h1>
+            <div class="tank">
+              <svg viewBox="0 0 110 150" role="img" aria-label="Today 25 percent full">
+                <defs>
+                  <clipPath id="glassC"><path d="M14 8 H96 L88 138 Q87 146 79 146 H31 Q23 146 22 138 Z"/></clipPath>
+                  <linearGradient id="waterG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2bb3a3"/><stop offset="1" stop-color="#2a7fd4"/></linearGradient>
+                </defs>
+                <g clip-path="url(#glassC)">
+                  <path class="wave" d="M-10 112 Q10 104 30 112 T70 112 T110 112 T150 112 V160 H-10Z" fill="url(#waterG)"/>
+                </g>
+                <path d="M14 8 H96 L88 138 Q87 146 79 146 H31 Q23 146 22 138 Z" fill="none" stroke="#7fa3ad" stroke-width="2"/>
+                <path d="M24 20 L30 120" stroke="#fff" stroke-width="3" opacity=".7" stroke-linecap="round"/>
+              </svg>
+              <div>
+                <div class="big">25%</div>
+                <p>1 of 4 done today. Your run fills the most.</p>
+                <div class="tubes" aria-label="Week, month and year fill">
+                  <div class="tube"><div><i style="height:33%"></i></div><span>Week</span></div>
+                  <div class="tube"><div><i style="height:58%"></i></div><span>Month</span></div>
+                  <div class="tube"><div><i style="height:38%"></i></div><span>Year</span></div>
+                </div>
+              </div>
+            </div>
+            <h3>Today</h3>
+            <div class="drop done">
+              <span class="tick"><svg viewBox="0 0 22 28" aria-hidden="true"><path d="M11 2 C11 2 3 12 3 18 a8 8 0 0 0 16 0 C19 12 11 2 11 2Z" fill="#2bb3a3"/></svg></span>
+              <span><b>Stretch 10 min</b><small>Habit · 12 in a row</small></span><time>06:50</time>
+            </div>
+            <div class="drop">
+              <span class="tick"><svg viewBox="0 0 22 28" aria-hidden="true"><path d="M11 2 C11 2 3 12 3 18 a8 8 0 0 0 16 0 C19 12 11 2 11 2Z" fill="none" stroke="#456272" stroke-width="1.8"/></svg></span>
+              <span><b>Easy 5 km run</b><small>pours into <em>3 runs this week</em></small></span><time>07:00</time>
+            </div>
+            <div class="drop">
+              <span class="tick"><svg viewBox="0 0 22 28" aria-hidden="true"><path d="M11 2 C11 2 3 12 3 18 a8 8 0 0 0 16 0 C19 12 11 2 11 2Z" fill="none" stroke="#456272" stroke-width="1.8"/></svg></span>
+              <span><b>Book physio</b><small>pours into <em>Stay injury free</em></small></span><time></time>
+            </div>
+            <div class="drop">
+              <span class="tick"><svg viewBox="0 0 22 28" aria-hidden="true"><path d="M11 2 C11 2 3 12 3 18 a8 8 0 0 0 16 0 C19 12 11 2 11 2Z" fill="none" stroke="#456272" stroke-width="1.8"/></svg></span>
+              <span><b>Read 20 pages</b><small>pours into <em>Read 24 books</em></small></span><time>21:30</time>
+            </div>
+          </div>
+          <nav class="bar" aria-label="Main">
+            <a class="on" href="#" aria-label="Home" aria-current="page"><svg class="i"><use href="#i-home"/></svg></a>
+            <a href="#" aria-label="Calendar"><svg class="i"><use href="#i-cal"/></svg></a>
+            <a class="plus" href="#" aria-label="Add"><svg class="i"><use href="#i-plus"/></svg></a>
+            <a href="#" aria-label="Goals"><svg class="i"><use href="#i-goal"/></svg></a>
+            <a href="#" aria-label="Notes"><svg class="i"><use href="#i-note"/></svg></a>
+          </nav>
+        </div>
+        <figcaption>Home. Today is a glass. Small tubes show the week, month and year filling up.</figcaption>
+      </figure>
+
+      <figure class="phone-wrap" style="margin:0">
+        <div class="phone v">
+          <div class="statusbar"><span>7:42</span><span>●●●</span></div>
+          <div class="scroll">
+            <p class="date">Month goal · October</p>
+            <div class="goal-title">Build to 15 km</div>
+            <p class="meta">9 days left · 11 runs so far</p>
+            <div class="pipes" aria-label="Goal chain fill levels">
+              <div class="pipe"><div class="glass" style="height:70px"><i style="height:100%"></i></div><b>1/1</b><small><span class="lbl">Today</span><br>5 km run</small></div>
+              <div class="pipe"><div class="glass" style="height:100px"><i style="height:33%"></i></div><b>33%</b><small><span class="lbl">Week</span><br>3 runs</small></div>
+              <div class="pipe"><div class="glass" style="height:140px;border-color:#0b2233;border-width:2px"><i style="height:58%"></i></div><b>58%</b><small><span class="lbl">This goal</span><br>15 km</small></div>
+              <div class="pipe"><div class="glass" style="height:180px"><i style="height:38%"></i></div><b>38%</b><small><span class="lbl">Year</span><br>Half marathon</small></div>
+            </div>
+            <div class="why"><small>Why</small><p>So I can feel strong when I turn 30.</p></div>
+          </div>
+          <nav class="bar" aria-label="Main">
+            <a href="#" aria-label="Home"><svg class="i"><use href="#i-home"/></svg></a>
+            <a href="#" aria-label="Calendar"><svg class="i"><use href="#i-cal"/></svg></a>
+            <a class="plus" href="#" aria-label="Add"><svg class="i"><use href="#i-plus"/></svg></a>
+            <a class="on" href="#" aria-label="Goals" aria-current="page"><svg class="i"><use href="#i-goal"/></svg></a>
+            <a href="#" aria-label="Notes"><svg class="i"><use href="#i-note"/></svg></a>
+          </nav>
+        </div>
+        <figcaption>Goal page. The chain as glasses getting taller, small to big, each filled to its progress.</figcaption>
+      </figure>
+
+      <figure class="phone-wrap" style="margin:0">
+        <div class="phone v focus">
+          <div class="statusbar"><span>7:51</span><span>●●●</span></div>
+          <div class="scroll">
+            <p>Focus · pours into 3 runs this week</p>
+            <h2>Easy 5 km run</h2>
+            <svg class="bottle" viewBox="0 0 150 260" role="img" aria-label="Timer bottle: 29 of 40 minutes left">
+              <defs>
+                <clipPath id="bottleC"><path d="M55 6 H95 V46 Q130 66 130 108 V236 Q130 252 114 252 H36 Q20 252 20 236 V108 Q20 66 55 46 Z"/></clipPath>
+                <linearGradient id="waterG2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2bb3a3"/><stop offset="1" stop-color="#2a7fd4"/></linearGradient>
+              </defs>
+              <g clip-path="url(#bottleC)">
+                <path class="wave" d="M-20 100 Q5 92 30 100 T80 100 T130 100 T180 100 V270 H-20Z" fill="url(#waterG2)"/>
+              </g>
+              <path d="M55 6 H95 V46 Q130 66 130 108 V236 Q130 252 114 252 H36 Q20 252 20 236 V108 Q20 66 55 46 Z" fill="none" stroke="#7fa3ad" stroke-width="2.5"/>
+              <g stroke="#7fa3ad" stroke-width="1.5"><path d="M118 130 h12 M118 166 h12 M118 202 h12"/></g>
+              <path d="M34 112 L36 220" stroke="#fff" stroke-width="4" opacity=".6" stroke-linecap="round"/>
+            </svg>
+            <div class="big">29:12</div>
+            <p>The bottle drains as time runs out.</p>
+            <div class="row">
+              <button class="btn">Back</button>
+              <button class="btn primary">Done</button>
+            </div>
+          </div>
+        </div>
+        <figcaption>Focus. Your liquid tube timer, the bottle drains as time runs out.</figcaption>
+      </figure>
+    </div>
+  </section>
+</div>
+
+<script>
+  // Tabs
+  const tabs = document.querySelectorAll('.tabs button')
+  tabs.forEach(b => b.addEventListener('click', () => {
+    tabs.forEach(x => x.setAttribute('aria-selected', x === b))
+    document.querySelectorAll('.direction').forEach(s => s.classList.toggle('on', s.id === 'd-' + b.dataset.d))
+  }))
+  // Constellation focus ring: 40 stars, 11 lit
+  const g = document.getElementById('dots')
+  for (let i = 0; i < 40; i++) {
+    const a = (i / 40) * Math.PI * 2 - Math.PI / 2
+    const lit = i < 11
+    const c = document.createElementNS('http://www.w3.org/2000/svg', 'circle')
+    c.setAttribute('cx', 100 + Math.cos(a) * 82)
+    c.setAttribute('cy', 100 + Math.sin(a) * 82)
+    c.setAttribute('r', lit ? 3.2 : 2)
+    c.setAttribute('fill', lit ? '#7ee8f5' : '#3a3d78')
+    if (lit) c.setAttribute('style', 'filter: drop-shadow(0 0 4px #7ee8f5)')
+    g.appendChild(c)
+  }
+</script>
+</body>
+</html>

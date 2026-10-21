@@ -59,6 +59,12 @@ A place to collect visual ideas for later. Nothing here is being built yet. Add 
 - **One-color themes**: everything blue, pink, orange, and so on.
 - **Theme templates**: the four seasons (spring, summer, autumn, winter), gold, iridescent, violet, black hole, star rupture.
 
+## Design themes (Constellation, Trail, Vessel)
+
+- Mockups: `design-mockups/index.html` (Home, Goal page, Focus for each).
+- Step 1 (built): colors and fonts, light and dark, picked in Settings.
+- Step 2 (next): each theme's own visuals: Home top (sky / climb chart / glass), Focus timer (star ring / contour rings / draining bottle), goal chain (stars / climb stages / glasses).
+
 ## General look
 
 - To be decided once the app's "vibe" is clear from using it.

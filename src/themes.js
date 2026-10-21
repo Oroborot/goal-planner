@@ -9,6 +9,11 @@
 const glowTop = (rgb, a) => `radial-gradient(circle at 50% -10%, rgba(${rgb}, ${a}), transparent 60%)`
 const glowCorner = (rgb, a, x) => `radial-gradient(circle at ${x}% -5%, rgba(${rgb}, ${a}), transparent 55%)`
 const IRIDESCENT = 'linear-gradient(135deg, #a1c4fd, #c2a9f5, #fbc2eb)'
+const WATER = 'linear-gradient(180deg, #2bb3a3, #2a7fd4)'
+// Two thin diagonal lines, like veins in marble.
+const marbleVeins = (rgb, a) =>
+  `linear-gradient(118deg, transparent 38%, rgba(${rgb}, ${a}) 39%, transparent 41.5%), ` +
+  `linear-gradient(152deg, transparent 63%, rgba(${rgb}, ${a * 0.8}) 63.6%, transparent 65%)`
 
 export const THEMES = [
   {
@@ -65,7 +70,76 @@ export const THEMES = [
     dark: { bg: '#0f1720', text: '#8aa3b8', textH: '#e8f1f8', border: '#22324a', accent: '#7cc4f0', glow: glowTop('124, 196, 240', 0.2) },
     light: { bg: '#f1f6fb', text: '#5d7487', textH: '#14222e', border: '#d8e4ee', accent: '#2b84c4', glow: glowTop('124, 196, 240', 0.25) },
   },
+  // The three designs from design-mockups/index.html. These also change
+  // the fonts (see FONTS below).
+  {
+    id: 'constellation',
+    name: 'Constellation',
+    fonts: 'constellation',
+    dark: { bg: '#070818', text: '#a3a8cf', textH: '#eef0ff', border: '#23264a', accent: '#b79cff', glow: glowCorner('91, 70, 220', 0.35, 70) },
+    light: { bg: '#eef0fb', text: '#4f5480', textH: '#12143a', border: '#d6d9ef', accent: '#6a4fd8', glow: glowCorner('106, 79, 216', 0.15, 70) },
+  },
+  {
+    id: 'trail',
+    name: 'Trail',
+    fonts: 'trail',
+    dark: { bg: '#0f1a14', text: '#9db3a4', textH: '#e8f0e6', border: '#22362a', accent: '#ff7a45', glow: glowCorner('255, 122, 69', 0.12, 85) },
+    light: { bg: '#e6ece2', text: '#4a5e52', textH: '#14261c', border: '#c3d0bd', accent: '#c94410', fill: '#e8501a' },
+  },
+  {
+    id: 'vessel',
+    name: 'Vessel',
+    fonts: 'vessel',
+    dark: { bg: '#071a26', text: '#8fb0c0', textH: '#e6f4f7', border: '#173447', accent: '#3fc7b6', fill: WATER, glow: glowTop('43, 179, 163', 0.18) },
+    light: { bg: '#e8f1f2', text: '#456272', textH: '#0b2233', border: '#c9dadd', accent: '#1f6fbf', fill: WATER, glow: 'linear-gradient(180deg, rgba(255, 255, 255, 0.6), transparent 40%)' },
+  },
+  // Stoic: black and marble, like the Marcus Aurelius bust pictures,
+  // with one bronze accent. Faint marble veins in the background, and
+  // Stoic quotes on the cover (see quotes.js).
+  {
+    id: 'stoic',
+    name: 'Stoic',
+    fonts: 'stoic',
+    dark: { bg: '#0c0c0d', text: '#a9a59d', textH: '#f4f2ed', border: '#29282b', accent: '#d8c08a', fill: '#f4f2ed', glow: marbleVeins('255, 255, 255', 0.05) },
+    light: { bg: '#f3f2ef', text: '#57544e', textH: '#111111', border: '#dcd9d2', accent: '#8a6a2f', fill: '#111111', glow: marbleVeins('0, 0, 0', 0.045) },
+  },
 ]
+
+// Font pairs: titles and everything else. Themes without `fonts` use the
+// phone's own font. Loaded from Google Fonts (free) only when picked.
+const SYSTEM = "system-ui, 'Segoe UI', Roboto, sans-serif"
+const FONTS = {
+  constellation: {
+    heading: `Syne, ${SYSTEM}`,
+    body: `Manrope, ${SYSTEM}`,
+    url: 'https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=Manrope:wght@400;500;600;700&display=swap',
+  },
+  trail: {
+    heading: `'Bricolage Grotesque', ${SYSTEM}`,
+    body: `'Atkinson Hyperlegible', ${SYSTEM}`,
+    url: 'https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Atkinson+Hyperlegible:wght@400;700&display=swap',
+  },
+  vessel: {
+    heading: `'Instrument Serif', Georgia, serif`,
+    body: `'Inter Tight', ${SYSTEM}`,
+    url: 'https://fonts.googleapis.com/css2?family=Instrument+Serif&family=Inter+Tight:wght@400;500;600;700&display=swap',
+  },
+  // Cinzel: Roman inscription capitals. Spectral: a sharp serif made for screens.
+  stoic: {
+    heading: `Cinzel, Georgia, serif`,
+    body: `Spectral, Georgia, serif`,
+    url: 'https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Spectral:wght@400;500;600&display=swap',
+  },
+}
+
+// Adds a theme's font file to the page once.
+function loadFonts(url) {
+  if (document.querySelector(`link[href="${url}"]`)) return
+  const link = document.createElement('link')
+  link.rel = 'stylesheet'
+  link.href = url
+  document.head.appendChild(link)
+}
 
 // '#c084fc', 0.15 -> 'rgba(192, 132, 252, 0.15)'
 function alpha(hex, a) {
@@ -107,6 +181,10 @@ export function applyTheme(themeId, mode) {
     dark ? 'rgba(255, 255, 255, 0.045)' : p.bg === '#ffffff' ? 'rgba(0, 0, 0, 0.03)' : 'rgba(255, 255, 255, 0.7)',
   )
   root.setProperty('--glow', p.glow || 'none')
+  const fonts = FONTS[(THEMES.find(t => t.id === themeId) || THEMES[0]).fonts]
+  if (fonts) loadFonts(fonts.url)
+  root.setProperty('--sans', fonts ? fonts.body : SYSTEM)
+  root.setProperty('--heading', fonts ? fonts.heading : SYSTEM)
   root.colorScheme = currentMode(mode)
   document.querySelector('meta[name="theme-color"]')?.setAttribute('content', p.bg)
 }

@@ -25,7 +25,7 @@ function CoverScreen({ items, settings }) {
   const today = todayKey()
   const { done, total } = dayCounts(activeGoals(items), today)
   const progress = total === 0 ? 0 : done / total
-  const quote = quoteFor(dateKey(now), offset)
+  const quote = quoteFor(dateKey(now), offset, settings.theme)
   const time = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`
 
   return (
