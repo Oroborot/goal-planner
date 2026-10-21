@@ -495,3 +495,43 @@ li.done { opacity: 0.75; }
 .reward-list li.claimed { opacity: 0.8; }
 .reward-head { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; color: var(--text-h); }
 .reward-target { max-width: 5.5rem; }
+
+/* Home: the theme picture on top (HomeHero.jsx) */
+.home h1 { margin-bottom: 1rem; }
+.home .feeds { color: var(--accent); }
+.hero { display: block; margin: 0 0 1rem; padding: 0.9rem; border: 1px solid var(--border); border-radius: 18px; background: var(--surface); color: var(--text); text-decoration: none; }
+.hero svg { display: block; width: 100%; height: auto; }
+.hero-empty { color: var(--text-h); }
+.hero-caption { display: flex; justify-content: space-between; gap: 0.5rem; margin-top: 0.3rem; font-size: 13px; }
+.hero-caption b { color: var(--text-h); font-weight: 600; }
+.hero-head { display: flex; justify-content: space-between; align-items: baseline; gap: 0.5rem; margin-bottom: 0.4rem; font-size: 13px; }
+.hero-head b { font-family: var(--heading); font-size: 26px; color: var(--text-h); }
+.sky-dust { fill: var(--text-h); opacity: 0.45; }
+.sky-line { stroke: var(--border); stroke-width: 1.2; }
+.sky-line.lit { stroke: var(--accent); opacity: 0.8; }
+.sky-halo { fill: var(--accent); opacity: 0.25; }
+.sky-root { fill: var(--text-h); }
+.sky-star { fill: none; stroke: var(--text); stroke-width: 1.2; }
+.sky-star.lit { fill: var(--accent); stroke: none; }
+.sky-glow { fill: var(--accent); opacity: 0.22; }
+.climb-area { fill: var(--accent); opacity: 0.18; }
+.climb-line { fill: none; stroke: var(--text-h); stroke-width: 2.5; stroke-linejoin: round; }
+.climb-ahead { fill: none; stroke: var(--text); stroke-width: 2; stroke-dasharray: 4 5; }
+.climb-marker { fill: var(--fill, var(--accent)); stroke: var(--bg); stroke-width: 2; }
+.climb-days { display: grid; grid-template-columns: repeat(7, 1fr); font-size: 11px; text-align: center; margin: 0.2rem -0.4rem 0; }
+.climb-days .today { color: var(--accent); font-weight: 700; }
+.hero-glass { display: grid; grid-template-columns: 100px 1fr; gap: 1rem; align-items: end; }
+.glass-water { fill: var(--accent); }
+.glass-edge { fill: none; stroke: var(--text); stroke-width: 2; opacity: 0.6; }
+.glass-shine { stroke: #fff; stroke-width: 3; stroke-linecap: round; opacity: 0.5; }
+.glass-big { display: block; font-family: var(--heading); font-weight: 400; font-size: 56px; line-height: 0.9; color: var(--text-h); }
+.glass-note { margin: 0.4rem 0 0; font-size: 14px; }
+.glass-tubes { display: flex; gap: 6px; margin-top: 0.7rem; }
+.glass-tube { flex: 1; }
+.tube-body { display: block; position: relative; height: 40px; border: 1.5px solid var(--border); border-radius: 10px; overflow: hidden; }
+.tube-water { position: absolute; left: 0; right: 0; bottom: 0; background: var(--fill, var(--accent)); }
+.tube-label { display: block; margin-top: 3px; text-align: center; font-size: 11px; font-weight: 600; }
+@media (prefers-reduced-motion: no-preference) {
+  .glass-water { animation: glass-slosh 4s ease-in-out infinite; }
+}
+@keyframes glass-slosh { 50% { transform: translateX(-12px); } }

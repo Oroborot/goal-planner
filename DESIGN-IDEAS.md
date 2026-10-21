@@ -63,7 +63,9 @@ A place to collect visual ideas for later. Nothing here is being built yet. Add 
 
 - Mockups: `design-mockups/index.html` (Home, Goal page, Focus for each).
 - Step 1 (built): colors and fonts, light and dark, picked in Settings.
-- Step 2 (next): each theme's own visuals: Home top (sky / climb chart / glass), Focus timer (star ring / contour rings / draining bottle), goal chain (stars / climb stages / glasses).
+- Step 2a (built): new Home: theme picture on top (sky / climb chart / glass; other themes a "done today" bar), Now box, Today list with "feeds …". Tiles removed.
+- Step 2b (next): Focus timer (star ring / contour rings / draining bottle).
+- Step 2c (later): goal page chain (stars / climb stages / glasses).
 
 ## General look
 

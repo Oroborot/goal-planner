@@ -325,7 +325,7 @@ function App() {
       />
     )
   } else {
-    page = <HomeScreen items={items} />
+    page = <HomeScreen items={items} apply={apply} settings={settings} />
   }
 
   return (
