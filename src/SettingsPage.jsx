@@ -67,14 +67,6 @@ function SettingsPage({ settings, onChange, items, events, onRestore }) {
         />
         <span>Show when the app opens</span>
       </label>
-      <label className="done-toggle">
-        <input
-          type="checkbox"
-          checked={settings.coverOnHome}
-          onChange={e => onChange({ ...settings, coverOnHome: e.target.checked })}
-        />
-        <span>Show when tapping Home</span>
-      </label>
       <p className="goal-meta">It fills up as today gets done. Pictures and more quotes come later.</p>
 
       <h2>Plan and wrap-up</h2>

@@ -97,6 +97,8 @@ function GoalsScreen({ items, events, apply, timeframe, setTimeframe }) {
     <div className="app">
       <BackLink fallback="#" />
       <h1>Goals</h1>
+      {/* The goal tree used to be "Views" in the menu. */}
+      <p className="goal-meta"><a href="#views">Goal tree</a></p>
 
       <div className="tabs">
         {TIMEFRAMES.map(t => (

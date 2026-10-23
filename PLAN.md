@@ -191,6 +191,23 @@ Inspiration: Google Calendar (week/month overview), Todoist (daily list), Sunsam
 - [ ] **Phone version and real notifications.** Browsers only send reminders reliably while the page is open, so true phone reminders come with a mobile app.
 - [ ] **Legal and privacy:** everything in the "Legal and privacy checklist" below. Must be done before the app goes public (before login, payments, sharing or app stores).
 
+### Part 6: life app (decided 2026-10-22)
+
+The app grows from a goal planner into a life app. Goals stay the core.
+
+**Order:** redesign → shopping list → dreams.
+
+**Keep as is:** goals (adjust later), focus timer, history log, stats, themes, home + Now box, day/week/month views.
+**Hide for now (keep the code):** archive, rewards.
+**Rethink:** folders become the filing and archive system once data grows. Cover screen stays, needs a clearer UI and more polish later.
+
+- [ ] **Redesign:** minimal, readable, wide. Look of Things 3 (white space, calm lists, big clear text). New menu for the new sections.
+  - Done 2026-10-23: menu and Home (floating ☰ and ＋ instead of the bottom bar, "This evening" on Home).
+  - Next: check every theme in light and dark at phone size (faint grey menu icons in light mode? smaller theme pictures on Home look right?).
+- [ ] **Shopping and cooking:** ingredient lists first, recipes later.
+- [ ] **Dreams:** fast dream notes right after waking (iPhone keyboard mic for voice, no audio storage). Dream symbol library: words with a meaning get highlighted, tap for a short explanation. User supplies the sources; we write the explanations in our own words.
+- [ ] **Dreams + sleep (last):** attach the night's sleep rating from the watch. A web app can't read Apple Health; the free route is an iPhone Shortcut that copies sleep data in. A native app costs $99/year.
+
 ## Maybe remove later
 
 Small things added along the way that might not be needed in the final app. Review this list during the design pass.

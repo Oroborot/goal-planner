@@ -1,19 +1,8 @@
 .app { max-width: 480px; width: 100%; margin: 0 auto; padding: 1.5rem 1rem 6rem; text-align: left; box-sizing: border-box; }
 
 /* Bottom bar: 5 icons, the round ＋ in the middle in the accent color. */
-.bottom-bar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 20; display: grid; grid-template-columns: repeat(5, 1fr); align-items: center; max-width: 480px; margin: 0 auto; padding: 6px 8px calc(10px + env(safe-area-inset-bottom)); box-sizing: border-box; background: var(--bg); border-top: 1px solid var(--border); }
-.bar-item { display: flex; justify-content: center; align-items: center; min-height: 44px; color: var(--text); }
-.bar-item.active { color: var(--accent); }
 /* Side menu: slides in from the left; a thin strip on the left edge opens it. */
-.menu-edge { position: fixed; left: 0; top: 30%; z-index: 15; width: 6px; height: 80px; min-height: 0; padding: 0; border: 0; border-radius: 0 6px 6px 0; background: var(--accent-border); opacity: 0.5; }
 .menu-backdrop { position: fixed; inset: 0; z-index: 40; background: rgba(0, 0, 0, 0.5); }
-.side-menu { display: flex; flex-direction: column; gap: 2px; text-align: left; width: 240px; height: 100%; padding: calc(1rem + env(safe-area-inset-top)) 1rem 1rem; box-sizing: border-box; background: var(--bg); border-right: 1px solid var(--border); animation: menu-in 0.18s ease-out; }
-@keyframes menu-in { from { transform: translateX(-100%); } }
-.side-menu a { display: flex; align-items: center; min-height: 44px; padding: 0 0.5rem; border-radius: 8px; color: var(--text-h); text-decoration: none; }
-.side-menu a:hover { background: var(--accent-bg); }
-.side-menu-title { margin: 0 0 0.5rem; font-size: 1.1em; font-weight: 600; color: var(--text-h); }
-.side-menu-later { margin: 1rem 0 0.25rem 0.5rem; font-size: 0.75em; }
-.side-menu-soon { padding: 0.4rem 0.5rem; opacity: 0.5; }
 
 /* The ＋ sheet: slides up from the bottom over a dimmed screen. */
 .sheet-backdrop { position: fixed; inset: 0; z-index: 30; display: flex; align-items: flex-end; justify-content: center; background: rgba(0, 0, 0, 0.5); }
@@ -24,7 +13,6 @@
 .sheet-choices span { font-size: 0.75em; color: var(--text); }
 .sheet-error { margin: 0; font-size: 0.85em; color: #e5484d; }
 .sheet-close { width: 100%; }
-.bar-add { justify-self: center; padding: 0; border: 0; display: flex; align-items: center; justify-content: center; width: 52px; height: 52px; border-radius: 50%; background: var(--fill, var(--accent)); color: var(--bg); }
 
 /* Shared look for inputs and buttons. 16px text stops iPhones zooming in,
    and 44px height makes them easy to tap. */
@@ -359,8 +347,6 @@ li.done { opacity: 0.75; }
 .month-day { border-radius: 12px; }
 .repeat-stats div { border-radius: 14px; background: var(--surface, transparent); }
 .sheet { border-radius: 22px 22px 0 0; }
-.side-menu a { border-radius: 12px; }
-.bottom-bar { background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
 .timeline-block { border-radius: 10px; }
 .now-box h2 { margin: 0 0 0.25rem; }
 
@@ -498,7 +484,6 @@ li.done { opacity: 0.75; }
 
 /* Home: the theme picture on top (HomeHero.jsx) */
 .home h1 { margin-bottom: 1rem; }
-.home .feeds { color: var(--accent); }
 .hero { display: block; margin: 0 0 1rem; padding: 0.9rem; border: 1px solid var(--border); border-radius: 18px; background: var(--surface); color: var(--text); text-decoration: none; }
 .hero svg { display: block; width: 100%; height: auto; }
 .hero-empty { color: var(--text-h); }
@@ -535,3 +520,31 @@ li.done { opacity: 0.75; }
   .glass-water { animation: glass-slosh 4s ease-in-out infinite; }
 }
 @keyframes glass-slosh { 50% { transform: translateX(-12px); } }
+
+/* Menu (Things 3 sidebar look) and the two floating buttons. */
+.menu-backdrop { position: fixed; inset: 0; z-index: 40; background: rgba(0, 0, 0, 0.4); }
+@keyframes menu-in { from { transform: translateX(-100%); } }
+.side-menu { display: flex; flex-direction: column; gap: 1.25rem; width: 270px; height: 100%; overflow-y: auto; padding: calc(1.5rem + env(safe-area-inset-top)) 0.75rem calc(1rem + env(safe-area-inset-bottom)); box-sizing: border-box; background: var(--bg); text-align: left; animation: menu-in 0.18s ease-out; }
+.side-menu-group { display: flex; flex-direction: column; }
+.side-menu-link { display: flex; align-items: center; gap: 0.85rem; min-height: 44px; padding: 0 0.6rem; border-radius: 10px; font-size: 17px; color: var(--text-h); text-decoration: none; }
+a.side-menu-link:hover { background: var(--accent-bg); }
+.side-menu-link.soon { color: var(--text); opacity: 0.45; }
+.side-menu-note { margin-left: auto; font-size: 13px; }
+.side-menu-settings { margin-top: auto; font-size: 15px; color: var(--text); }
+.float-menu, .float-add { position: fixed; z-index: 20; bottom: calc(1rem + env(safe-area-inset-bottom)); display: flex; align-items: center; justify-content: center; padding: 0; border-radius: 50%; }
+.float-menu { left: max(1rem, calc(50% - 224px)); width: 44px; height: 44px; min-height: 0; border: 1px solid var(--border); background: var(--bg); color: var(--text); }
+.float-add { right: max(1rem, calc(50% - 224px)); width: 56px; height: 56px; border: 0; background: var(--fill, var(--accent)); color: var(--bg); box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25); }
+
+/* Home in the Things 3 look: big Today title, calm rows, no cards. */
+.home-title { display: flex; align-items: center; gap: 0.6rem; margin: 0.2rem 0 1.25rem; font-size: 30px; }
+.home-title svg { color: #EF9F27; }
+.home-routines { display: flex; gap: 1.25rem; margin: -0.5rem 0 1.25rem; font-size: 14px; }
+.home-routines a { color: var(--text); text-decoration: none; }
+.home .hero { padding: 0.6rem; border-radius: 14px; }
+.home .hero svg { max-height: 110px; }
+.home .now-box { margin: 0 0 1.5rem; padding: 0.15rem 0 0.15rem 0.85rem; border: 0; border-left: 3px solid var(--accent); border-radius: 0; background: transparent; }
+.home .now-box li.now-row { border-bottom: 0; }
+.home .day-list li { margin: 0; padding: 0.55rem 0.1rem; border: 0; border-radius: 0; background: transparent; }
+.home .day-list li.chained { border-left: 0; }
+.home .feeds { color: var(--text); opacity: 0.7; }
+.home-evening { margin: 1.5rem 0 0.25rem; padding-bottom: 0.3rem; border-bottom: 1px solid var(--border); font-size: 14px; font-weight: 600; color: var(--text); }

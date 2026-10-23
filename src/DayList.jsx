@@ -7,6 +7,9 @@ import { colorOf } from './colors.js'
 import { ImportanceIcon } from './TaskExtras.jsx'
 import { showTime } from './settings.js'
 
+// From this time on, Home lists things under "This evening".
+const EVENING = '18:00'
+
 // One row: tick box (or a mark), time (and end time), color dot, title.
 // Habits get a ↻; chained ones say what they come after.
 function Row({ entry, goals, items, apply, onToggle, top, showFeeds }) {
@@ -84,7 +87,8 @@ function Row({ entry, goals, items, apply, onToggle, top, showFeeds }) {
 // ones placed right after what they follow). Used by Day, Week and Month.
 // Tasks can be ticked any day; habits only today (they're ticked per day).
 // `showFeeds` adds the bigger goals each one counts toward.
-function DayList({ dateKey, goals, items, apply, compact = false, showFeeds = false }) {
+// `splitEvening` puts things from 18:00 on under "This evening" (Home).
+function DayList({ dateKey, goals, items, apply, compact = false, showFeeds = false, splitEvening = false }) {
   const entries = dayEntries(goals, dateKey)
   const isToday = dateKey === todayKey()
   // The day's ★ top tasks, picked in "Plan your day".
@@ -94,9 +98,10 @@ function DayList({ dateKey, goals, items, apply, compact = false, showFeeds = fa
     return <p className="empty">Nothing planned.</p>
   }
 
-  return (
+  const isEvening = entry => splitEvening && entry.time >= EVENING
+  const list = part => (
     <ul className={compact ? 'day-list compact' : 'day-list'}>
-      {entries.map(entry => (
+      {part.map(entry => (
         <Row
           key={entry.goal.id}
           entry={entry}
@@ -111,6 +116,20 @@ function DayList({ dateKey, goals, items, apply, compact = false, showFeeds = fa
         />
       ))}
     </ul>
+  )
+  const day = entries.filter(e => !isEvening(e))
+  const evening = entries.filter(isEvening)
+
+  return (
+    <>
+      {day.length > 0 && list(day)}
+      {evening.length > 0 && (
+        <>
+          <h3 className="home-evening">This evening</h3>
+          {list(evening)}
+        </>
+      )}
+    </>
   )
 }
 

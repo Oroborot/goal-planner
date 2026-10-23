@@ -340,11 +340,9 @@ function App() {
         </div>
       )}
       {page}
-      {screen.name !== 'focus' && <BottomBar
-          screen={screen.name}
-          homeHref={settings.coverOnHome ? '#cover' : '#'}
-          onAdd={() => setAdding(true)}
-        />}
+      {screen.name !== 'focus' && (
+        <BottomBar onMenu={() => setMenuOpen(true)} onAdd={() => setAdding(true)} />
+      )}
       <SideMenu open={menuOpen} setOpen={setMenuOpen} />
       {adding && <AddSheet items={items} apply={apply} onClose={() => setAdding(false)} />}
     </>
