@@ -92,6 +92,88 @@ const SHAPES = {
       </>
     ),
   },
+  // Hub tabs (bottom bar) and the gear.
+  training: {
+    label: 'Training',
+    shape: (
+      <>
+        <path d="M9 12h6M1.5 12H3M21 12h1.5" />
+        <rect x="6" y="6" width="3" height="12" rx="1" />
+        <rect x="15" y="6" width="3" height="12" rx="1" />
+        <rect x="3" y="8.5" width="3" height="7" rx="1" />
+        <rect x="18" y="8.5" width="3" height="7" rx="1" />
+      </>
+    ),
+  },
+  work: {
+    label: 'Work',
+    shape: (
+      <>
+        <circle cx="12" cy="13.5" r="7.5" />
+        <path d="M12 13.5V9.5M10 2.5h4M12 2.5V6M18 7.5l1.5-1.5" />
+      </>
+    ),
+  },
+  cookbook: {
+    label: 'Cookbook',
+    shape: <path d="M6 3v6a3 3 0 0 0 6 0V3M9 3v6M9 12v9M18 21V3c-2 1.5-3.5 4.5-3.5 9H18" />,
+  },
+  projects: {
+    label: 'Projects',
+    shape: (
+      <>
+        <rect x="5" y="4" width="14" height="17" rx="2" />
+        <rect x="9" y="2.5" width="6" height="3" rx="1" />
+        <path d="m9 13 2 2 4-4" />
+      </>
+    ),
+  },
+  gear: {
+    label: 'More',
+    shape: (
+      <>
+        <circle cx="12" cy="12" r="3" />
+        <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
+      </>
+    ),
+  },
+  backup: {
+    label: 'Backup',
+    shape: <path d="M12 4v11M7.5 10.5 12 15l4.5-4.5M5 19h14" />,
+  },
+  chevron: { label: 'Open', shape: <path d="m9 6 6 6-6 6" /> },
+  chevronUp: { label: 'Open', shape: <path d="m6 15 6-6 6 6" /> },
+  chevronLeft: { label: 'Back', shape: <path d="m15 6-6 6 6 6" /> },
+  // Training buttons. Pause, play and skip are filled shapes.
+  pause: {
+    label: 'Pause',
+    shape: (
+      <>
+        <rect x="6" y="5" width="4" height="14" rx="1.2" fill="currentColor" stroke="none" />
+        <rect x="14" y="5" width="4" height="14" rx="1.2" fill="currentColor" stroke="none" />
+      </>
+    ),
+  },
+  play: { label: 'Play', shape: <path d="M7 5v14l12-7z" fill="currentColor" /> },
+  skip: {
+    label: 'Skip',
+    shape: (
+      <>
+        <path d="M5 5v14l11-7z" fill="currentColor" />
+        <path d="M18.5 5v14" strokeWidth="2.6" />
+      </>
+    ),
+  },
+  clock: {
+    label: 'Clock',
+    shape: (
+      <>
+        <circle cx="12" cy="12" r="8.5" />
+        <path d="M12 7.5V12l3 2" />
+      </>
+    ),
+  },
+  updown: { label: 'Switch', shape: <path d="M8 4v16M4.5 7.5 8 4l3.5 3.5M16 20V4M12.5 16.5 16 20l3.5-3.5" /> },
   menu: { label: 'Menu', shape: <path d="M5 7h14M5 12h14M5 17h14" /> },
 }
 

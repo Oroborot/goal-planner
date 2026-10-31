@@ -8,10 +8,9 @@ import DayPage from './DayPage.jsx'
 import WeekPage from './WeekPage.jsx'
 import MonthPage from './MonthPage.jsx'
 import { mondayOf, todayKey } from './calendar.js'
-import { EVENTS_KEY, loadEvents, makeEvent } from './history.js'
+import { makeEvent } from './history.js'
+import { loadEvents, loadItems, saveEvents, saveItems, stampItems } from './store.js'
 import TimerBar from './TimerBar.jsx'
-import BottomBar from './BottomBar.jsx'
-import AddSheet from './AddSheet.jsx'
 import FocusPage from './FocusPage.jsx'
 import StatsPage from './StatsPage.jsx'
 import RoutinePage from './RoutinePage.jsx'
@@ -23,7 +22,11 @@ import SettingsPage from './SettingsPage.jsx'
 import { loadSettings, saveSettings } from './settings.js'
 import { applyTheme } from './themes.js'
 import { rememberPage } from './navHistory.js'
-import SideMenu from './SideMenu.jsx'
+import TabBar from './TabBar.jsx'
+import GearSheet from './GearSheet.jsx'
+import EmptyTab from './EmptyTab.jsx'
+import TrainingScreen from './TrainingScreen.jsx'
+import BackupSection from './BackupSection.jsx'
 import { ArchivePage, HistoryPage } from './MenuPages.jsx'
 import {
   alarm,
@@ -36,10 +39,13 @@ import {
 } from './timer.js'
 import './App.css'
 
-// The name of the slot in the browser's localStorage where items are saved.
-const STORAGE_KEY = 'planner-items'
+// The 4 tabs of the hub, shown in the bar at the bottom.
+const TABS = ['training', 'work', 'cookbook', 'projects']
 
 // Which screen to show, read from the end of the web address:
+//   no address    -> the Training tab
+//   #work, #cookbook, #projects -> the other tabs
+//   #home         -> the old Today home screen (hidden, still works)
 //   #goals        -> the goals list
 //   #goal/<id>    -> the page for one goal
 //   #notes        -> the notes list
@@ -48,10 +54,10 @@ const STORAGE_KEY = 'planner-items'
 //   #day/<date>   -> one day in the calendar, e.g. #day/2026-10-21
 //   #week         -> this week; #week/<date> -> the week with that date
 //   #month        -> this month; #month/2026-10 -> that month
-//   anything else -> the home screen
+//   anything else -> the Training tab
 function screenFromAddress() {
   const address = window.location.hash.slice(1)
-  if (['history', 'archive', 'views', 'settings', 'stats', 'plan', 'wrapup', 'cover', 'folders', 'rewards'].includes(address)) return { name: address }
+  if (['home', 'backup', 'history', 'archive', 'views', 'settings', 'stats', 'plan', 'wrapup', 'cover', 'folders', 'rewards', ...TABS].includes(address)) return { name: address }
   if (address.startsWith('focus/')) return { name: 'focus', goalId: address.slice(6) }
   if (address === 'day') return { name: 'day', dateKey: todayKey() }
   if (address === 'week') return { name: 'week', mondayKey: mondayOf(todayKey()) }
@@ -63,45 +69,12 @@ function screenFromAddress() {
   if (address.startsWith('goal/')) return { name: 'goal', goalId: address.slice(5) }
   if (address === 'notes') return { name: 'notes' }
   if (address.startsWith('note/')) return { name: 'note', noteId: address.slice(5) }
-  return { name: 'home' }
+  return { name: 'training' }
 }
 
-// Read saved items when the app opens. If nothing is saved yet, or the saved
-// data is broken, start with an empty list instead of crashing.
-// Older test items had a single `parentId`; they get turned into a
-// `parentIds` list so everything uses the same shape.
-function loadItems() {
-  try {
-    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY))
-    if (!Array.isArray(saved)) return []
-    return saved.map(({ parentId, ...item }) => ({
-      why: '',
-      completedBy: item.done ? 'hand' : null,
-      color: null,
-      date: null,
-      time: null,
-      plannedDate: null,
-      importance: 0,
-      duration: null,
-      after: null,
-      repeat: null,
-      target: null,
-      repeatSince: null,
-      doneDates: [],
-      ...item,
-      parentIds: item.parentIds ?? (parentId ? [parentId] : []),
-    }))
-  } catch {
-    return []
-  }
-}
-
-// When the app opens with no address, show the cover first if that's on
-// in Settings (it can be turned off).
+// The "show cover when the app opens" setting is ignored for now: the
+// cover is hidden from navigation and the app opens on Training.
 function firstScreen() {
-  if (!window.location.hash && loadSettings().coverOnOpen) {
-    window.history.replaceState(null, '', '#cover')
-  }
   return screenFromAddress()
 }
 
@@ -119,17 +92,15 @@ function App() {
   const [goalsTab, setGoalsTab] = useState('day')
 
   // Save to localStorage every time the items or the history change.
-  useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(items))
-  }, [items])
-  useEffect(() => {
-    localStorage.setItem(EVENTS_KEY, JSON.stringify(events))
-  }, [events])
+  // (store.js decides where: localStorage now, a server later.)
+  useEffect(() => saveItems(items), [items])
+  useEffect(() => saveEvents(events), [events])
 
   // Every change goes through here: the goal actions return the new items
   // plus history entries for what happened, and both get saved.
+  // New and changed items get their owner and timestamps here (see store.js).
   function apply({ items: newItems, events: newEvents }) {
-    setItems(newItems)
+    setItems(previous => stampItems(previous, newItems))
     if (newEvents.length > 0) setEvents(previous => [...previous, ...newEvents])
   }
 
@@ -178,10 +149,8 @@ function App() {
     setEvents(backup.events)
     changeSettings({ ...loadSettings(), ...backup.settings })
   }
-  // True while the ＋ add sheet is open.
-  const [adding, setAdding] = useState(false)
-  // True while the side menu is open.
-  const [menuOpen, setMenuOpen] = useState(false)
+  // True while the gear sheet (Settings, History, Backup, Stats) is open.
+  const [gearOpen, setGearOpen] = useState(false)
   // Set when a countdown ends, for the "Time's up" banner.
   const [timesUp, setTimesUp] = useState(null)
   useEffect(() => saveTimer(timer), [timer])
@@ -299,6 +268,12 @@ function App() {
         <GoalTree items={items} />
       </div>
     )
+  } else if (screen.name === 'backup') {
+    page = (
+      <div className="app">
+        <BackupSection items={items} events={events} settings={settings} onRestore={restoreBackup} />
+      </div>
+    )
   } else if (screen.name === 'settings') {
     page = (
       <SettingsPage
@@ -324,8 +299,13 @@ function App() {
         deleteEvents={deleteEvents}
       />
     )
-  } else {
+  } else if (screen.name === 'home') {
     page = <HomeScreen items={items} apply={apply} settings={settings} />
+  } else if (screen.name === 'training') {
+    page = <TrainingScreen onGear={() => setGearOpen(true)} />
+  } else {
+    // Work, Cookbook or Projects: not built yet.
+    page = <EmptyTab key={screen.name} tab={screen.name} onGear={() => setGearOpen(true)} />
   }
 
   return (
@@ -340,11 +320,10 @@ function App() {
         </div>
       )}
       {page}
-      {screen.name !== 'focus' && (
-        <BottomBar onMenu={() => setMenuOpen(true)} onAdd={() => setAdding(true)} />
+      {screen.name !== 'focus' && screen.name !== 'cover' && (
+        <TabBar active={TABS.includes(screen.name) ? screen.name : null} />
       )}
-      <SideMenu open={menuOpen} setOpen={setMenuOpen} />
-      {adding && <AddSheet items={items} apply={apply} onClose={() => setAdding(false)} />}
+      {gearOpen && <GearSheet onClose={() => setGearOpen(false)} />}
     </>
   )
 }

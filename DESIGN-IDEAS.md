@@ -84,4 +84,4 @@ The visuals are mostly drawing: they show the same saved data in different ways.
 ## New ideas
 
 -  I want to have different timer visuals, like stacking dominoes, like sand in an hourglass, like liquid in a bottle and like a piece of wood burning turning black by the minute.
--  
+- Training timer: a prettier, more fluid water animation for the liquid (sloshing, ripples, small bubbles). Plain SVG may be enough; if not, look at a canvas/WebGL or Lottie animation later.

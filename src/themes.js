@@ -180,6 +180,12 @@ export function applyTheme(themeId, mode) {
     '--surface',
     dark ? 'rgba(255, 255, 255, 0.045)' : p.bg === '#ffffff' ? 'rgba(0, 0, 0, 0.03)' : 'rgba(255, 255, 255, 0.7)',
   )
+  // The Training timer's liquid: the theme's accent with a little twist so
+  // it stands out from the page. Light themes get a pale surface and a bit
+  // deeper bottom; dark themes a bright surface over a deep bottom, so the
+  // white numbers stay readable.
+  root.setProperty('--liquid-top', dark ? p.accent : `color-mix(in srgb, ${p.accent} 55%, white)`)
+  root.setProperty('--liquid-bottom', `color-mix(in srgb, ${p.accent} ${dark ? 65 : 88}%, black)`)
   root.setProperty('--glow', p.glow || 'none')
   const fonts = FONTS[(THEMES.find(t => t.id === themeId) || THEMES[0]).fonts]
   if (fonts) loadFonts(fonts.url)

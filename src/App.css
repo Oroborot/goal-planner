@@ -548,3 +548,112 @@ a.side-menu-link:hover { background: var(--accent-bg); }
 .home .day-list li.chained { border-left: 0; }
 .home .feeds { color: var(--text); opacity: 0.7; }
 .home-evening { margin: 1.5rem 0 0.25rem; padding-bottom: 0.3rem; border-bottom: 1px solid var(--border); font-size: 14px; font-weight: 600; color: var(--text); }
+
+/* ---- Hub: tab bar at the bottom, gear and its sheet ---- */
+/* The hub's orange. Same in every theme, like the Training design. */
+:root { --hub-accent: #EF9F27; }
+
+.tab-bar { position: fixed; z-index: 20; left: 0; right: 0; bottom: 0; display: flex; justify-content: center; padding: 6px 0 calc(6px + env(safe-area-inset-bottom)); border-top: 1px solid var(--border); background: color-mix(in srgb, var(--bg) 88%, transparent); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); }
+.tab-bar-link { display: flex; flex: 1; max-width: 120px; flex-direction: column; align-items: center; gap: 2px; padding: 2px 0; font-size: 11px; color: var(--text); text-decoration: none; opacity: 0.8; }
+.tab-bar-link.active { color: var(--hub-accent); opacity: 1; }
+
+.tab-head { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+.tab-head h1 { margin: 0; }
+.gear-button { display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; min-height: 0; padding: 0; border: 0; border-radius: 50%; background: transparent; color: var(--text-h); }
+
+.sheet-handle { align-self: center; width: 40px; height: 5px; border-radius: 3px; background: var(--border); }
+.gear-sheet-head { display: flex; align-items: center; justify-content: space-between; }
+.gear-sheet-head h2 { margin: 0; font-size: 22px; color: var(--text-h); }
+.sheet-x { width: 36px; height: 36px; min-height: 0; padding: 0; border: 0; background: transparent; font-size: 18px; color: var(--text); }
+.gear-sheet-list { display: flex; flex-direction: column; margin-bottom: 0.5rem; border: 1px solid var(--border); border-radius: 14px; background: var(--surface); overflow: hidden; }
+.gear-sheet-link { display: flex; align-items: center; gap: 0.85rem; min-height: 52px; padding: 0 1rem; font-size: 17px; color: var(--text-h); text-decoration: none; }
+.gear-sheet-link + .gear-sheet-link { border-top: 1px solid var(--border); }
+.gear-sheet-link span { flex: 1; text-align: left; }
+.gear-sheet-link svg:last-child { color: var(--text); opacity: 0.6; }
+
+/* ---- Training tab ---- */
+/* One screen tall, above the tab bar (about 60px). */
+.training { position: relative; display: flex; flex-direction: column; max-width: 480px; min-height: calc(100dvh - 60px - env(safe-area-inset-bottom)); margin: 0 auto; padding: calc(0.75rem + env(safe-area-inset-top)) 1rem 0.9rem; box-sizing: border-box; text-align: left; }
+.training-top { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 0.5rem; }
+.training-counts { display: flex; flex-direction: column; font-size: 15px; white-space: nowrap; line-height: 1.5; color: var(--text-h); }
+.training-set { color: var(--text); }
+.training-session { display: flex; align-items: center; justify-content: center; gap: 0.1rem; }
+.training-session-clock { font-size: 32px; font-weight: 500; letter-spacing: -0.5px; color: var(--text-h); font-variant-numeric: tabular-nums; }
+.training-swap { display: flex; align-items: center; justify-content: center; width: 32px; height: 40px; min-height: 0; padding: 0; border: 0; background: transparent; color: var(--text); }
+.training-top .gear-button { justify-self: end; margin-right: -0.5rem; }
+
+.training-circle-area { display: flex; flex: 1; align-items: center; justify-content: center; padding: 1rem 0; }
+.timer-circle { position: relative; width: min(84vw, 340px); aspect-ratio: 1; }
+.timer-circle svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.timer-circle-disc-top { stop-color: var(--liquid-bottom, var(--hub-accent)); stop-opacity: 0.02; }
+.timer-circle-disc-bottom { stop-color: var(--liquid-bottom, var(--hub-accent)); stop-opacity: 0.08; }
+/* Soft liquid in the theme's own color (set in themes.js): light enough for
+   the numbers on top, and it still reads on dark themes. */
+.timer-circle-liquid-top { stop-color: var(--liquid-top, #F7C27A); stop-opacity: 0.35; }
+.timer-circle-liquid-bottom { stop-color: var(--liquid-bottom, var(--hub-accent)); stop-opacity: 0.6; }
+.timer-circle-liquid.back { fill: var(--liquid-top, #F7C27A); fill-opacity: 0.22; }
+/* The ring follows the theme's accent, like the liquid. */
+.timer-circle-track { fill: none; stroke: var(--accent, var(--hub-accent)); stroke-opacity: 0.16; stroke-width: 7; }
+.timer-circle-ring { fill: none; stroke: var(--accent, var(--hub-accent)); stroke-width: 5; stroke-linecap: round; }
+.timer-circle-text { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; pointer-events: none; }
+.timer-circle-label { margin-bottom: 0.3rem; font-size: 17px; line-height: 1; font-weight: 600; color: var(--hub-accent); }
+.timer-circle-clock { font-size: clamp(56px, 19vw, 76px); line-height: 1; font-weight: 500; letter-spacing: -2px; color: var(--text-h); font-variant-numeric: tabular-nums; }
+.timer-circle-clock small { font-size: 0.42em; font-weight: 400; letter-spacing: 0; color: var(--text); }
+
+.training-buttons { display: grid; grid-template-columns: 1fr 1.15fr 0.85fr; gap: 0.6rem; }
+.training-buttons button { display: flex; align-items: center; justify-content: center; gap: 0.5rem; height: 56px; padding: 0 0.5rem; border-radius: 28px; font-size: 17px; font-weight: 500; }
+.training-buttons button:disabled { opacity: 0.4; cursor: default; }
+.training-pause { border: 0; background: color-mix(in srgb, var(--text) 13%, transparent); color: var(--text-h); }
+.training-skip { border: 0; background: var(--hub-accent); color: #fff; box-shadow: 0 4px 14px rgba(239, 159, 39, 0.35); }
+.training-plus { border: 1px solid var(--border); background: transparent; color: var(--text-h); }
+
+/* The two cards between the circle and the buttons. */
+.training-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; margin-bottom: 0.9rem; }
+.training-card { display: flex; align-items: center; gap: 0.5rem; min-height: 72px; padding: 0.7rem 0.8rem 0.7rem 1rem; border: 1px solid var(--border); border-radius: 16px; background: var(--surface, var(--bg)); color: var(--text); text-align: left; }
+.training-card.current { border-color: color-mix(in srgb, var(--hub-accent) 22%, var(--border)); background: color-mix(in srgb, var(--hub-accent) 9%, var(--surface, var(--bg))); }
+.training-card:disabled { opacity: 0.5; cursor: default; }
+.training-card-text { display: flex; flex: 1; flex-direction: column; gap: 0.15rem; min-width: 0; }
+.training-card-text strong { overflow: hidden; font-size: 17px; font-weight: 500; white-space: nowrap; text-overflow: ellipsis; color: var(--text-h); }
+.training-card-text span { overflow: hidden; font-size: 14px; white-space: nowrap; text-overflow: ellipsis; }
+
+/* The bottom panel: covers everything above the buttons, so Pause / Skip /
+   +10s stay usable below it. */
+.training-backdrop { position: absolute; top: 0; left: 0; right: 0; bottom: calc(56px + 0.9rem + 0.5rem); z-index: 20; display: flex; align-items: flex-end; background: rgba(0, 0, 0, 0.35); animation: training-fade 0.18s ease-out; }
+@keyframes training-fade { from { opacity: 0; } }
+.training-panel { display: flex; flex-direction: column; width: 100%; max-height: 82%; border-radius: 22px; background: var(--bg); box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.12); animation: sheet-up 0.2s ease-out; transition: transform 0.2s ease-out; }
+.training-panel-grab { padding: 0.5rem 1rem 0.25rem; touch-action: none; cursor: grab; }
+.training-panel-grab .sheet-handle { margin: 0 auto 0.4rem; }
+.training-panel-head { display: flex; align-items: center; gap: 0.25rem; }
+.training-panel-head h2 { flex: 1; margin: 0; font-size: 24px; font-weight: 600; color: var(--text-h); }
+.training-panel-back { display: flex; align-items: center; justify-content: center; width: 32px; height: 36px; min-height: 0; margin-left: -0.4rem; padding: 0; border: 0; background: transparent; color: var(--text-h); }
+.training-panel-body { overflow-y: auto; padding: 0.5rem 1rem 1rem; overscroll-behavior: contain; }
+.training-panel-note { margin: 0; font-size: 15px; line-height: 1.45; color: var(--text); }
+.training-panel h3 { margin: 0 0 0.5rem; font-size: 15px; font-weight: 600; color: var(--text-h); }
+
+/* Placeholder drawings until real pictures are added to the data. */
+.training-drawing { display: block; border-radius: 12px; object-fit: contain; }
+.training-drawing.placeholder { display: flex; align-items: center; justify-content: center; border: 1px dashed color-mix(in srgb, var(--hub-accent) 45%, var(--border)); background: color-mix(in srgb, var(--hub-accent) 7%, transparent); }
+.training-drawing.placeholder span { font-size: 12px; color: var(--text); }
+.training-drawing.position { width: 100%; aspect-ratio: 16 / 9; }
+.training-drawing.body { width: 100%; height: 76px; margin-bottom: 0.6rem; }
+.training-drawing.thumb { flex: none; width: 92px; height: 64px; border-radius: 10px; }
+
+.training-details-top { display: grid; grid-template-columns: 1.15fr 1fr; gap: 0.9rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border); }
+.training-positions { display: flex; flex-direction: column; gap: 0.5rem; }
+.training-muscles ul { margin: 0; padding: 0; list-style: none; }
+.training-muscles li { display: flex; align-items: center; gap: 0.55rem; font-size: 15px; line-height: 1.6; color: var(--text-h); }
+.training-muscles li::before { content: ''; width: 9px; height: 9px; border-radius: 50%; background: var(--hub-accent); }
+.training-instructions { padding-top: 1rem; }
+.training-instructions ol { display: flex; flex-direction: column; gap: 0.7rem; margin: 0; padding: 0; list-style: none; }
+.training-instructions li { display: flex; gap: 0.75rem; font-size: 15px; line-height: 1.4; color: var(--text); }
+.training-step { display: flex; flex: none; align-items: center; justify-content: center; width: 26px; height: 26px; border-radius: 50%; font-size: 13px; background: color-mix(in srgb, var(--text) 10%, transparent); color: var(--text-h); }
+
+/* Variations list. */
+.training-variations { display: flex; flex-direction: column; gap: 0.6rem; }
+.training-variation { display: flex; align-items: center; gap: 0.9rem; width: 100%; min-height: 0; padding: 0.55rem 0.7rem 0.55rem 0.55rem; border: 1px solid var(--border); border-radius: 14px; background: var(--surface, var(--bg)); color: var(--text); text-align: left; }
+.training-variation-text { display: flex; flex: 1; flex-direction: column; gap: 0.2rem; min-width: 0; }
+.training-variation-text strong { font-size: 16px; font-weight: 500; color: var(--text-h); }
+.training-variation-text span { font-size: 14px; line-height: 1.3; }
+.training-variation > svg { flex: none; opacity: 0.6; }
+/* Undo the app's boxed list style inside the panel. */
+.training-panel li { margin: 0; padding: 0; border: 0; border-radius: 0; background: none; }
