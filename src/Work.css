@@ -1,0 +1,113 @@
+/* ---- Work tab ---- */
+/* Same frame as Training (.training in App.css), with the hourglass in the
+   middle. Every color comes from the theme (--accent and friends). */
+.work-top { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
+.work-top .gear-button { margin-right: -0.5rem; }
+.work-project-info { display: flex; flex-direction: column; min-width: 0; line-height: 1.35; }
+.work-project-info strong { overflow: hidden; font-size: 17px; font-weight: 600; white-space: nowrap; text-overflow: ellipsis; color: var(--text-h); }
+.work-project-info span { font-size: 15px; color: var(--text); font-variant-numeric: tabular-nums; }
+
+.work-glass-area { position: relative; flex: 1 1 0; min-height: 280px; }
+.hourglass { position: absolute; inset: 0.25rem 0; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.4s ease, filter 0.4s ease; }
+.hourglass.dimmed { opacity: 0.7; filter: saturate(0.7); }
+.hourglass-art { position: relative; height: 100%; max-height: 430px; max-width: 100%; }
+.hg-classic { display: block; width: 100%; height: 100%; overflow: visible; }
+.hourglass-text { position: absolute; left: 0; right: 0; transform: translateY(-50%); text-align: center; pointer-events: none; font-variant-numeric: tabular-nums; text-shadow: 0 0 8px var(--bg), 0 0 2px var(--bg); }
+.hourglass-text.top { font-size: clamp(30px, 9.5vw, 40px); font-weight: 400; letter-spacing: -0.5px; color: color-mix(in srgb, var(--text-h) 68%, transparent); }
+.hourglass-text.bottom { font-size: 15px; font-weight: 500; color: color-mix(in srgb, var(--text-h) 78%, transparent); }
+.hourglass-below { display: flex; flex-direction: column; align-items: center; }
+.hourglass-below .hourglass-text { position: static; transform: none; }
+
+/* Glass, sand and caps of the classic hourglass. */
+.hg-glass-edge { stop-color: var(--text-h); stop-opacity: 0.08; }
+.hg-glass-mid { stop-color: var(--text-h); stop-opacity: 0.015; }
+.hg-edge { fill: none; stroke: var(--text-h); stroke-opacity: 0.26; stroke-width: 1.6; }
+.hg-shine { fill: none; stroke: #fff; stroke-opacity: 0.55; stroke-width: 3; stroke-linecap: round; }
+.hg-shine.soft { stroke-opacity: 0.3; stroke-width: 2; }
+.hg-cap { fill: color-mix(in srgb, var(--accent) 18%, var(--bg)); stroke: color-mix(in srgb, var(--text-h) 18%, transparent); stroke-width: 1; }
+.hg-sand-light { stop-color: color-mix(in srgb, var(--accent) 62%, #fff); }
+.hg-sand-deep { stop-color: color-mix(in srgb, var(--accent) 92%, #000); }
+.hg-grain { fill: color-mix(in srgb, var(--accent) 55%, #000); fill-opacity: 0.22; }
+.hg-stream { stroke: var(--accent); stroke-width: 2.2; stroke-linecap: round; stroke-dasharray: 3 4; }
+.hg-stream.flowing { animation: hg-fall 0.45s linear infinite; }
+@keyframes hg-fall { to { stroke-dashoffset: -7; } }
+@media (prefers-reduced-motion: reduce) { .hg-stream.flowing { animation: none; } }
+
+/* The line under the hourglass: length chips or the session's state. */
+.work-status-row { display: flex; align-items: center; justify-content: center; min-height: 44px; margin-bottom: 0.6rem; }
+.work-lengths { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.4rem; }
+.work-status { display: inline-flex; align-items: center; gap: 0.35rem; margin: 0; font-size: 15px; color: var(--text); font-variant-numeric: tabular-nums; }
+.work-status.break { padding: 0.3rem 0.8rem; border-radius: 999px; background: var(--accent-bg); color: var(--accent); font-weight: 600; }
+
+.work-dot { display: inline-block; flex: none; width: 10px; height: 10px; border-radius: 50%; }
+.work .training-card.current { border-color: color-mix(in srgb, var(--accent) 22%, var(--border)); background: color-mix(in srgb, var(--accent) 9%, var(--surface, var(--bg))); }
+.work .training-card > svg { flex: none; opacity: 0.6; }
+.work-buttons { grid-template-columns: 1.2fr 1.1fr 0.75fr; }
+.work-buttons button { gap: 0.4rem; font-size: 16px; white-space: nowrap; }
+.work .work-done { background: var(--accent); color: var(--on-accent, #fff); box-shadow: 0 4px 14px color-mix(in srgb, var(--accent) 35%, transparent); }
+
+/* Panels: cover the whole screen, tab bar included. */
+.work-backdrop { position: fixed; inset: 0; z-index: 30; display: flex; align-items: flex-end; justify-content: center; background: rgba(0, 0, 0, 0.35); animation: training-fade 0.18s ease-out; text-align: left; }
+.work-panel { max-width: 480px; max-height: 86dvh; border-radius: 22px 22px 0 0; padding-bottom: env(safe-area-inset-bottom); }
+.work-panel-note { display: flex; align-items: center; gap: 0.4rem; margin: 0 0 0.75rem; font-size: 14px; line-height: 1.4; color: var(--text); }
+.work-rows { display: flex; flex-direction: column; gap: 0.5rem; }
+.work-row, .work-session { display: flex; align-items: center; gap: 0.75rem; width: 100%; min-height: 56px; padding: 0.5rem 0.8rem 0.5rem 1rem; border: 1px solid var(--border); border-radius: 14px; background: var(--surface, var(--bg)); color: var(--text); text-align: left; }
+.work-row.selected { border-color: var(--accent-border); }
+.work-row > svg, .work-session > svg { flex: none; opacity: 0.6; }
+.work-row-name { flex: 1; min-width: 0; overflow: hidden; font-size: 17px; white-space: nowrap; text-overflow: ellipsis; color: var(--text-h); }
+.work-row-time { font-size: 15px; font-variant-numeric: tabular-nums; }
+.work-new { display: flex; align-items: center; justify-content: center; gap: 0.4rem; width: 100%; height: 50px; margin-top: 0.6rem; border: 1px dashed var(--border); border-radius: 14px; background: transparent; color: var(--accent); font-size: 16px; }
+.work-new-form { display: flex; align-items: center; gap: 0.5rem; margin-top: 0.6rem; }
+.work-new-form input { flex: 1; min-width: 0; height: 46px; font-size: 16px; }
+.work-unit { font-size: 15px; color: var(--text); }
+
+.work-week-total { display: flex; align-items: baseline; gap: 0.4rem; }
+.work-week-total strong { font-size: 32px; font-weight: 600; letter-spacing: -0.5px; color: var(--text-h); }
+.work-week-total span { font-size: 15px; color: var(--text); }
+.work-chart { display: grid; grid-template-columns: repeat(7, 1fr); gap: 0.5rem; height: 150px; margin: 0.5rem 0 1.1rem; }
+.work-chart-day { display: flex; flex-direction: column; align-items: center; gap: 0.3rem; min-height: 0; }
+.work-chart-track { display: flex; flex: 1; align-items: flex-end; width: 100%; max-width: 30px; border-radius: 8px; background: color-mix(in srgb, var(--text) 9%, transparent); overflow: hidden; }
+.work-chart-stack { display: flex; flex-direction: column-reverse; width: 100%; border-radius: 8px; overflow: hidden; transition: height 0.3s ease; }
+.work-chart-stack span { display: block; flex-basis: 0; min-height: 2px; }
+.work-chart-label { font-size: 12px; color: var(--text); }
+.work-chart-day.today .work-chart-label { font-weight: 700; color: var(--accent); }
+.work-list-title { margin: 0.4rem 0 0.6rem; }
+
+.work-session-text { display: flex; flex: 1; flex-direction: column; gap: 0.15rem; min-width: 0; }
+.work-session-top { display: flex; justify-content: space-between; gap: 0.5rem; }
+.work-session-top strong { overflow: hidden; font-size: 16px; font-weight: 500; white-space: nowrap; text-overflow: ellipsis; color: var(--text-h); }
+.work-session-top span { font-size: 15px; color: var(--text-h); font-variant-numeric: tabular-nums; }
+.work-session-when { font-size: 13px; }
+.work-tags { display: flex; flex-wrap: wrap; gap: 0.3rem; margin-top: 0.15rem; }
+.work-tag { padding: 0.05rem 0.5rem; border-radius: 999px; background: var(--accent-bg); font-size: 12px; color: var(--text-h); }
+
+.work-details { margin: 0 0 0.75rem; }
+.work-details div { display: flex; justify-content: space-between; gap: 1rem; padding: 0.55rem 0; border-bottom: 1px solid var(--border); font-size: 15px; }
+.work-details dt { color: var(--text); }
+.work-details dd { margin: 0; text-align: right; color: var(--text-h); font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+
+.work-summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; margin-bottom: 0.75rem; }
+.work-summary div { display: flex; flex-direction: column; align-items: center; padding: 0.6rem 0.3rem; border: 1px solid var(--border); border-radius: 14px; background: var(--surface, transparent); }
+.work-summary strong { font-size: 19px; font-weight: 500; color: var(--text-h); font-variant-numeric: tabular-nums; }
+.work-summary span { font-size: 13px; color: var(--text); }
+.work-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-bottom: 0.9rem; }
+.work-fields label { display: flex; flex-direction: column; gap: 0.25rem; font-size: 13px; color: var(--text); }
+.work-fields .wide { grid-column: span 2; }
+.work-fields input { width: 100%; min-width: 0; height: 44px; box-sizing: border-box; font-size: 16px; }
+.work-finish-buttons { display: flex; flex-direction: column; gap: 0.5rem; }
+.work-small-primary, .work-small-secondary { display: flex; align-items: center; justify-content: center; gap: 0.4rem; min-height: 48px; padding: 0 1.2rem; border-radius: 24px; font-size: 16px; font-weight: 600; }
+.work-small-primary { border: 0; background: var(--accent); color: var(--on-accent, #fff); }
+.work-small-primary:disabled { opacity: 0.4; }
+.work-small-secondary { border: 1px solid var(--border); background: transparent; color: var(--text-h); }
+.work-discard { min-height: 44px; border: 0; background: transparent; font-size: 15px; color: var(--text); }
+.work-discard.sure { color: #e5484d; font-weight: 600; }
+.work-break-today { font-size: 14px; color: var(--text); opacity: 0.85; }
+.work-gains { display: flex; flex-direction: column; gap: 0.4rem; font-size: 13px; color: var(--text); }
+.work-gain-types { display: flex; gap: 0.4rem; }
+.work-gain-row { display: flex; gap: 0.4rem; }
+.work-gain-row input { flex: 1; min-width: 0; height: 44px; box-sizing: border-box; font-size: 16px; }
+.work-gain-row select { flex: none; height: 44px; font-size: 16px; }
+.work-gain-row .work-small-secondary { min-height: 44px; padding: 0 1rem; }
+.work-gain-row .work-small-secondary:disabled { opacity: 0.4; }
+.work-tag.removable { min-height: 28px; padding: 0 0.6rem; border: 0; font-size: 13px; }
+.work-presets { display: flex; flex-wrap: wrap; gap: 0.4rem; }

@@ -186,6 +186,9 @@ export function applyTheme(themeId, mode) {
   // white numbers stay readable.
   root.setProperty('--liquid-top', dark ? p.accent : `color-mix(in srgb, ${p.accent} 55%, white)`)
   root.setProperty('--liquid-bottom', `color-mix(in srgb, ${p.accent} ${dark ? 65 : 88}%, black)`)
+  // Text on accent-colored buttons: dark themes have light accents, so
+  // dark text reads better there; light themes have deep accents.
+  root.setProperty('--on-accent', dark ? '#14120e' : '#ffffff')
   root.setProperty('--glow', p.glow || 'none')
   const fonts = FONTS[(THEMES.find(t => t.id === themeId) || THEMES[0]).fonts]
   if (fonts) loadFonts(fonts.url)

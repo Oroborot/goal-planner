@@ -2,7 +2,8 @@
 // themes) come with "Customize" later.
 // { clock: '24' | '12', theme: 'violet' | 'gold' | …, mode: 'dark' | 'light' | 'auto',
 //   routineView: 'stepped' | 'compact' (plan and wrap-up),
-//   coverStyle: 'tree' | 'liquid' | 'plank', coverOnOpen: show the cover when the app opens }
+//   coverStyle: 'tree' | 'liquid' | 'plank', coverOnOpen: show the cover when the app opens,
+//   hourglass: 'classic' (Work tab hourglass design) }
 
 const SETTINGS_KEY = 'planner-settings'
 const DEFAULTS = {
@@ -12,6 +13,8 @@ const DEFAULTS = {
   routineView: 'stepped',
   coverStyle: 'tree',
   coverOnOpen: true,
+  // The Work tab's hourglass design (see hourglasses.js).
+  hourglass: 'classic',
 }
 
 export function loadSettings() {

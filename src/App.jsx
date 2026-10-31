@@ -26,6 +26,7 @@ import TabBar from './TabBar.jsx'
 import GearSheet from './GearSheet.jsx'
 import EmptyTab from './EmptyTab.jsx'
 import TrainingScreen from './TrainingScreen.jsx'
+import WorkScreen from './WorkScreen.jsx'
 import BackupSection from './BackupSection.jsx'
 import { ArchivePage, HistoryPage } from './MenuPages.jsx'
 import {
@@ -303,8 +304,10 @@ function App() {
     page = <HomeScreen items={items} apply={apply} settings={settings} />
   } else if (screen.name === 'training') {
     page = <TrainingScreen onGear={() => setGearOpen(true)} />
+  } else if (screen.name === 'work') {
+    page = <WorkScreen onGear={() => setGearOpen(true)} />
   } else {
-    // Work, Cookbook or Projects: not built yet.
+    // Cookbook or Projects: not built yet.
     page = <EmptyTab key={screen.name} tab={screen.name} onGear={() => setGearOpen(true)} />
   }
 

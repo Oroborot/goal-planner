@@ -173,6 +173,17 @@ const SHAPES = {
       </>
     ),
   },
+  // Work buttons.
+  cup: {
+    label: 'Break',
+    shape: (
+      <>
+        <path d="M5 9h11v5a5 5 0 0 1-5 5h-1a5 5 0 0 1-5-5z" />
+        <path d="M16 10.5h1.5a2.5 2.5 0 0 1 0 5H16M8.5 3.5v2M12.5 3.5v2" />
+      </>
+    ),
+  },
+  check: { label: 'Done', shape: <path d="m5 12.5 4.5 4.5L19 7.5" strokeWidth="2.4" /> },
   updown: { label: 'Switch', shape: <path d="M8 4v16M4.5 7.5 8 4l3.5 3.5M16 20V4M12.5 16.5 16 20l3.5-3.5" /> },
   menu: { label: 'Menu', shape: <path d="M5 7h14M5 12h14M5 17h14" /> },
 }
