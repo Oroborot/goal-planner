@@ -155,6 +155,7 @@ const SHAPES = {
     ),
   },
   play: { label: 'Play', shape: <path d="M7 5v14l12-7z" fill="currentColor" /> },
+  restart: { label: 'Restart', shape: <path d="M4 12a8 8 0 1 0 2.5-5.8M4 4v4.5h4.5" /> },
   skip: {
     label: 'Skip',
     shape: (

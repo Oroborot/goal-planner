@@ -57,6 +57,25 @@ function TrainingScreen({ onGear }) {
 
   useEffect(() => saveTraining(session), [session])
 
+  // Restart asks twice: the first tap turns the button into "Restart?", the
+  // second one restarts. It goes back to normal after 3 seconds.
+  const [confirmRestart, setConfirmRestart] = useState(false)
+  useEffect(() => {
+    if (!confirmRestart) return
+    const timer = setTimeout(() => setConfirmRestart(false), 3000)
+    return () => clearTimeout(timer)
+  }, [confirmRestart])
+
+  function restart() {
+    if (!confirmRestart) {
+      setConfirmRestart(true)
+      return
+    }
+    setConfirmRestart(false)
+    change(null)
+    setNow(Date.now())
+  }
+
   const running = Boolean(session) && !session.pausedAt && session.index < PERIODS.length
 
   // While running, redraw every frame (for the hundredths and the liquid).
@@ -141,7 +160,20 @@ function TrainingScreen({ onGear }) {
             <AppIcon name="updown" size={20} />
           </button>
         </div>
-        <GearButton onClick={onGear} />
+        <div className="training-top-right">
+          {/* Restart shows once a workout has started (running, paused or done). */}
+          {session && (
+            <button
+              type="button"
+              className={confirmRestart ? 'training-restart sure' : 'training-restart'}
+              onClick={restart}
+              aria-label={confirmRestart ? 'Tap again to restart' : 'Restart workout'}
+            >
+              {confirmRestart ? 'Restart?' : <AppIcon name="restart" size={22} />}
+            </button>
+          )}
+          <GearButton onClick={onGear} />
+        </div>
       </header>
 
       <div className="training-circle-area">

@@ -585,7 +585,9 @@ body:has(.training) #root { height: 100%; min-height: 0; }
 .training-session { display: flex; align-items: center; justify-content: center; gap: 0.1rem; }
 .training-session-clock { font-size: 32px; font-weight: 500; letter-spacing: -0.5px; color: var(--text-h); font-variant-numeric: tabular-nums; }
 .training-swap { display: flex; align-items: center; justify-content: center; width: 32px; height: 40px; min-height: 0; padding: 0; border: 0; background: transparent; color: var(--text); }
-.training-top .gear-button { justify-self: end; margin-right: -0.5rem; }
+.training-top-right { display: flex; align-items: center; justify-content: flex-end; margin-right: -0.5rem; }
+.training-restart { display: flex; align-items: center; justify-content: center; min-width: 40px; height: 40px; min-height: 0; padding: 0 0.4rem; border: 0; background: transparent; color: var(--text); font-size: 15px; font-weight: 600; }
+.training-restart.sure { border-radius: 20px; padding: 0 0.8rem; background: var(--hub-accent); color: #fff; }
 
 .training-circle-area { display: flex; flex: 1; align-items: center; justify-content: center; padding: 1rem 0; }
 .timer-circle { position: relative; width: min(84vw, 340px); aspect-ratio: 1; }
