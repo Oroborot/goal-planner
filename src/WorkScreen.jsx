@@ -100,7 +100,9 @@ function WorkScreen({ onGear }) {
 
   // Training is built in: always listed after your own projects, never saved
   // with them, so it can't be renamed or deleted.
-  const allProjects = withTraining(projects)
+  // Removed projects stay saved (marked deletedAt) so old sessions keep their name.
+  const everyProject = withTraining(projects)
+  const allProjects = withTraining(projects.filter(p => !p.deletedAt))
   const project = allProjects.find(p => p.id === (active?.projectId ?? prefs.projectId)) || allProjects[0]
   // After Done is tapped the session has ended, so everything stays still
   // at that moment while the form is open.
@@ -151,6 +153,15 @@ function WorkScreen({ onGear }) {
     }
     setPrefs(p => ({ ...p, projectId: id }))
     setPanel(null)
+  }
+
+  function renameProject(id, name) {
+    if (name.trim()) setProjects(list => list.map(p => (p.id === id ? { ...p, name: name.trim() } : p)))
+  }
+
+  function removeProject(id) {
+    setProjects(list => list.map(p => (p.id === id ? { ...p, deletedAt: Date.now() } : p)))
+    if (prefs.projectId === id) setPrefs(p => ({ ...p, projectId: allProjects.find(x => x.id !== id).id }))
   }
 
   function addProject(name) {
@@ -290,12 +301,15 @@ function WorkScreen({ onGear }) {
           live={liveFocus}
           onPick={pickProject}
           onAdd={addProject}
+          onRename={renameProject}
+          onRemove={removeProject}
+          busyId={active?.projectId}
           onClose={() => setPanel(null)}
         />
       )}
       {panel?.type === 'week' && (
         <WeekPanel
-          projects={allProjects}
+          projects={everyProject}
           sessions={sessions}
           live={liveFocus}
           onOpenSession={id => setPanel({ type: 'session', id })}
@@ -305,7 +319,7 @@ function WorkScreen({ onGear }) {
       {panel?.type === 'session' && (
         <SessionDetails
           session={sessions.find(s => s.id === panel.id)}
-          projects={allProjects}
+          projects={everyProject}
           onBack={() => setPanel({ type: 'week' })}
           onClose={() => setPanel(null)}
         />

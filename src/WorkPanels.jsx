@@ -3,7 +3,7 @@ import AppIcon from './icons.jsx'
 import { parseKey, todayKey } from './calendar.js'
 import { showTime } from './settings.js'
 import { clockText, durationText } from './workTimer.js'
-import { CURRENCIES, dayTotals, gainText, sessionTags, weekDays, weekFocusMs, weekSessions, withTraining } from './workLog.js'
+import { CURRENCIES, dayTotals, gainText, sessionTags, weekDays, weekFocusMs, weekSessions, withTraining, TRAINING_ID } from './workLog.js'
 
 // The bottom panels of the Work tab: project picker, this week, one
 // session's details, the end-of-session form and the custom length.
@@ -45,8 +45,11 @@ const dateAt = ms => new Date(ms).toLocaleDateString(undefined, { weekday: 'shor
 
 // Projects: colored dot, name, time this week, chevron. "New project" at
 // the bottom. `liveMs` adds the running session to its project's time.
-export function ProjectPicker({ projects, sessions, activeId, live, onPick, onAdd, onClose }) {
+export function ProjectPicker({ projects, sessions, activeId, live, busyId, onPick, onAdd, onRename, onRemove, onClose }) {
   const [adding, setAdding] = useState(false)
+  // Edit mode: your own projects get a name box and a remove button.
+  const [editing, setEditing] = useState(false)
+  const [sureId, setSureId] = useState(null)
   const [name, setName] = useState('')
 
   function add(e) {
@@ -59,9 +62,33 @@ export function ProjectPicker({ projects, sessions, activeId, live, onPick, onAd
 
   return (
     <WorkSheet title="Projects" onClose={onClose}>
+      <button type="button" className="work-edit-toggle" onClick={() => { setEditing(!editing); setSureId(null) }}>
+        {editing ? "Done" : "✎ Edit"}
+      </button>
       {live && <p className="work-panel-note">Picking another project first saves or discards the running session.</p>}
       <div className="work-rows">
         {projects.map(project => {
+          if (editing) return project.id === TRAINING_ID ? (
+            <div key={project.id} className="work-row">
+              <span className="work-dot" style={{ background: project.color }} />
+              <span className="work-row-name">{project.name}</span>
+              <span className="work-row-time">Built in</span>
+            </div>
+          ) : (
+            <div key={project.id} className="work-row">
+              <span className="work-dot" style={{ background: project.color }} />
+              <input className="work-row-input" defaultValue={project.name} maxLength={40} aria-label="Project name" onBlur={e => onRename(project.id, e.target.value)} />
+              <button
+                type="button"
+                className={sureId === project.id ? "work-remove sure" : "work-remove"}
+                disabled={project.id === busyId}
+                onClick={() => (sureId === project.id ? onRemove(project.id) : setSureId(project.id))}
+                aria-label={"Remove " + project.name}
+              >
+                {project.id === busyId ? "Running" : sureId === project.id ? "Remove?" : "✕"}
+              </button>
+            </div>
+          )
           const week = weekFocusMs(sessions, project.id) + (live?.projectId === project.id ? live.focusMs : 0)
           return (
             <button

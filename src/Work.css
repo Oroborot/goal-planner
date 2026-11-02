@@ -113,3 +113,9 @@
 .work-gain-row .work-small-secondary:disabled { opacity: 0.4; }
 .work-tag.removable { min-height: 28px; padding: 0 0.6rem; border: 0; font-size: 13px; }
 .work-presets { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+
+.work-edit-toggle { align-self: flex-end; min-height: 36px; padding: 0 0.8rem; border: 0; background: transparent; font-size: 15px; font-weight: 600; color: var(--accent); }
+.work-row-input { flex: 1; min-width: 0; height: 40px; font-size: 16px; }
+.work-remove { min-width: 44px; min-height: 40px; padding: 0 0.6rem; border: 1px solid var(--border); border-radius: 12px; background: transparent; font-size: 15px; color: var(--text); }
+.work-remove.sure { border-color: #e5484d; color: #e5484d; font-weight: 600; }
+.work-remove:disabled { opacity: 0.5; }
