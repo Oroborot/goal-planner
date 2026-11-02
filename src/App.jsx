@@ -28,6 +28,7 @@ import EmptyTab from './EmptyTab.jsx'
 import TrainingScreen from './TrainingScreen.jsx'
 import WorkScreen from './WorkScreen.jsx'
 import BackupSection from './BackupSection.jsx'
+import { restoreExtras } from './backup.js'
 import { ArchivePage, HistoryPage } from './MenuPages.jsx'
 import {
   alarm,
@@ -149,6 +150,7 @@ function App() {
     setItems(backup.items)
     setEvents(backup.events)
     changeSettings({ ...loadSettings(), ...backup.settings })
+    restoreExtras(backup.extras)
   }
   // True while the gear sheet (Settings, History, Backup, Stats) is open.
   const [gearOpen, setGearOpen] = useState(false)
