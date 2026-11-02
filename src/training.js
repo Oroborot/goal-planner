@@ -51,8 +51,52 @@ export function saveTraining(session) {
   else localStorage.removeItem(TRAINING_KEY)
 }
 
-export function startTraining(now) {
-  return { startedAt: now, pausedAt: null, pausedMs: 0, index: 0, periodStartMs: 0, extraSec: 0, pendingExtraSec: 0 }
+// `plan` is the settings the workout starts with. It's kept in the session,
+// so changing the settings later never breaks a workout that's running.
+export function startTraining(now, plan) {
+  return { startedAt: now, pausedAt: null, pausedMs: 0, index: 0, periodStartMs: 0, extraSec: 0, pendingExtraSec: 0, plan }
+}
+
+// The numbers set in the Training settings sheet (rounds, sets and times).
+const SETTINGS_KEY = 'planner-training-settings'
+
+// Each setting's lowest and highest allowed value.
+export const SETTING_LIMITS = {
+  roundsPerSet: [1, 20],
+  sets: [1, 10],
+  exerciseSeconds: [5, 600],
+  restSeconds: [0, 300],
+  setRestSeconds: [0, 600],
+}
+
+// Whole number inside the limits; the fallback when it isn't a number.
+function clampSetting(key, value, fallback) {
+  const number = Math.round(Number(value))
+  if (value === '' || Number.isNaN(number)) return fallback
+  const [min, max] = SETTING_LIMITS[key]
+  return Math.min(max, Math.max(min, number))
+}
+
+// The saved settings. Anything missing falls back to the default, so new
+// settings can be added later without breaking old saves.
+export function loadTrainingSettings(defaults) {
+  let saved = null
+  try {
+    saved = JSON.parse(localStorage.getItem(SETTINGS_KEY))
+  } catch {
+    // Unreadable save: use the defaults.
+  }
+  const settings = {}
+  for (const key of Object.keys(SETTING_LIMITS)) settings[key] = clampSetting(key, saved?.[key], defaults[key])
+  return settings
+}
+
+// Saves the settings (each one kept inside its limits) and returns them.
+export function saveTrainingSettings(values, defaults) {
+  const settings = {}
+  for (const key of Object.keys(SETTING_LIMITS)) settings[key] = clampSetting(key, values[key], defaults[key])
+  localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings))
+  return settings
 }
 
 // Time since Start, not counting pauses.

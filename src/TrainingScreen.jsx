@@ -1,15 +1,18 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import AppIcon from './icons.jsx'
 import GearButton from './GearButton.jsx'
 import TimerCircle from './TimerCircle.jsx'
 import { playBeep } from './sound.js'
 import TrainingPanel from './TrainingPanel.jsx'
-import { EXERCISES, WORKOUT } from './trainingData.js'
+import TrainingSettings from './TrainingSettings.jsx'
+import { DEFAULT_SETTINGS, EXERCISES, workoutFrom } from './trainingData.js'
 import {
   addTenSeconds,
   buildPeriods,
   catchUp,
   loadTraining,
+  loadTrainingSettings,
+  saveTrainingSettings,
   pauseTraining,
   resumeTraining,
   saveTraining,
@@ -20,16 +23,12 @@ import {
   trainingView,
 } from './training.js'
 
-// The workout's periods, worked out once from the mock data.
-const PERIODS = buildPeriods(WORKOUT)
-const TOTAL_ROUNDS = WORKOUT.rounds.length * WORKOUT.sets
-
 // The small orange word above the numbers. Exercises have none.
 const LABELS = { ready: 'Ready', rest: 'Rest', setRest: 'Set rest', done: 'Done' }
 
 // The first exercise period at or after `from` (-1 when there's none left).
-function nextExerciseAt(from) {
-  for (let i = from; i < PERIODS.length; i++) if (PERIODS[i].kind === 'exercise') return i
+function nextExerciseAt(periods, from) {
+  for (let i = from; i < periods.length; i++) if (periods[i].kind === 'exercise') return i
   return -1
 }
 
@@ -49,6 +48,19 @@ function TrainingScreen({ onGear }) {
   const [panel, setPanel] = useState(null)
   // The latest session, readable right away inside the animation loop.
   const sessionRef = useRef(session)
+  // The numbers set in the settings sheet, used for the next start.
+  const [settings, setSettings] = useState(() => loadTrainingSettings(DEFAULT_SETTINGS))
+  const [settingsOpen, setSettingsOpen] = useState(false)
+
+  // A running workout keeps the numbers it started with (older saved
+  // workouts have none, so they use the defaults). With no workout started,
+  // the screen shows the next one, built from the settings.
+  const plan = session ? session.plan || DEFAULT_SETTINGS : settings
+  const workout = useMemo(() => workoutFrom(plan), [plan])
+  const periods = useMemo(() => buildPeriods(workout), [workout])
+  const totalRounds = workout.rounds.length * workout.sets
+  // The whole workout's length in seconds, for the "time left" clock.
+  const sessionTotalSeconds = periods.reduce((sum, p) => sum + p.seconds, 0)
 
   function change(next) {
     sessionRef.current = next
@@ -56,6 +68,11 @@ function TrainingScreen({ onGear }) {
   }
 
   useEffect(() => saveTraining(session), [session])
+
+  function saveSettings(values) {
+    setSettings(saveTrainingSettings(values, DEFAULT_SETTINGS))
+    setSettingsOpen(false)
+  }
 
   // Restart asks twice: the first tap turns the button into "Restart?", the
   // second one restarts. It goes back to normal after 3 seconds.
@@ -76,7 +93,7 @@ function TrainingScreen({ onGear }) {
     setNow(Date.now())
   }
 
-  const running = Boolean(session) && !session.pausedAt && session.index < PERIODS.length
+  const running = Boolean(session) && !session.pausedAt && session.index < periods.length
 
   // While running, redraw every frame (for the hundredths and the liquid).
   // Each frame also moves on to the next period when one runs out.
@@ -85,7 +102,7 @@ function TrainingScreen({ onGear }) {
     let frame
     function tick() {
       const time = Date.now()
-      const { session: next, ended } = catchUp(sessionRef.current, PERIODS, time)
+      const { session: next, ended } = catchUp(sessionRef.current, periods, time)
       if (ended > 0) {
         sessionRef.current = next
         setSession(next)
@@ -96,38 +113,38 @@ function TrainingScreen({ onGear }) {
     }
     frame = requestAnimationFrame(tick)
     return () => cancelAnimationFrame(frame)
-  }, [running])
+  }, [running, periods])
 
   // Run a button's change on the up-to-date session.
   function act(update) {
     const time = Date.now()
-    const current = catchUp(sessionRef.current, PERIODS, time).session
+    const current = catchUp(sessionRef.current, periods, time).session
     change(update(current, time))
     setNow(time)
   }
 
-  const current = catchUp(session, PERIODS, now).session
-  const view = trainingView(current, PERIODS, now)
+  const current = catchUp(session, periods, now).session
+  const view = trainingView(current, periods, now)
   const { status, period } = view
   const idle = status === 'ready' || status === 'done'
 
   // The cards show the exercise that's on now, or during a rest the one
   // that's coming up, plus the exercise after it.
-  const index = status === 'ready' ? 0 : status === 'done' ? PERIODS.length - 1 : current.index
-  const shownAt = nextExerciseAt(index)
-  const shown = shownAt === -1 ? null : PERIODS[shownAt]
+  const index = status === 'ready' ? 0 : status === 'done' ? periods.length - 1 : current.index
+  const shownAt = nextExerciseAt(periods, index)
+  const shown = shownAt === -1 ? null : periods[shownAt]
   const exercise = shown?.exerciseId ? EXERCISES[shown.exerciseId] : null
-  const nextAt = shownAt === -1 ? -1 : nextExerciseAt(shownAt + 1)
+  const nextAt = shownAt === -1 ? -1 : nextExerciseAt(periods, shownAt + 1)
   const variationCount = exercise?.variations.length || 0
 
   function primary() {
-    if (idle) act((_, time) => startTraining(time))
+    if (idle) act((_, time) => startTraining(time, settings))
     else if (status === 'paused') act(resumeTraining)
     else act(pauseTraining)
   }
 
   const sessionSeconds = showLeft
-    ? Math.ceil((WORKOUT.sessionSeconds * 1000 - view.activeMs) / 1000)
+    ? Math.ceil((sessionTotalSeconds * 1000 - view.activeMs) / 1000)
     : Math.floor(view.activeMs / 1000)
 
   const label = idle ? LABELS[status] : LABELS[period.kind]
@@ -141,14 +158,15 @@ function TrainingScreen({ onGear }) {
   return (
     <div className="training">
       <header className="training-top">
-        <div className="training-counts">
+        {/* Tap the round and set numbers to change them. */}
+        <button type="button" className="training-counts" onClick={() => setSettingsOpen(true)} aria-label="Workout settings">
           <span>
-            Round {period.round + 1} / {TOTAL_ROUNDS}
+            Round {period.round + 1} / {totalRounds}
           </span>
           <span className="training-set">
-            Set {period.set + 1} / {WORKOUT.sets}
+            Set {period.set + 1} / {workout.sets} ✎
           </span>
-        </div>
+        </button>
         <div className="training-session">
           <span className="training-session-clock">{sessionClock(sessionSeconds)}</span>
           <button
@@ -189,7 +207,7 @@ function TrainingScreen({ onGear }) {
         <button type="button" className="training-card current" onClick={() => setPanel({ type: 'details', exerciseId: shown?.exerciseId })}>
           <span className="training-card-text">
             <strong>{shown ? exerciseName(shown) : 'Done'}</strong>
-            <span>{nextAt === -1 ? 'Last exercise' : `Next: ${exerciseName(PERIODS[nextAt])}`}</span>
+            <span>{nextAt === -1 ? 'Last exercise' : `Next: ${exerciseName(periods[nextAt])}`}</span>
           </span>
           <AppIcon name="chevronUp" size={20} />
         </button>
@@ -209,6 +227,10 @@ function TrainingScreen({ onGear }) {
 
       {/* The panel keeps the exercise it was opened for, so it doesn't jump
           to the next one while you're reading. */}
+      {settingsOpen && (
+        <TrainingSettings settings={settings} running={Boolean(session) && status !== 'done'} onSave={saveSettings} onClose={() => setSettingsOpen(false)} />
+      )}
+
       {panel && (
         <TrainingPanel
           type={panel.type}
@@ -226,7 +248,7 @@ function TrainingScreen({ onGear }) {
           type="button"
           className="training-skip"
           disabled={idle}
-          onClick={() => act((current, time) => skipPeriod(current, PERIODS, time))}
+          onClick={() => act((current, time) => skipPeriod(current, periods, time))}
         >
           <AppIcon name="skip" size={20} />
           Skip
@@ -235,7 +257,7 @@ function TrainingScreen({ onGear }) {
           type="button"
           className="training-plus"
           disabled={idle}
-          onClick={() => act(current => addTenSeconds(current, PERIODS))}
+          onClick={() => act(current => addTenSeconds(current, periods))}
         >
           <AppIcon name="clock" size={20} />
           +10s

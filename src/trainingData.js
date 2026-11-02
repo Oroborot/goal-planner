@@ -91,3 +91,22 @@ export const WORKOUT = {
     { exerciseId: 'mountain-climbers' },
   ],
 }
+
+// The numbers you can change in the Training settings sheet. Until you
+// change them, they match the mock workout above.
+export const DEFAULT_SETTINGS = {
+  roundsPerSet: WORKOUT.rounds.length,
+  sets: WORKOUT.sets,
+  exerciseSeconds: WORKOUT.exerciseSeconds,
+  restSeconds: WORKOUT.restSeconds,
+  setRestSeconds: WORKOUT.setRestSeconds,
+}
+
+// The workout built from the settings. The exercises come from the mock
+// list, repeated if there are more rounds than exercises (exercise picking
+// comes in a later round).
+export function workoutFrom(settings) {
+  const rounds = []
+  for (let i = 0; i < settings.roundsPerSet; i++) rounds.push(WORKOUT.rounds[i % WORKOUT.rounds.length])
+  return { ...WORKOUT, ...settings, rounds }
+}

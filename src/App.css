@@ -580,13 +580,19 @@ html:has(.training), body:has(.training) { overscroll-behavior: none; }
 body:has(.training) { height: 100dvh; min-height: 0; box-sizing: border-box; overflow: hidden; }
 body:has(.training) #root { height: 100%; min-height: 0; }
 .training-top { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 0.5rem; }
-.training-counts { display: flex; flex-direction: column; font-size: 15px; white-space: nowrap; line-height: 1.5; color: var(--text-h); }
+.training-counts { align-items: flex-start; min-height: 0; padding: 0; border: 0; background: transparent; font: inherit; font-size: 15px; text-align: left; display: flex; flex-direction: column; font-size: 15px; white-space: nowrap; line-height: 1.5; color: var(--text-h); }
 .training-set { color: var(--text); }
 .training-session { display: flex; align-items: center; justify-content: center; gap: 0.1rem; }
 .training-session-clock { font-size: 32px; font-weight: 500; letter-spacing: -0.5px; color: var(--text-h); font-variant-numeric: tabular-nums; }
 .training-swap { display: flex; align-items: center; justify-content: center; width: 32px; height: 40px; min-height: 0; padding: 0; border: 0; background: transparent; color: var(--text); }
 .training-top-right { display: flex; align-items: center; justify-content: flex-end; margin-right: -0.5rem; }
 .training-restart { display: flex; align-items: center; justify-content: center; min-width: 40px; height: 40px; min-height: 0; padding: 0 0.4rem; border: 0; background: transparent; color: var(--text); font-size: 15px; font-weight: 600; }
+.training-settings { display: flex; flex-direction: column; gap: 0.6rem; margin-bottom: 1rem; }
+.training-setting { display: flex; align-items: center; gap: 0.6rem; font-size: 16px; color: var(--text-h); }
+.training-setting > span:first-child { flex: 1; }
+.training-setting input { width: 5.5rem; height: 44px; box-sizing: border-box; font-size: 16px; text-align: right; }
+.training-setting-unit { width: 2rem; font-size: 14px; color: var(--text); }
+.training-settings-save { width: 100%; height: 52px; margin-top: 0.8rem; border: 0; border-radius: 26px; background: var(--hub-accent); color: #fff; font-size: 17px; font-weight: 600; }
 .training-restart.sure { border-radius: 20px; padding: 0 0.8rem; background: var(--hub-accent); color: #fff; }
 
 .training-circle-area { display: flex; flex: 1; align-items: center; justify-content: center; padding: 1rem 0; }
