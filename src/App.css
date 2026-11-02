@@ -573,7 +573,12 @@ a.side-menu-link:hover { background: var(--accent-bg); }
 
 /* ---- Training tab ---- */
 /* One screen tall, above the tab bar (about 60px). */
-.training { position: relative; display: flex; flex-direction: column; max-width: 480px; min-height: calc(100dvh - 60px - env(safe-area-inset-bottom)); margin: 0 auto; padding: calc(0.75rem + env(safe-area-inset-top)) 1rem 0.9rem; box-sizing: border-box; text-align: left; }
+.training { position: relative; display: flex; flex-direction: column; max-width: 480px; min-height: 0; height: calc(100% - 60px); margin: 0 auto; padding: 0.75rem 1rem 0.9rem; box-sizing: border-box; text-align: left; }
+/* Training and Work fit the screen exactly, so they never scroll. The body already keeps clear of the notch, so the page adds no extra top space. */
+/* overscroll-behavior: none also stops the rubber-band bounce (works on iPhone home-screen apps too). */
+html:has(.training), body:has(.training) { overscroll-behavior: none; }
+body:has(.training) { height: 100dvh; min-height: 0; box-sizing: border-box; overflow: hidden; }
+body:has(.training) #root { height: 100%; min-height: 0; }
 .training-top { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 0.5rem; }
 .training-counts { display: flex; flex-direction: column; font-size: 15px; white-space: nowrap; line-height: 1.5; color: var(--text-h); }
 .training-set { color: var(--text); }

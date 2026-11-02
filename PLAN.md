@@ -208,6 +208,17 @@ The app grows from a goal planner into a life app. Goals stay the core.
 - [ ] **Dreams:** fast dream notes right after waking (iPhone keyboard mic for voice, no audio storage). Dream symbol library: words with a meaning get highlighted, tap for a short explanation. User supplies the sources; we write the explanations in our own words.
 - [ ] **Dreams + sleep (last):** attach the night's sleep rating from the watch. A web app can't read Apple Health; the free route is an iPhone Shortcut that copies sleep data in. A native app costs $99/year.
 
+### Part 7: hub direction (decided 2026-11-02)
+
+The app is for tracking **now, here and now**: what I did with my time this week. Future planning lives only in the Projects tab.
+
+- **Rounds (cost plan).** Round 1 (Sonnet, small): no-scroll fix, collapsed Gains (Item, Number, Money), Restart, edit rounds/sets/times. Round 2 (Sonnet, medium): Training time in "This week", "Log time" by hand, Training as a built-in category. Then stop and use the app for a week.
+- **Later, Opus:** schedules (reuse calendar.js / repeat.js), workout builder, exercise database with photos and variations (decide photo storage first, IndexedDB is the likely free option).
+- **Choose what you see.** Every tab is optional: a friend who doesn't cook hides Cookbook, a friend who only wants Projects sees only Projects. Needs a Start screen listing all the tabs with on/off switches, and the tab bar showing only the ones switched on. (Start screen design comes later, no work now.)
+- **One calendar, week by week only.** No year, month or day plans like the old goal planner. It shows what I aim to achieve this week. Anything further out is either a very simple note or done in another app.
+- **Projects tab = the only place for the future.** A project can have a ship date (e.g. "ship on the 10th") and tracks progress toward it. Work's placeholder projects will come from here.
+- **Log everything.** Any time spent (this chat = "App creation") should land in the weekly view, with or without a timer.
+
 ## Maybe remove later
 
 Small things added along the way that might not be needed in the final app. Review this list during the design pass.
