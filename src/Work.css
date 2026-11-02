@@ -103,6 +103,8 @@
 .work-discard.sure { color: #e5484d; font-weight: 600; }
 .work-break-today { font-size: 14px; color: var(--text); opacity: 0.85; }
 .work-gains { display: flex; flex-direction: column; gap: 0.4rem; font-size: 13px; color: var(--text); }
+.work-gains-toggle { align-self: flex-start; min-height: 36px; padding: 0 0.2rem; border: 0; background: transparent; font-size: 15px; font-weight: 500; color: var(--text-h); }
+.work-gain-row[hidden] { display: none; }
 .work-gain-types { display: flex; gap: 0.4rem; }
 .work-gain-row { display: flex; gap: 0.4rem; }
 .work-gain-row input { flex: 1; min-width: 0; height: 44px; box-sizing: border-box; font-size: 16px; }

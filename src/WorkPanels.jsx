@@ -224,9 +224,9 @@ export function SessionDetails({ session, projects, onBack, onClose }) {
 }
 
 const GAIN_TYPES = [
-  { id: 'money', label: 'Money' },
   { id: 'item', label: 'Item' },
   { id: 'number', label: 'Number' },
+  { id: 'money', label: 'Money' },
 ]
 
 // The gain being typed, as a gain object, or null when it isn't filled in.
@@ -242,6 +242,8 @@ function draftGain(draft) {
 function GainsField({ gains, setGains, draft, setDraft }) {
   const set = changes => setDraft({ ...draft, ...changes })
   const ready = draftGain(draft)
+  // Collapsed until tapped, so the sheet stays short.
+  const [open, setOpen] = useState(false)
 
   function add() {
     if (!ready) return
@@ -251,7 +253,9 @@ function GainsField({ gains, setGains, draft, setDraft }) {
 
   return (
     <div className="work-gains">
-      <span className="work-gains-label">Gains</span>
+      <button type="button" className="work-gains-toggle" aria-expanded={open} onClick={() => setOpen(!open)}>
+        {open ? '− Gains' : '+ Gains'}
+      </button>
       {gains.length > 0 && (
         <div className="work-tags">
           {gains.map((gain, i) => (
@@ -261,14 +265,16 @@ function GainsField({ gains, setGains, draft, setDraft }) {
           ))}
         </div>
       )}
-      <div className="work-gain-types" role="group" aria-label="Kind of gain">
-        {GAIN_TYPES.map(t => (
-          <button key={t.id} type="button" className={draft.type === t.id ? 'chip active' : 'chip'} onClick={() => set({ type: t.id })}>
-            {t.label}
-          </button>
-        ))}
-      </div>
-      <div className="work-gain-row">
+      {open && (
+        <div className="work-gain-types" role="group" aria-label="Kind of gain">
+          {GAIN_TYPES.map(t => (
+            <button key={t.id} type="button" className={draft.type === t.id ? 'chip active' : 'chip'} onClick={() => set({ type: t.id })}>
+              {t.label}
+            </button>
+          ))}
+        </div>
+      )}
+      <div className="work-gain-row" hidden={!open}>
         {draft.type === 'money' && (
           <>
             <select value={draft.currency} onChange={e => set({ currency: e.target.value })} aria-label="Currency">
@@ -307,7 +313,7 @@ function GainsField({ gains, setGains, draft, setDraft }) {
 export function FinishSheet({ record, project, timeUp, switchTo, currency, onSave, onDiscard, onExtend, onClose }) {
   const [progress, setProgress] = useState('')
   const [gains, setGains] = useState([])
-  const [draft, setDraft] = useState({ type: 'money', currency, value: '', text: '', unit: '' })
+  const [draft, setDraft] = useState({ type: 'item', currency, value: '', text: '', unit: '' })
   const [note, setNote] = useState('')
   const [confirmDiscard, setConfirmDiscard] = useState(false)
 
