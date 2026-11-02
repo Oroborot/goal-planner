@@ -20,8 +20,10 @@ import {
   skipPeriod,
   splitClock,
   startTraining,
+  trainingRecord,
   trainingView,
 } from './training.js'
+import { saveTrainingSession } from './workLog.js'
 
 // The small orange word above the numbers. Exercises have none.
 const LABELS = { ready: 'Ready', rest: 'Rest', setRest: 'Set rest', done: 'Done' }
@@ -69,6 +71,13 @@ function TrainingScreen({ onGear }) {
 
   useEffect(() => saveTraining(session), [session])
 
+  // When a workout reaches its end, save it as a Training session in the
+  // Work log. Saving the same workout again just replaces it.
+  useEffect(() => {
+    if (!session || session.index < periods.length) return
+    saveTrainingSession(trainingRecord(session, periods, Date.now()))
+  }, [session, periods])
+
   function saveSettings(values) {
     setSettings(saveTrainingSettings(values, DEFAULT_SETTINGS))
     setSettingsOpen(false)
@@ -89,6 +98,10 @@ function TrainingScreen({ onGear }) {
       return
     }
     setConfirmRestart(false)
+    // A workout stopped halfway still counts as Training time.
+    const time = Date.now()
+    const record = trainingRecord(catchUp(sessionRef.current, periods, time).session, periods, time)
+    if (record) saveTrainingSession(record)
     change(null)
     setNow(Date.now())
   }

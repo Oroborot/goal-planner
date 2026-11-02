@@ -46,6 +46,21 @@ export const saveProjects = projects => localStorage.setItem(PROJECTS_KEY, JSON.
 export const loadPrefs = () => ({ projectId: 'reading', minutes: 60, currency: 'EUR', ...read(PREFS_KEY, {}) })
 export const savePrefs = prefs => localStorage.setItem(PREFS_KEY, JSON.stringify(prefs))
 
+// Training time is saved in the same log as Work sessions. Its sessions have
+// projectId 'training' and kind 'training'. The color follows the theme.
+export const TRAINING_ID = 'training'
+export const TRAINING_PROJECT = { id: TRAINING_ID, name: 'Training', color: 'var(--accent)' }
+
+// The Work projects plus Training, unless the list already has it.
+export const withTraining = projects => (projects.some(p => p.id === TRAINING_ID) ? projects : [...projects, TRAINING_PROJECT])
+
+// Saves one Training session into the log. The id is the same for the same
+// workout, so saving it twice (e.g. at the end, then again) never doubles it.
+export function saveTrainingSession(record) {
+  const others = loadSessions().filter(s => s.id !== record.id)
+  saveSessions([...others, record])
+}
+
 export function newProject(projects, name) {
   const color = GOAL_COLORS[projects.length % GOAL_COLORS.length].value
   return { id: `p${Date.now().toString(36)}`, name: name.trim(), color }

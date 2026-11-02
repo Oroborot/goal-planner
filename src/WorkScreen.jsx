@@ -18,6 +18,7 @@ import {
   saveProjects,
   saveSessions,
   weekFocusMs,
+  withTraining,
 } from './workLog.js'
 import {
   addFiveMinutes,
@@ -97,7 +98,10 @@ function WorkScreen({ onGear }) {
     setNow(time)
   }
 
-  const project = projects.find(p => p.id === (active?.projectId ?? prefs.projectId)) || projects[0]
+  // Training is built in: always listed after your own projects, never saved
+  // with them, so it can't be renamed or deleted.
+  const allProjects = withTraining(projects)
+  const project = allProjects.find(p => p.id === (active?.projectId ?? prefs.projectId)) || allProjects[0]
   // After Done is tapped the session has ended, so everything stays still
   // at that moment while the form is open.
   const view = active ? workView(active, panel?.record ? panel.record.endedAt : now) : null
@@ -209,7 +213,7 @@ function WorkScreen({ onGear }) {
     status = <p className="work-status">Time's up</p>
   }
 
-  const finishProject = panel?.type === 'finish' && active ? projects.find(p => p.id === active.projectId) || project : project
+  const finishProject = panel?.type === 'finish' && active ? allProjects.find(p => p.id === active.projectId) || project : project
 
   return (
     <div className="training work">
@@ -280,7 +284,7 @@ function WorkScreen({ onGear }) {
 
       {panel?.type === 'projects' && (
         <ProjectPicker
-          projects={projects}
+          projects={allProjects}
           sessions={sessions}
           activeId={project.id}
           live={liveFocus}
@@ -291,7 +295,7 @@ function WorkScreen({ onGear }) {
       )}
       {panel?.type === 'week' && (
         <WeekPanel
-          projects={projects}
+          projects={allProjects}
           sessions={sessions}
           live={liveFocus}
           onOpenSession={id => setPanel({ type: 'session', id })}
@@ -301,7 +305,7 @@ function WorkScreen({ onGear }) {
       {panel?.type === 'session' && (
         <SessionDetails
           session={sessions.find(s => s.id === panel.id)}
-          projects={projects}
+          projects={allProjects}
           onBack={() => setPanel({ type: 'week' })}
           onClose={() => setPanel(null)}
         />
@@ -322,7 +326,7 @@ function WorkScreen({ onGear }) {
           project={finishProject}
           timeUp={panel.timeUp}
           currency={prefs.currency}
-          switchTo={panel.switchTo ? projects.find(p => p.id === panel.switchTo) : null}
+          switchTo={panel.switchTo ? allProjects.find(p => p.id === panel.switchTo) : null}
           onSave={saveFinished}
           onDiscard={() => afterFinish(false)}
           onExtend={extend}

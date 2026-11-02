@@ -111,6 +111,40 @@ function periodMs(session, periods) {
 
 const isDone = (session, periods) => session.index >= periods.length
 
+// A workout that stopped before this many seconds isn't saved (a mis-tap).
+const MIN_SAVE_SECONDS = 10
+
+// The workout as a saved session for the Work log (same shape as a Work
+// session, plus kind: 'training'). Call it with the caught-up session.
+// A finished workout always counts; a stopped one only after 10 seconds.
+// Returns null when there is nothing to save.
+export function trainingRecord(session, periods, now) {
+  if (!session) return null
+  const done = isDone(session, periods)
+  const focusMs = done ? session.periodStartMs : activeMs(session, now)
+  if (!done && focusMs < MIN_SAVE_SECONDS * 1000) return null
+  const endedAt = done ? session.startedAt + session.periodStartMs + session.pausedMs : (session.pausedAt ?? now)
+  const plannedMs = periods.reduce((sum, p) => sum + p.seconds * 1000, 0)
+  return {
+    id: `training-${session.startedAt}`,
+    projectId: 'training',
+    kind: 'training',
+    mode: 'countdown',
+    startedAt: session.startedAt,
+    endedAt,
+    plannedMs,
+    finalPlannedMs: plannedMs,
+    focusMs,
+    breakMs: 0,
+    breaks: [],
+    wallMs: endedAt - session.startedAt,
+    status: done ? 'completed' : 'ended',
+    progress: null,
+    gains: [],
+    note: null,
+  }
+}
+
 // Move to period `index`, starting at active time `startMs`. A rest picks
 // up the seconds that were added during the exercise before it.
 function enter(session, periods, index, startMs) {

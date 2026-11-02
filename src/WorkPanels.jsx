@@ -3,7 +3,7 @@ import AppIcon from './icons.jsx'
 import { parseKey, todayKey } from './calendar.js'
 import { showTime } from './settings.js'
 import { clockText, durationText } from './workTimer.js'
-import { CURRENCIES, dayTotals, gainText, sessionTags, weekDays, weekFocusMs, weekSessions } from './workLog.js'
+import { CURRENCIES, dayTotals, gainText, sessionTags, weekDays, weekFocusMs, weekSessions, withTraining } from './workLog.js'
 
 // The bottom panels of the Work tab: project picker, this week, one
 // session's details, the end-of-session form and the custom length.
@@ -34,7 +34,7 @@ function WorkSheet({ title, onClose, onBack, children }) {
   )
 }
 
-const projectOf = (projects, id) => projects.find(p => p.id === id) || { id, name: 'Deleted project', color: '#8b8d98' }
+const projectOf = (projects, id) => withTraining(projects).find(p => p.id === id) || { id, name: 'Deleted project', color: '#8b8d98' }
 
 const pad = n => String(n).padStart(2, '0')
 const clockAt = ms => {
@@ -151,7 +151,7 @@ export function WeekPanel({ projects, sessions, live, onOpenSession, onClose }) 
           <div key={key} className={key === today ? 'work-chart-day today' : 'work-chart-day'}>
             <div className="work-chart-track">
               <div className="work-chart-stack" style={{ height: `${(dayMs[i] / scale) * 100}%` }}>
-                {projects
+                {withTraining(projects)
                   .filter(p => perDay[i][p.id])
                   .map(p => (
                     <span key={p.id} style={{ flexGrow: perDay[i][p.id], background: p.color }} />
@@ -182,7 +182,7 @@ export function SessionDetails({ session, projects, onBack, onClose }) {
   const rows = [
     ['Date', dateAt(session.startedAt)],
     ['Time', `${clockAt(session.startedAt)} – ${clockAt(session.endedAt)}`],
-    ['Timer', session.mode === 'countdown' ? 'Countdown' : 'No limit'],
+    ['Timer', session.kind === 'training' ? 'Training workout' : session.mode === 'countdown' ? 'Countdown' : 'No limit'],
     session.plannedMs && ['Planned', durationText(session.plannedMs)],
     session.finalPlannedMs && session.finalPlannedMs !== session.plannedMs && ['With extra time', durationText(session.finalPlannedMs)],
     ['Focused', clockText(session.focusMs)],
