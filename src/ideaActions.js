@@ -74,6 +74,31 @@ export function renameIdea(items, id, title) {
   }
 }
 
+// Every idea inside this one, at every level (not the idea itself).
+export function ideasInside(items, id) {
+  return childIdeas(items, id).flatMap(child => [child, ...ideasInside(items, child.id)])
+}
+
+// Move an idea (with everything inside it) to a new home: another idea, or
+// `null` to make it a main idea. Only one parentId changes. An idea can't go
+// into itself or into anything inside it; that case changes nothing.
+export function moveIdea(items, id, newParentId) {
+  const idea = items.find(item => item.id === id)
+  const target = newParentId ? items.find(item => item.id === newParentId) : null
+  const blocked = newParentId && (newParentId === id || ideasInside(items, id).some(i => i.id === newParentId))
+  if (!idea || blocked || (newParentId && !target) || (idea.parentId ?? null) === newParentId) {
+    return { items, events: [] }
+  }
+  // A main idea carries its color down; an idea made main needs its own.
+  const mainsEver = items.filter(item => item.list === 'ideas' && !item.parentId).length
+  const color = newParentId ? null : idea.color ?? COLORS[mainsEver % COLORS.length]
+  const after = { ...idea, parentId: newParentId, color }
+  return {
+    items: items.map(item => (item.id === id ? after : item)),
+    events: [makeEvent('idea-moved', after, { toTitle: target ? target.title : null })],
+  }
+}
+
 // Save the free text under an idea's title ("how it works", pasted notes).
 // No length limit. Does nothing if the text didn't change.
 export function setIdeaText(items, id, how) {

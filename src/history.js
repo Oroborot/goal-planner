@@ -71,6 +71,7 @@ const EVENT_TEXT = {
   'subitem-ticked': e => `Checklist: ticked “${e.text}”`,
   'subitem-unticked': e => `Checklist: unticked “${e.text}”`,
   'subitem-removed': e => `Checklist: removed “${e.text}”`,
+  'idea-moved': e => (e.toTitle ? `Moved into “${e.toTitle}”` : 'Made a main idea'),
   moved: e => `Moved ${e.minutes < 0 ? 'earlier' : 'later'} to ${showTime(e.time)}`,
   'reward-added': () => 'Reward set',
   'reward-claimed': () => 'Reward claimed 🎉',

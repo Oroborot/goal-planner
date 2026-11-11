@@ -236,7 +236,7 @@ A 5th tab for game ideas I have while chilling. Main ideas float as soft clouds;
 **Build steps (test each one before the next):**
 - [ ] **1. Base.** Ideas tab, overview with main clouds, tap to open, nested clouds inside (two levels shown, tap to go deeper), add idea / note at any level, rename, delete (hide). *Built 2026-11-11, waiting for my test.*
 - [ ] **1a. Text inside each idea.** Free text field (`how`) under the title on the idea page, no length limit (title stays 80). Saved when the field loses focus, through an action in `ideaActions.js`. A cloud with text shows a small ≡ mark.
-- [ ] **1b. "Move to…" picker.** From the ··· menu: pick a new home from a list of ideas, or "Make it a main idea". One `parentId` change + history event "moved". Can't move into itself or anything inside it.
+- [ ] **1b. "Move to…" picker.** From the ··· menu: pick a new home from a list of ideas, or "Make it a main idea". One `parentId` change + history event "moved". Can't move into itself or anything inside it. *Built 2026-11-11 as an indented list (event type `idea-moved`), waiting for my test.*
 - [ ] **1c. Restore deleted ideas.** Deleted ideas listed on the Archive page (`MenuPages.jsx`) with a Restore button.
 - [ ] **1d. Backup nudge and text export.** "Last backup X days ago" line on the Ideas overview (`planner-last-backup`); "Export as text" in the ··· menu: the idea and everything inside as an indented outline, via the iPhone share sheet or copied.
 - [ ] **1e. Work timer link (plan on Opus).** "Work on this" starts the Work timer and tags the session with the idea id; the idea shows total time worked.
@@ -247,6 +247,8 @@ A 5th tab for game ideas I have while chilling. Main ideas float as soft clouds;
 - [ ] **5. Merge.** "Merge" from the tray: a preview of the combined cloud first, then confirm. Restore of a merged idea from the archive.
 - [ ] **6. Links and extra fields.** "Needs" links between ideas, game label, "how it works" text. Deleted ideas show up in the Archive page.
 - [ ] **7. Polish.** Brain-like two-lobe layout, gentle floating motion (off when the phone asks for reduced motion).
+
+- [ ] **End goal (not now): living clouds.** The small clouds inside an idea drift slowly like the old DVD-logo screensaver: semi-random, casual, never forced or jerky, bouncing softly off the edges of the big cloud. You can still drag any small cloud and drop it in its own spot without the others getting pushed around or rearranged; it stays where you put it, then keeps drifting gently. Needs `x`/`y` per cloud (see Data), a slow animation loop that pauses when the phone asks for reduced motion, and a check that it stays smooth with many clouds. Do after steps 2 to 4, since it builds on pinch/pan and drag.
 
 **iPhone gesture risks (home-screen app) and what to do about them:**
 - **Safari ignores "no zoom" settings.** A pinch can zoom the whole app instead of the clouds, and the tab bar slides away. Fix: `touch-action: none` on the cloud area only, and our own pinch code with pointer events. Step 2 gets tested on the real phone before anything is built on top of it.

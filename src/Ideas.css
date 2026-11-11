@@ -59,6 +59,10 @@
 .idea-dialog input { width: 100%; height: 48px; font-size: 17px; }
 .idea-dialog-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
 .idea-dialog-buttons button:disabled { opacity: 0.5; }
+/* The "Move to…" list: scrolls when there are many ideas. */
+.idea-move-list { display: flex; flex-direction: column; gap: 0.3rem; max-height: 50vh; overflow-y: auto; }
+.idea-move-row { min-height: 44px; padding: 0.6rem 0.9rem; text-align: left; overflow-wrap: anywhere; }
+.idea-move-row:disabled { opacity: 0.4; }
 .idea-sure { margin: 0.2rem 0; color: var(--text-h); }
 button.idea-danger { color: #e5484d; }
 .ideas .sheet button.idea-danger-fill { border-color: #e5484d; background: #e5484d; color: #fff; }

@@ -9,7 +9,9 @@ import {
   countInside,
   deleteIdea,
   ideaPath,
+  ideasInside,
   mainIdeas,
+  moveIdea,
   renameIdea,
   setIdeaText,
 } from './ideaActions.js'
@@ -164,6 +166,21 @@ function IdeaInside({ ideaId, items, apply }) {
   const inside = countInside(items, idea.id)
   const backHref = parent ? `#idea/${parent.id}` : '#ideas'
 
+  // The "Move to…" list: every idea, in tree order, with how deep it sits.
+  const insideIds = new Set(ideasInside(items, idea.id).map(i => i.id))
+  const moveRows = []
+  const addRows = (list, level) =>
+    list.forEach(row => {
+      moveRows.push({ row, depth: level })
+      addRows(childIdeas(items, row.id), level + 1)
+    })
+  addRows(mainIdeas(items), 0)
+
+  function moveTo(newParentId) {
+    apply(moveIdea(items, idea.id, newParentId))
+    close()
+  }
+
   function remove() {
     apply(deleteIdea(items, idea.id))
     // Replace this page in the Back history, so Back never lands on the
@@ -257,14 +274,45 @@ function IdeaInside({ ideaId, items, apply }) {
           onClose={close}
         />
       )}
-      {(open === 'menu' || open === 'delete') && (
+      {(open === 'menu' || open === 'delete' || open === 'move') && (
         <div className="sheet-backdrop" onClick={close}>
           <div className="sheet" role="dialog" aria-label={idea.title} onClick={e => e.stopPropagation()}>
             <div className="sheet-handle" />
-            {open === 'menu' ? (
+            {open === 'move' ? (
+              <>
+                <p className="idea-sure">Move “{idea.title}” to…</p>
+                <div className="idea-move-list">
+                  {parent && (
+                    <button type="button" className="idea-move-row" onClick={() => moveTo(null)}>
+                      ☁ Make it a main idea
+                    </button>
+                  )}
+                  {moveRows.map(({ row, depth: level }) => {
+                    // Not allowed: itself, anything inside it, or where it already is.
+                    const blocked = row.id === idea.id || insideIds.has(row.id) || row.id === idea.parentId
+                    return (
+                      <button
+                        key={row.id}
+                        type="button"
+                        className="idea-move-row"
+                        style={{ paddingLeft: `${0.9 + level * 1.1}rem` }}
+                        disabled={blocked}
+                        onClick={() => moveTo(row.id)}
+                      >
+                        {row.title}
+                        {row.id === idea.parentId && ' (now here)'}
+                      </button>
+                    )
+                  })}
+                </div>
+              </>
+            ) : open === 'menu' ? (
               <>
                 <button type="button" onClick={() => setOpen('rename')}>
                   ✎ Rename
+                </button>
+                <button type="button" onClick={() => setOpen('move')}>
+                  Move to…
                 </button>
                 <button type="button" className="secondary idea-danger" onClick={() => setOpen('delete')}>
                   Delete
