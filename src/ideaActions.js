@@ -1,6 +1,7 @@
 // Ideas: the thought map of clouds (the Ideas tab).
 // An idea looks like:
-// { id, list: 'ideas', title, parentId, color, createdAt, deletedAt }
+// { id, list: 'ideas', title, how, parentId, color, createdAt, deletedAt }
+// - how:      free text under the title (notes, "how it works"), optional
 // - parentId: the idea it sits inside, or null for a main idea
 // - color:    'purple' or 'green', only set on main ideas; the clouds
 //             inside take their color from it
@@ -70,6 +71,18 @@ export function renameIdea(items, id, title) {
   return {
     items: items.map(item => (item.id === id ? after : item)),
     events: [makeEvent('edited', after, { fields: ['title'] })],
+  }
+}
+
+// Save the free text under an idea's title ("how it works", pasted notes).
+// No length limit. Does nothing if the text didn't change.
+export function setIdeaText(items, id, how) {
+  const before = items.find(item => item.id === id)
+  if (!before || (before.how ?? '') === how) return { items, events: [] }
+  const after = { ...before, how }
+  return {
+    items: items.map(item => (item.id === id ? after : item)),
+    events: [makeEvent('edited', after, { fields: ['text'] })],
   }
 }
 

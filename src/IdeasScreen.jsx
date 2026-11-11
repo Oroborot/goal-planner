@@ -11,6 +11,7 @@ import {
   ideaPath,
   mainIdeas,
   renameIdea,
+  setIdeaText,
 } from './ideaActions.js'
 import './Ideas.css'
 
@@ -36,6 +37,29 @@ function drift(id) {
   const x = Math.round((random() - 0.5) * 22)
   const y = Math.round((random() - 0.5) * 26)
   return { transform: `translate(${x}px, ${y}px)` }
+}
+
+// A small ≡ mark after a cloud's title when the idea has text written in it.
+function NoteMark({ idea }) {
+  if (!idea.how?.trim()) return null
+  return <span className="cloud-note" aria-label="has notes" title="Has notes"> ≡</span>
+}
+
+// The free text under an idea's title. It is saved when you tap away from
+// the field (not on every letter), so the history log stays tidy.
+function IdeaText({ idea, onSave }) {
+  const [text, setText] = useState(idea.how ?? '')
+  return (
+    <textarea
+      className="idea-text"
+      value={text}
+      onChange={e => setText(e.target.value)}
+      onBlur={() => text !== (idea.how ?? '') && onSave(text)}
+      placeholder="Notes, how it works… (paste anything)"
+      aria-label="Notes"
+      rows={4}
+    />
+  )
 }
 
 // The small box with one text field, used for "new idea", "new note" and
@@ -96,7 +120,7 @@ function IdeasOverview({ items, apply, onGear }) {
             style={drift(idea.id)}
             onOpen={() => openIdea(idea.id)}
           >
-            <span className="cloud-title">{idea.title}</span>
+            <span className="cloud-title">{idea.title}<NoteMark idea={idea} /></span>
           </IdeaCloud>
         ))}
       </div>
@@ -160,6 +184,9 @@ function IdeaInside({ ideaId, items, apply }) {
       </div>
       {parent && <p className="ideas-crumbs">{path.slice(0, -1).map(step => step.title).join(' › ')}</p>}
 
+      {/* key = id, so each idea starts with its own saved text */}
+      <IdeaText key={idea.id} idea={idea} onSave={how => apply(setIdeaText(items, idea.id, how))} />
+
       <IdeaCloud seed={idea.id} kind="big" tone={toneFor(main.color, depth, false)} tail>
         {children.length === 0 && <p className="cloud-hint">Nothing in here yet.</p>}
         <div className="cloud-kids">
@@ -168,7 +195,7 @@ function IdeaInside({ ideaId, items, apply }) {
             if (grandchildren.length === 0) {
               return (
                 <IdeaCloud key={child.id} seed={child.id} kind="leaf" tone="cream" label={`Open ${child.title}`} onOpen={() => openIdea(child.id)}>
-                  <span className="cloud-title">{child.title}</span>
+                  <span className="cloud-title">{child.title}<NoteMark idea={child} /></span>
                 </IdeaCloud>
               )
             }
@@ -181,7 +208,7 @@ function IdeaInside({ ideaId, items, apply }) {
                 label={`Open ${child.title}`}
                 onOpen={() => openIdea(child.id)}
               >
-                <span className="cloud-title">{child.title}</span>
+                <span className="cloud-title">{child.title}<NoteMark idea={child} /></span>
                 <div className="cloud-kids">
                   {grandchildren.map(grandchild => {
                     const more = countInside(items, grandchild.id)
@@ -196,6 +223,7 @@ function IdeaInside({ ideaId, items, apply }) {
                       >
                         <span className="cloud-title">
                           {grandchild.title}
+                          <NoteMark idea={grandchild} />
                           {more > 0 && <span className="cloud-more"> +{more}</span>}
                         </span>
                       </IdeaCloud>

@@ -47,6 +47,11 @@
 .ideas-head h1 { margin: 0; font-size: 1.6rem; line-height: 1.15; text-align: center; overflow-wrap: anywhere; }
 .ideas-crumbs { margin: 0.4rem 0 0; font-size: 0.85rem; text-align: center; opacity: 0.7; }
 
+/* The free text under an idea's title, and the small ≡ mark on clouds with text. */
+.idea-text { display: block; width: 100%; box-sizing: border-box; min-height: 5.5rem; margin: 0.8rem 0 0; padding: 0.7rem 0.9rem; border: 0; border-radius: 16px; background: var(--felt-cream); color: var(--felt-ink); font: inherit; font-size: 16px; line-height: 1.4; resize: vertical; box-shadow: 0 1px 3px rgba(59, 42, 69, 0.25); }
+.idea-text::placeholder { color: var(--felt-ink); opacity: 0.5; }
+.cloud-note { font-weight: 700; opacity: 0.6; }
+
 /* The text box for new idea / new note / rename. */
 .idea-dialog-backdrop { position: fixed; inset: 0; z-index: 30; display: flex; align-items: flex-start; justify-content: center; padding: calc(4.5rem + env(safe-area-inset-top)) 1rem 0; background: rgba(0, 0, 0, 0.5); }
 .idea-dialog { display: flex; flex-direction: column; gap: 0.8rem; width: 100%; max-width: 420px; padding: 1.1rem; box-sizing: border-box; border-radius: 22px; background: var(--bg); }

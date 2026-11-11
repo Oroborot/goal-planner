@@ -235,6 +235,12 @@ A 5th tab for game ideas I have while chilling. Main ideas float as soft clouds;
 
 **Build steps (test each one before the next):**
 - [ ] **1. Base.** Ideas tab, overview with main clouds, tap to open, nested clouds inside (two levels shown, tap to go deeper), add idea / note at any level, rename, delete (hide). *Built 2026-11-11, waiting for my test.*
+- [ ] **1a. Text inside each idea.** Free text field (`how`) under the title on the idea page, no length limit (title stays 80). Saved when the field loses focus, through an action in `ideaActions.js`. A cloud with text shows a small ≡ mark.
+- [ ] **1b. "Move to…" picker.** From the ··· menu: pick a new home from a list of ideas, or "Make it a main idea". One `parentId` change + history event "moved". Can't move into itself or anything inside it.
+- [ ] **1c. Restore deleted ideas.** Deleted ideas listed on the Archive page (`MenuPages.jsx`) with a Restore button.
+- [ ] **1d. Backup nudge and text export.** "Last backup X days ago" line on the Ideas overview (`planner-last-backup`); "Export as text" in the ··· menu: the idea and everything inside as an indented outline, via the iPhone share sheet or copied.
+- [ ] **1e. Work timer link (plan on Opus).** "Work on this" starts the Work timer and tags the session with the idea id; the idea shows total time worked.
+- [ ] **1f. Search.** One field on the overview that finds any idea or note at any depth and opens it.
 - [ ] **2. Pinch zoom and pan** on the overview and inside an idea, plus the ＋ / − buttons from the mockups.
 - [ ] **3. Drag and move.** Long-press a cloud to pick it up, drop it on another visible cloud to move it there (one `parentId` change, history event "moved").
 - [ ] **4. Tray.** Drag a cloud to the bottom to park the whole branch in a tray, go to any other idea, tap "Place here".
