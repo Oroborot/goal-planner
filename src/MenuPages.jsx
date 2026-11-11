@@ -11,6 +11,7 @@ const HISTORY_LIMIT = 100
 function itemHref(item) {
   if (item.list === 'days') return `#day/${item.date}`
   if (item.list === 'rewards') return '#rewards'
+  if (item.list === 'ideas') return `#idea/${item.id}`
   return item.list === 'notes' ? `#note/${item.id}` : `#goal/${item.id}`
 }
 

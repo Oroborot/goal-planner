@@ -21,7 +21,8 @@
 - All files are flat in `src/`. Components are PascalCase `.jsx`; logic is lowercase `.js`.
 - **State:** every change goes through `apply({ items, events })` in `App.jsx`. Action files (`goalActions.js`, `noteActions.js`, `categoryActions.js`, `rewardActions.js`) return `{ items, events }`, so every change is recorded in the history log. Deleting hides an item (`deletedAt`) and never erases it.
 - **Data (localStorage):** `planner-items` (goals, notes and categories; the `list` field says which), `planner-events` (history), `planner-timer`, `planner-training` (running workout), `planner-settings`, `planner-day-view`, `planner-last-backup`. It's all test data until the final stage, so no migration code is needed; just clear it.
-- **Routing:** by the address hash, in `screenFromAddress()` in `App.jsx`. Home has no hash. Routes include `#goals`, `#goal/<id>`, `#notes`, `#note/<id>`, `#day/<date>`, `#week/<date>`, `#month/<yyyy-mm>`, `#focus/<id>`, `#history`, `#archive`, `#settings`, `#stats`, `#folders`, `#rewards` and `#cover`.
+- **Routing:** by the address hash, in `screenFromAddress()` in `App.jsx`. Home has no hash. Routes include `#goals`, `#goal/<id>`, `#notes`, `#note/<id>`, `#day/<date>`, `#week/<date>`, `#month/<yyyy-mm>`, `#focus/<id>`, `#history`, `#archive`, `#settings`, `#stats`, `#folders`, `#rewards`, `#cover`, `#ideas` and `#idea/<id>`.
+- **Ideas tab:** nested thought clouds. `ideaActions.js` (items with `list: 'ideas'`, nested by `parentId`), `IdeasScreen.jsx`, `IdeaCloud.jsx` + `cloudShape.js` (draws the cloud outline), `Ideas.css`. Build steps are in `PLAN.md` Part 8.
 - **Shared pieces:** `icons.jsx` (all icons), `colors.js`, `themes.js`, `calendar.js` (date helpers), `repeat.js`, `progress.js`, `timer.js`, `timeframes.js`. Use these instead of writing new ones.
 - Comments are plain-English and beginner-friendly. Keep that style.
 

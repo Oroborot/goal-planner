@@ -27,6 +27,7 @@ import GearSheet from './GearSheet.jsx'
 import EmptyTab from './EmptyTab.jsx'
 import TrainingScreen from './TrainingScreen.jsx'
 import WorkScreen from './WorkScreen.jsx'
+import IdeasScreen from './IdeasScreen.jsx'
 import BackupSection from './BackupSection.jsx'
 import { restoreExtras } from './backup.js'
 import { ArchivePage, HistoryPage } from './MenuPages.jsx'
@@ -41,12 +42,13 @@ import {
 } from './timer.js'
 import './App.css'
 
-// The 4 tabs of the hub, shown in the bar at the bottom.
-const TABS = ['training', 'work', 'cookbook', 'projects']
+// The 5 tabs of the hub, shown in the bar at the bottom.
+const TABS = ['training', 'work', 'cookbook', 'projects', 'ideas']
 
 // Which screen to show, read from the end of the web address:
 //   no address    -> the Training tab
-//   #work, #cookbook, #projects -> the other tabs
+//   #work, #cookbook, #projects, #ideas -> the other tabs
+//   #idea/<id>    -> inside one idea (still the Ideas tab)
 //   #home         -> the old Today home screen (hidden, still works)
 //   #goals        -> the goals list
 //   #goal/<id>    -> the page for one goal
@@ -71,6 +73,7 @@ function screenFromAddress() {
   if (address.startsWith('goal/')) return { name: 'goal', goalId: address.slice(5) }
   if (address === 'notes') return { name: 'notes' }
   if (address.startsWith('note/')) return { name: 'note', noteId: address.slice(5) }
+  if (address.startsWith('idea/')) return { name: 'idea', ideaId: address.slice(5) }
   return { name: 'training' }
 }
 
@@ -308,6 +311,17 @@ function App() {
     page = <TrainingScreen onGear={() => setGearOpen(true)} />
   } else if (screen.name === 'work') {
     page = <WorkScreen onGear={() => setGearOpen(true)} />
+  } else if (screen.name === 'ideas' || screen.name === 'idea') {
+    // `key` gives each idea a fresh page, so open boxes don't carry over.
+    page = (
+      <IdeasScreen
+        key={screen.ideaId || 'overview'}
+        ideaId={screen.ideaId}
+        items={items}
+        apply={apply}
+        onGear={() => setGearOpen(true)}
+      />
+    )
   } else {
     // Cookbook or Projects: not built yet.
     page = <EmptyTab key={screen.name} tab={screen.name} onGear={() => setGearOpen(true)} />
@@ -326,7 +340,7 @@ function App() {
       )}
       {page}
       {screen.name !== 'focus' && screen.name !== 'cover' && (
-        <TabBar active={TABS.includes(screen.name) ? screen.name : null} />
+        <TabBar active={screen.name === 'idea' ? 'ideas' : TABS.includes(screen.name) ? screen.name : null} />
       )}
       {gearOpen && <GearSheet onClose={() => setGearOpen(false)} />}
     </>

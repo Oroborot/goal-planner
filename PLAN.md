@@ -219,6 +219,39 @@ The app is for tracking **now, here and now**: what I did with my time this week
 - **Projects tab = the only place for the future.** A project can have a ship date (e.g. "ship on the 10th") and tracks progress toward it. Work's placeholder projects will come from here.
 - **Log everything.** Any time spent (this chat = "App creation") should land in the weekly view, with or without a timer.
 
+### Part 8: Ideas, a thought map of clouds (decided 2026-11-11)
+
+A 5th tab for game ideas I have while chilling. Main ideas float as soft clouds; tap one to see its sub-ideas and notes as smaller clouds inside it.
+
+**Look:** felt-paper clouds (the "Thought Tray" mockup: flat pastel purple, green and cream, soft shadow) with the airy, loosely spread overview of the "Floating Canvas" mockup. Felt was picked because flat shapes plus one shadow can be drawn well with SVG; watercolor needs uneven washes and soft edges that look cheap in CSS and are slow on a phone.
+
+**Data (all in `planner-items`, `list: 'ideas'`, actions in `ideaActions.js`):**
+`{ id, list: 'ideas', title, parentId, color, createdAt, deletedAt }`
+- A note and a sub-idea are the same thing: an idea with nothing inside it yet.
+- `parentId` = the idea it sits in, `null` for a main idea. Moving a branch = changing one `parentId`.
+- Deleting hides only that one idea (`deletedAt`); everything inside it disappears with it and comes back if it's restored.
+- Merge (later) = give the source's children the target's id as `parentId`, then hide the source.
+- Fields added later, no rework needed: `game` (label), `how` ("how it works" text), `needs` (list of idea ids, for links that are not parent and child), `x`/`y` if clouds ever get dragged to a fixed spot.
+
+**Build steps (test each one before the next):**
+- [ ] **1. Base.** Ideas tab, overview with main clouds, tap to open, nested clouds inside (two levels shown, tap to go deeper), add idea / note at any level, rename, delete (hide). *Built 2026-11-11, waiting for my test.*
+- [ ] **2. Pinch zoom and pan** on the overview and inside an idea, plus the ＋ / − buttons from the mockups.
+- [ ] **3. Drag and move.** Long-press a cloud to pick it up, drop it on another visible cloud to move it there (one `parentId` change, history event "moved").
+- [ ] **4. Tray.** Drag a cloud to the bottom to park the whole branch in a tray, go to any other idea, tap "Place here".
+- [ ] **5. Merge.** "Merge" from the tray: a preview of the combined cloud first, then confirm. Restore of a merged idea from the archive.
+- [ ] **6. Links and extra fields.** "Needs" links between ideas, game label, "how it works" text. Deleted ideas show up in the Archive page.
+- [ ] **7. Polish.** Brain-like two-lobe layout, gentle floating motion (off when the phone asks for reduced motion).
+
+**iPhone gesture risks (home-screen app) and what to do about them:**
+- **Safari ignores "no zoom" settings.** A pinch can zoom the whole app instead of the clouds, and the tab bar slides away. Fix: `touch-action: none` on the cloud area only, and our own pinch code with pointer events. Step 2 gets tested on the real phone before anything is built on top of it.
+- **Drag vs. scroll vs. tap.** A finger that moves a little while tapping must still open the cloud. Fix: drag starts only after a long press (about 0.35 s) with a small "lift" animation; a move before that is a scroll.
+- **Long press pops up the iOS text-select / callout bubble.** Fix: `user-select: none` and `-webkit-touch-callout: none` on clouds.
+- **Edge swipes.** Swiping from the left edge is "back" in iOS and can't be turned off. Fix: keep drag targets and the tray away from the screen edges.
+- **No HTML drag-and-drop on iPhone.** It doesn't work with touch. Fix: pointer events with `setPointerCapture`, no library needed.
+- **Rubber-band bounce** while dragging moves the whole page. Fix: lock page scroll while a cloud is held (the Training tab already does this).
+- **Many shadows are slow.** Each cloud has a soft shadow; with 100+ clouds on screen zooming may stutter. Fix: only two levels are drawn inside an idea, and shadows switch off while pinching if needed.
+- If steps 2 to 4 turn out too fiddly by hand, the fallback is the small free library `@use-gesture/react`. I'll ask before adding it.
+
 ## Maybe remove later
 
 Small things added along the way that might not be needed in the final app. Review this list during the design pass.

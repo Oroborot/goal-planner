@@ -1,0 +1,59 @@
+/* The Ideas tab: felt-paper thought clouds. */
+.ideas {
+  --felt-purple: #cdb5e6;
+  --felt-green: #c5d29c;
+  --felt-purple-soft: #e4d5f2;
+  --felt-green-soft: #dfe8c2;
+  --felt-cream: #f9f1e2;
+  --felt-ink: #3b2a45;
+}
+
+/* One cloud: the SVG shape sits behind, the text and smaller clouds on top. */
+.cloud { position: relative; display: inline-flex; box-sizing: border-box; max-width: 100%; color: var(--felt-ink); -webkit-tap-highlight-color: transparent; -webkit-touch-callout: none; user-select: none; -webkit-user-select: none; }
+.cloud[role='link'] { cursor: pointer; }
+.cloud-shape { position: absolute; top: 0; left: 0; overflow: visible; pointer-events: none; filter: drop-shadow(0 2px 2.5px rgba(59, 42, 69, 0.24)); }
+.cloud-purple > .cloud-shape { fill: var(--felt-purple); }
+.cloud-green > .cloud-shape { fill: var(--felt-green); }
+.cloud-purple-soft > .cloud-shape { fill: var(--felt-purple-soft); }
+.cloud-green-soft > .cloud-shape { fill: var(--felt-green-soft); }
+.cloud-cream > .cloud-shape { fill: var(--felt-cream); }
+.cloud-body { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.6rem; width: 100%; min-width: 0; text-align: center; }
+.cloud-title { max-width: 100%; font-weight: 700; line-height: 1.15; overflow-wrap: break-word; }
+.cloud-more { font-weight: 600; opacity: 0.6; }
+.cloud-hint { margin: 0; opacity: 0.65; }
+.cloud-kids { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0.7rem 0.5rem; max-width: 100%; }
+.cloud-kids:empty { display: none; }
+
+/* The four sizes. */
+.cloud-main { width: 9.4rem; min-height: 6.4rem; padding: 1.5rem 1rem; font-size: 1.15rem; }
+.cloud-big { display: flex; width: 100%; min-height: 19rem; margin-top: 1rem; padding: 3.2rem 1.7rem 3.4rem; }
+.cloud-big > .cloud-body { gap: 1rem; }
+.cloud-mid { padding: 1.3rem 1.1rem 1.4rem; font-size: 1.1rem; }
+.cloud-leaf { padding: 0.6rem 1rem; font-size: 0.95rem; }
+.cloud-leaf .cloud-title { font-weight: 600; }
+
+/* The overview: clouds in loose pairs, every second one a bit lower. */
+.ideas-sky { display: flex; flex-wrap: wrap; justify-content: center; gap: 1.8rem 0.9rem; padding: 1.6rem 0 2rem; }
+.ideas-sky > .cloud:nth-child(even) { margin-top: 1.7rem; }
+
+/* Round felt buttons (back, more, add). */
+.ideas-round { display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; min-height: 0; padding: 0; border: 0; border-radius: 50%; background: var(--felt-cream); color: var(--felt-ink); font-size: 20px; font-weight: 700; text-decoration: none; box-shadow: 0 1px 3px rgba(59, 42, 69, 0.3); }
+.ideas-add { position: fixed; z-index: 15; right: max(1rem, calc(50% - 224px)); bottom: calc(78px + env(safe-area-inset-bottom)); width: 52px; height: 52px; font-size: 24px; }
+.ideas-add-note { position: fixed; z-index: 15; left: 50%; bottom: calc(78px + env(safe-area-inset-bottom)); height: 46px; min-height: 0; padding: 0 1.3rem; border: 0; border-radius: 23px; background: var(--felt-cream); color: var(--felt-ink); font-weight: 600; white-space: nowrap; box-shadow: 0 1px 4px rgba(59, 42, 69, 0.32); transform: translateX(-50%); }
+.ideas-add-note:active { transform: translateX(-50%) scale(0.97); }
+
+/* Inside an idea: back, title, more. */
+.ideas-head { display: grid; grid-template-columns: 44px 1fr 44px; align-items: center; gap: 0.6rem; }
+.ideas-head h1 { margin: 0; font-size: 1.6rem; line-height: 1.15; text-align: center; overflow-wrap: anywhere; }
+.ideas-crumbs { margin: 0.4rem 0 0; font-size: 0.85rem; text-align: center; opacity: 0.7; }
+
+/* The text box for new idea / new note / rename. */
+.idea-dialog-backdrop { position: fixed; inset: 0; z-index: 30; display: flex; align-items: flex-start; justify-content: center; padding: calc(4.5rem + env(safe-area-inset-top)) 1rem 0; background: rgba(0, 0, 0, 0.5); }
+.idea-dialog { display: flex; flex-direction: column; gap: 0.8rem; width: 100%; max-width: 420px; padding: 1.1rem; box-sizing: border-box; border-radius: 22px; background: var(--bg); }
+.idea-dialog h2 { margin: 0; font-size: 1.1rem; overflow-wrap: anywhere; }
+.idea-dialog input { width: 100%; height: 48px; font-size: 17px; }
+.idea-dialog-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+.idea-dialog-buttons button:disabled { opacity: 0.5; }
+.idea-sure { margin: 0.2rem 0; color: var(--text-h); }
+button.idea-danger { color: #e5484d; }
+.ideas .sheet button.idea-danger-fill { border-color: #e5484d; background: #e5484d; color: #fff; }

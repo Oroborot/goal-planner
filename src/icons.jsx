@@ -128,6 +128,17 @@ const SHAPES = {
       </>
     ),
   },
+  // A thought cloud with its two little bubbles.
+  ideas: {
+    label: 'Ideas',
+    shape: (
+      <>
+        <path d="M17 16H9.5a5.5 5.5 0 1 1 5.3-7H17a3.5 3.5 0 1 1 0 7Z" />
+        <circle cx="7" cy="19.6" r="1.1" />
+        <circle cx="4.3" cy="21.6" r="0.5" />
+      </>
+    ),
+  },
   gear: {
     label: 'More',
     shape: (

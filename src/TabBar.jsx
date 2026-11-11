@@ -1,11 +1,12 @@
 import AppIcon from './icons.jsx'
 
-// The 4 spaces of the hub, like the tab bar in Apple's Clock app.
+// The 5 spaces of the hub, like the tab bar in Apple's Clock app.
 const TABS = [
   { id: 'training', label: 'Training', href: '#training' },
   { id: 'work', label: 'Work', href: '#work' },
   { id: 'cookbook', label: 'Cookbook', href: '#cookbook' },
   { id: 'projects', label: 'Projects', href: '#projects' },
+  { id: 'ideas', label: 'Ideas', href: '#ideas' },
 ]
 
 // The bar at the bottom of every screen. The open tab is orange, the rest

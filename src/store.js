@@ -35,6 +35,8 @@ export function loadItems() {
       doneDates: [],
       ...item,
       parentIds: item.parentIds ?? (parentId ? [parentId] : []),
+      // Ideas and note categories nest with a single `parentId`: keep it.
+      ...(item.list === 'ideas' || item.list === 'categories' ? { parentId: parentId ?? null } : {}),
     }))
   } catch {
     return []
