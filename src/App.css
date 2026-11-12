@@ -595,6 +595,20 @@ body:has(.training) #root { height: 100%; min-height: 0; }
 .training-setting input { width: 5.5rem; height: 44px; box-sizing: border-box; font-size: 16px; text-align: right; }
 .training-setting-unit { width: 2rem; font-size: 14px; color: var(--text); }
 .training-settings-save { width: 100%; height: 52px; margin-top: 0.8rem; border: 0; border-radius: 26px; background: var(--hub-accent); color: #fff; font-size: 17px; font-weight: 600; }
+.program-list { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 0.8rem; }
+.program-row { display: flex; align-items: center; gap: 0.6rem; }
+.program-dot { flex: none; width: 26px; height: 26px; min-height: 0; padding: 0; border: 2px solid var(--hub-accent); border-radius: 50%; background: transparent; }
+.program-dot.on { background: var(--hub-accent); box-shadow: inset 0 0 0 4px var(--bg); }
+.program-name { display: flex; flex: 1; flex-direction: column; align-items: flex-start; gap: 0.1rem; min-height: 52px; padding: 0.5rem 0.8rem; border: 1px solid var(--border, rgba(128, 128, 128, 0.25)); border-radius: 14px; background: transparent; font: inherit; text-align: left; color: var(--text-h); }
+.program-name span { font-size: 14px; color: var(--text); }
+.program-text { flex: 1; min-width: 0; height: 44px; box-sizing: border-box; font-size: 16px; }
+.training-setting input.program-text { width: auto; text-align: left; }
+.program-num { width: 1.4rem; text-align: center; font-size: 15px; color: var(--text); }
+.program-head { margin: 1rem 0 0.5rem; }
+.program-link { display: block; width: 100%; min-height: 44px; border: 0; background: transparent; font-size: 16px; font-weight: 600; color: var(--hub-accent); }
+.program-link.danger { color: #d33; font-weight: 500; }
+.training-program { display: flex; align-items: center; justify-content: center; gap: 0.4rem; width: 100%; min-height: 40px; margin-bottom: 0.6rem; border: 0; background: transparent; font: inherit; font-size: 15px; color: var(--text-h); }
+.training-program span { color: var(--text); }
 .training-restart.sure { border-radius: 20px; padding: 0 0.8rem; background: var(--hub-accent); color: #fff; }
 
 .training-circle-area { display: flex; flex: 1; align-items: center; justify-content: center; padding: 1rem 0; }

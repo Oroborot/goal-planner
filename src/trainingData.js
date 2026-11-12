@@ -106,6 +106,8 @@ export const DEFAULT_SETTINGS = {
 // list, repeated if there are more rounds than exercises (exercise picking
 // comes in a later round).
 export function workoutFrom(settings) {
+  // A workout from one of your programs already has its own rounds.
+  if (settings.rounds) return settings
   const rounds = []
   for (let i = 0; i < settings.roundsPerSet; i++) rounds.push(WORKOUT.rounds[i % WORKOUT.rounds.length])
   return { ...WORKOUT, ...settings, rounds }

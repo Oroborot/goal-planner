@@ -24,8 +24,8 @@ export function buildPeriods(workout) {
   const periods = []
   for (let i = 0; i < total; i++) {
     const set = Math.floor(i / perSet)
-    const { exerciseId } = workout.rounds[i % perSet]
-    periods.push({ kind: 'exercise', round: i, set, exerciseId, seconds: workout.exerciseSeconds })
+    const { exerciseId, name } = workout.rounds[i % perSet]
+    periods.push({ kind: 'exercise', round: i, set, exerciseId, name, seconds: workout.exerciseSeconds })
     if (i === total - 1) break
     const endOfSet = (i + 1) % perSet === 0
     periods.push({

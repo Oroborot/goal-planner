@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import AppIcon from './icons.jsx'
 import GearButton from './GearButton.jsx'
 import TimerCircle from './TimerCircle.jsx'
@@ -24,6 +24,8 @@ import {
   trainingView,
 } from './training.js'
 import { saveTrainingSession } from './workLog.js'
+import ProgramsSheet from './ProgramsSheet.jsx'
+import { activeProgram, doneThisWeek, loadPrograms, nextWorkout, savePrograms, withFinished, workoutPlan } from './programs.js'
 
 // The small orange word above the numbers. Exercises have none.
 const LABELS = { ready: 'Ready', rest: 'Rest', setRest: 'Set rest', done: 'Done' }
@@ -36,7 +38,7 @@ function nextExerciseAt(periods, from) {
 
 // An exercise's name, or "Freestyle" for a round without one.
 function exerciseName(period) {
-  return period.exerciseId ? EXERCISES[period.exerciseId].name : 'Freestyle'
+  return (period.exerciseId && EXERCISES[period.exerciseId].name) || period.name || 'Freestyle'
 }
 
 // The Training tab: round and set counters, the session timer, the big
@@ -57,7 +59,13 @@ function TrainingScreen({ onGear }) {
   // A running workout keeps the numbers it started with (older saved
   // workouts have none, so they use the defaults). With no workout started,
   // the screen shows the next one, built from the settings.
-  const plan = session ? session.plan || DEFAULT_SETTINGS : settings
+  // Your programs: with one in use, the next workout of it is what starts.
+  const [programs, setPrograms] = useState(loadPrograms)
+  const [programsOpen, setProgramsOpen] = useState(false)
+  const program = activeProgram(programs)
+  const next = nextWorkout(programs, program)
+  const nextPlan = useMemo(() => (next ? workoutPlan(program, next) : null), [program, next])
+  const plan = session ? session.plan || DEFAULT_SETTINGS : nextPlan || settings
   const workout = useMemo(() => workoutFrom(plan), [plan])
   const periods = useMemo(() => buildPeriods(workout), [workout])
   const totalRounds = workout.rounds.length * workout.sets
@@ -67,6 +75,7 @@ function TrainingScreen({ onGear }) {
   function change(next) {
     sessionRef.current = next
     setSession(next)
+    logIfFinished(next)
   }
 
   useEffect(() => saveTraining(session), [session])
@@ -77,6 +86,25 @@ function TrainingScreen({ onGear }) {
     if (!session || session.index < periods.length) return
     saveTrainingSession(trainingRecord(session, periods, Date.now()))
   }, [session, periods])
+
+  // A finished program workout moves the program on to its next workout.
+  // Logging the same start time twice does nothing.
+  const logIfFinished = useCallback(
+    updated => {
+      if (!updated || updated.index < periods.length) return
+      setPrograms(current => {
+        const result = withFinished(current, updated.plan, updated.startedAt)
+        if (result !== current) savePrograms(result)
+        return result
+      })
+    },
+    [periods],
+  )
+
+  function changePrograms(updated) {
+    savePrograms(updated)
+    setPrograms(updated)
+  }
 
   function saveSettings(values) {
     setSettings(saveTrainingSettings(values, DEFAULT_SETTINGS))
@@ -119,6 +147,7 @@ function TrainingScreen({ onGear }) {
       if (ended > 0) {
         sessionRef.current = next
         setSession(next)
+        logIfFinished(next)
         playBeep()
       }
       setNow(time)
@@ -126,7 +155,7 @@ function TrainingScreen({ onGear }) {
     }
     frame = requestAnimationFrame(tick)
     return () => cancelAnimationFrame(frame)
-  }, [running, periods])
+  }, [running, periods, logIfFinished])
 
   // Run a button's change on the up-to-date session.
   function act(update) {
@@ -151,7 +180,7 @@ function TrainingScreen({ onGear }) {
   const variationCount = exercise?.variations.length || 0
 
   function primary() {
-    if (idle) act((_, time) => startTraining(time, settings))
+    if (idle) act((_, time) => startTraining(time, nextPlan || settings))
     else if (status === 'paused') act(resumeTraining)
     else act(pauseTraining)
   }
@@ -172,7 +201,7 @@ function TrainingScreen({ onGear }) {
     <div className="training">
       <header className="training-top">
         {/* Tap the round and set numbers to change them. */}
-        <button type="button" className="training-counts" onClick={() => setSettingsOpen(true)} aria-label="Workout settings">
+        <button type="button" className="training-counts" onClick={() => (nextPlan ? setProgramsOpen(true) : setSettingsOpen(true))} aria-label="Workout settings">
           <span>
             Round {period.round + 1} / {totalRounds}
           </span>
@@ -216,6 +245,20 @@ function TrainingScreen({ onGear }) {
         />
       </div>
 
+      {/* Your program: which workout is next and how the week is going. */}
+      <button type="button" className="training-program" onClick={() => setProgramsOpen(true)}>
+        {program && next ? (
+          <>
+            <strong>{(session?.plan?.name) || next.name}</strong>
+            <span>
+              · {program.name} · {doneThisWeek(programs, program)} of {program.perWeek} this week
+            </span>
+          </>
+        ) : (
+          <strong>＋ Add your program</strong>
+        )}
+      </button>
+
       <div className="training-cards">
         <button type="button" className="training-card current" onClick={() => setPanel({ type: 'details', exerciseId: shown?.exerciseId })}>
           <span className="training-card-text">
@@ -243,6 +286,8 @@ function TrainingScreen({ onGear }) {
       {settingsOpen && (
         <TrainingSettings settings={settings} running={Boolean(session) && status !== 'done'} onSave={saveSettings} onClose={() => setSettingsOpen(false)} />
       )}
+
+      {programsOpen && <ProgramsSheet state={programs} onChange={changePrograms} onClose={() => setProgramsOpen(false)} />}
 
       {panel && (
         <TrainingPanel
