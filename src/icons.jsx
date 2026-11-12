@@ -62,6 +62,7 @@ const SHAPES = {
       </>
     ),
   },
+  archive: { label: 'Archive', shape: <path d="M4 5h16v4H4zM5.5 9v10h13V9M10 13h4" /> },
   folders: { label: 'Folders', shape: <path d="M4 7v11h16V9h-8l-2-2z" /> },
   cover: {
     label: 'Cover',

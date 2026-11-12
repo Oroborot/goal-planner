@@ -3,6 +3,7 @@ import { eventText, formatTime } from './history.js'
 import EventRow from './EventRow.jsx'
 import { restoreGoal } from './goalActions.js'
 import { restoreNote } from './noteActions.js'
+import { restoreIdea, ideaWhereabouts, countInside } from './ideaActions.js'
 import { deletedEvent } from './history.js'
 
 // How many history entries the History page shows.
@@ -100,18 +101,28 @@ export function HistoryPage({ items, events, deleteEvents }) {
 // Deleted goals and notes in one place, each with Restore.
 export function ArchivePage({ items, events, apply }) {
   const deleted = items
-    .filter(item => item.deletedAt && (item.list === 'goals' || item.list === 'notes'))
+    .filter(item => item.deletedAt && (item.list === 'goals' || item.list === 'notes' || item.list === 'ideas'))
     .sort((a, b) => b.deletedAt.localeCompare(a.deletedAt))
 
+  // Small line for a deleted idea: where it was and what was inside it.
+  function ideaLine(item) {
+    const { parents, parentGone } = ideaWhereabouts(items, item.id)
+    const inside = countInside(items, item.id)
+    const where = parents.length ? `in ${parents.join(' › ')}` : 'main idea'
+    const insideText = inside ? ` · ${inside} idea${inside === 1 ? '' : 's'} inside` : ''
+    return `Idea · ${where}${insideText}${parentGone ? ' · comes back as a main idea' : ''}`
+  }
+
   function restore(item) {
-    if (item.list === 'notes') apply(restoreNote(items, item.id))
+    if (item.list === 'ideas') apply(restoreIdea(items, item.id))
+    else if (item.list === 'notes') apply(restoreNote(items, item.id))
     else apply(restoreGoal(items, item.id, deletedEvent(events, item.id)))
   }
 
   return (
     <div className="app">
       <h1>Archive</h1>
-      <p className="goal-meta">Deleted goals and notes. Nothing here is erased.</p>
+      <p className="goal-meta">Deleted goals, notes and ideas. Nothing here is erased.</p>
       {deleted.length === 0 ? (
         <p className="empty">Nothing deleted.</p>
       ) : (
@@ -119,12 +130,18 @@ export function ArchivePage({ items, events, apply }) {
           {deleted.map(item => (
             <li key={item.id}>
               <div className="goal-text">
-                <a href={itemHref(item)} className="goal-title goal-link">
-                  {item.list === 'notes' && <span className="short-id">{item.shortId}</span>}
-                  {item.title}
-                </a>
+                {item.list === 'ideas' ? (
+                  // A deleted idea has no page to open, so no link.
+                  <span className="goal-title">{item.title}</span>
+                ) : (
+                  <a href={itemHref(item)} className="goal-title goal-link">
+                    {item.list === 'notes' && <span className="short-id">{item.shortId}</span>}
+                    {item.title}
+                  </a>
+                )}
                 <span className="goal-meta">
-                  {item.list === 'notes' ? 'Note' : 'Goal'} · deleted {formatTime(item.deletedAt)}
+                  {item.list === 'ideas' ? ideaLine(item) : item.list === 'notes' ? 'Note' : 'Goal'} · deleted{' '}
+                  {formatTime(item.deletedAt)}
                 </span>
               </div>
               <button type="button" className="secondary restore-button" onClick={() => restore(item)}>

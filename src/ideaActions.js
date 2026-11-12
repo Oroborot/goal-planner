@@ -111,6 +111,41 @@ export function setIdeaText(items, id, how) {
   }
 }
 
+// Where a deleted idea used to be: the titles of the ideas above it (main
+// idea first), counting parents even if they are deleted too. `parentGone`
+// is true when the direct parent is still deleted (or missing), so putting
+// the idea back in place would leave it invisible.
+export function ideaWhereabouts(items, id) {
+  const idea = items.find(item => item.id === id)
+  const parents = []
+  let current = idea
+  // The length check stops an endless loop if ideas ever point at each other.
+  while (current && current.parentId && parents.length < 50) {
+    current = items.find(item => item.id === current.parentId)
+    if (current) parents.unshift(current.title)
+  }
+  const parent = idea && idea.parentId ? items.find(item => item.id === idea.parentId) : null
+  const parentGone = Boolean(idea && idea.parentId && (!parent || parent.deletedAt))
+  return { parents, parentGone }
+}
+
+// Bring a deleted idea back. Deleting only hid it, so everything inside it
+// comes back with it. If the idea it sat in is still deleted, it would stay
+// invisible, so it comes back as a main idea instead (with its own color).
+export function restoreIdea(items, id) {
+  const idea = items.find(item => item.id === id)
+  if (!idea || !idea.deletedAt) return { items, events: [] }
+  let after = { ...idea, deletedAt: null }
+  if (ideaWhereabouts(items, id).parentGone) {
+    const mainsEver = items.filter(item => item.list === 'ideas' && !item.parentId).length
+    after = { ...after, parentId: null, color: idea.color ?? COLORS[mainsEver % COLORS.length] }
+  }
+  return {
+    items: items.map(item => (item.id === id ? after : item)),
+    events: [makeEvent('restored', after)],
+  }
+}
+
 // Delete an idea (hidden, not erased). Only this one idea is marked; the
 // ideas inside it can't be reached any more, so they disappear with it and
 // would all come back if it's restored.

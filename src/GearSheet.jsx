@@ -4,6 +4,7 @@ import AppIcon from './icons.jsx'
 const LINKS = [
   { href: '#settings', icon: 'gear', label: 'Settings' },
   { href: '#history', icon: 'history', label: 'History' },
+  { href: '#archive', icon: 'archive', label: 'Archive' },
   { href: '#backup', icon: 'backup', label: 'Backup' },
   { href: '#stats', icon: 'stats', label: 'Stats' },
 ]
