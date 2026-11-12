@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import AppIcon from './icons.jsx'
+import { loadIdeasSpot, saveIdeasSpot } from './ideasMemory.js'
 import GearButton from './GearButton.jsx'
 import IdeaCloud from './IdeaCloud.jsx'
 import { randomFrom } from './cloudShape.js'
@@ -150,6 +151,24 @@ function IdeaInside({ ideaId, items, apply }) {
 
   const path = ideaPath(items, ideaId)
   const idea = path[path.length - 1]
+  const found = Boolean(idea)
+
+  // Remember this idea and how far you scrolled; put the scroll back when
+  // you return to it.
+  useEffect(() => {
+    if (!found) {
+      saveIdeasSpot(null)
+      return undefined
+    }
+    const saved = loadIdeasSpot()
+    const startScroll = saved?.ideaId === ideaId ? saved.scroll : 0
+    saveIdeasSpot(ideaId, startScroll)
+    window.scrollTo(0, startScroll)
+    const onScroll = () => saveIdeasSpot(ideaId, window.scrollY)
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [ideaId, found])
+
   if (!idea) {
     return (
       <div className="app ideas">

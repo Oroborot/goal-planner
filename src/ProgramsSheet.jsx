@@ -183,9 +183,14 @@ function ProgramsSheet({ state, onChange, onClose }) {
                   </div>
                 ))}
               </div>
-              <button type="button" className="program-link" onClick={() => editWorkout({ rounds: [...workout.rounds, { name: '' }] })}>
-                ＋ Add round
-              </button>
+              <div className="program-actions">
+                <button type="button" className="program-link" onClick={() => editWorkout({ rounds: [...workout.rounds, { name: '' }] })}>
+                  ＋ Add round
+                </button>
+                <button type="button" className="program-link" onClick={back}>
+                  Done
+                </button>
+              </div>
               {program.workouts.length > 1 && (
                 <button type="button" className="program-link danger" onClick={deleteWorkout}>
                   Delete workout

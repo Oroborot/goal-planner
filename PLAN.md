@@ -260,6 +260,16 @@ A 5th tab for game ideas I have while chilling. Main ideas float as soft clouds;
 - **Many shadows are slow.** Each cloud has a soft shadow; with 100+ clouds on screen zooming may stutter. Fix: only two levels are drawn inside an idea, and shadows switch off while pinching if needed.
 - If steps 2 to 4 turn out too fiddly by hand, the fallback is the small free library `@use-gesture/react`. I'll ask before adding it.
 
+### Part 9: Training, next steps (added 2026-11-12, not built yet)
+
+Mechanics first, then a UI/skins pass per screen.
+
+- [ ] **A. Multiple unique sets in one workout.** A workout becomes blocks (Set A, Set B…), each with its own rounds, times and repeats, all running in one session. The editor lets me choose which block I'm filling.
+- [ ] **B. Exercise library with muscle groups.** About 40 exercises and about 20 stretches, each with muscle groups. Image fields left empty.
+- [ ] **C. Premade programs.** Shipped with the app, with an "Add to my programs" copy button.
+- [ ] **D. "Check my program" button.** Suggests balance fixes from the muscle data. Plain rules, no AI, free.
+- [ ] **E. Optional stretching routine after each session.** Reusable routines, suggested by the muscles trained that day.
+
 ## Maybe remove later
 
 Small things added along the way that might not be needed in the final app. Review this list during the design pass.

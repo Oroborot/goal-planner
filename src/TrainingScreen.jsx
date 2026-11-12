@@ -25,7 +25,7 @@ import {
 } from './training.js'
 import { saveTrainingSession } from './workLog.js'
 import ProgramsSheet from './ProgramsSheet.jsx'
-import { activeProgram, doneThisWeek, loadPrograms, nextWorkout, savePrograms, withFinished, workoutPlan } from './programs.js'
+import { activeProgram, loadPrograms, nextWorkout, savePrograms, withFinished, workoutPlan } from './programs.js'
 
 // The small orange word above the numbers. Exercises have none.
 const LABELS = { ready: 'Ready', rest: 'Rest', setRest: 'Set rest', done: 'Done' }
@@ -250,9 +250,7 @@ function TrainingScreen({ onGear }) {
         {program && next ? (
           <>
             <strong>{(session?.plan?.name) || next.name}</strong>
-            <span>
-              · {program.name} · {doneThisWeek(programs, program)} of {program.perWeek} this week
-            </span>
+            <span>· {program.name}</span>
           </>
         ) : (
           <strong>＋ Add your program</strong>
@@ -260,7 +258,7 @@ function TrainingScreen({ onGear }) {
       </button>
 
       <div className="training-cards">
-        <button type="button" className="training-card current" onClick={() => setPanel({ type: 'details', exerciseId: shown?.exerciseId })}>
+        <button type="button" className="training-card current" onClick={() => setPanel({ type: 'details', exerciseId: shown?.exerciseId, name: shown?.name })}>
           <span className="training-card-text">
             <strong>{shown ? exerciseName(shown) : 'Done'}</strong>
             <span>{nextAt === -1 ? 'Last exercise' : `Next: ${exerciseName(periods[nextAt])}`}</span>
@@ -293,15 +291,12 @@ function TrainingScreen({ onGear }) {
         <TrainingPanel
           type={panel.type}
           exercise={panel.exerciseId ? EXERCISES[panel.exerciseId] : null}
+          name={panel.name}
           onClose={() => setPanel(null)}
         />
       )}
 
       <div className="training-buttons">
-        <button type="button" className="training-pause" onClick={primary}>
-          <AppIcon name={primaryButton.icon} size={22} />
-          {primaryButton.text}
-        </button>
         <button
           type="button"
           className="training-skip"
@@ -310,6 +305,10 @@ function TrainingScreen({ onGear }) {
         >
           <AppIcon name="skip" size={20} />
           Skip
+        </button>
+        <button type="button" className="training-pause" onClick={primary}>
+          <AppIcon name={primaryButton.icon} size={22} />
+          {primaryButton.text}
         </button>
         <button
           type="button"

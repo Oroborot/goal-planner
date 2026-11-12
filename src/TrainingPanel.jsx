@@ -24,6 +24,10 @@ function ExerciseDetails({ exercise, fallback }) {
   if (!exercise) {
     return <p className="training-panel-note">No set exercise this round. Do any move you like.</p>
   }
+  // Your own exercise name: no pictures or steps, just a short note.
+  if (exercise.custom) {
+    return <p className="training-panel-note">Your own exercise. No instructions or pictures yet.</p>
+  }
   const images = exercise.images || {}
   const muscles = exercise.muscles || fallback?.muscles || []
   const instructions = exercise.instructions || []
@@ -69,7 +73,9 @@ function ExerciseDetails({ exercise, fallback }) {
 // Pause / Skip / +10s buttons, so they stay usable, and the timer keeps
 // running behind it. Closes with ✕, a tap on the dimmed screen, or a swipe
 // down on the top part.
-function TrainingPanel({ type, exercise, onClose }) {
+function TrainingPanel({ type, exercise: given, name, onClose }) {
+  // A round with your own exercise name has no data: show just the name.
+  const exercise = given || (name ? { name, custom: true } : null)
   // The variation picked in the list (only shows its details, never changes
   // the exercise in the workout).
   const [pickedId, setPickedId] = useState(null)

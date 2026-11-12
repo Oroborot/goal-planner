@@ -1,4 +1,5 @@
 import AppIcon from './icons.jsx'
+import { loadIdeasSpot } from './ideasMemory.js'
 
 // The 5 spaces of the hub, like the tab bar in Apple's Clock app.
 const TABS = [
@@ -20,6 +21,14 @@ function TabBar({ active }) {
           href={tab.href}
           className={tab.id === active ? 'tab-bar-link active' : 'tab-bar-link'}
           aria-current={tab.id === active ? 'page' : undefined}
+          onClick={event => {
+            // Coming to Ideas from another tab: reopen the last idea.
+            if (tab.id !== 'ideas' || active === 'ideas') return
+            const spot = loadIdeasSpot()
+            if (!spot) return
+            event.preventDefault()
+            window.location.hash = `idea/${spot.ideaId}`
+          }}
         >
           <AppIcon name={tab.id} size={26} />
           <span>{tab.label}</span>
