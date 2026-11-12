@@ -651,7 +651,7 @@ body:has(.training) #root { height: 100%; min-height: 0; }
    +10s stay usable below it. */
 .training-backdrop { position: absolute; top: 0; left: 0; right: 0; bottom: calc(56px + 0.9rem + 0.5rem); z-index: 20; display: flex; align-items: flex-end; background: rgba(0, 0, 0, 0.35); animation: training-fade 0.18s ease-out; }
 @keyframes training-fade { from { opacity: 0; } }
-.training-panel { display: flex; flex-direction: column; width: 100%; max-height: 82%; border-radius: 22px; background: var(--bg); box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.12); animation: sheet-up 0.2s ease-out; transition: transform 0.2s ease-out; }
+.training-panel { display: flex; flex-direction: column; width: calc(100% - 0.5rem); margin-right: auto; max-height: 82%; border-radius: 22px; background: var(--bg); box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.12); animation: sheet-up 0.2s ease-out; transition: transform 0.2s ease-out; }
 .training-panel-grab { padding: 0.5rem 1rem 0.25rem; touch-action: none; cursor: grab; }
 .training-panel-grab .sheet-handle { margin: 0 auto 0.4rem; }
 .training-panel-head { display: flex; align-items: center; gap: 0.25rem; }
@@ -688,3 +688,24 @@ body:has(.training) #root { height: 100%; min-height: 0; }
 .training-variation > svg { flex: none; opacity: 0.6; }
 /* Undo the app's boxed list style inside the panel. */
 .training-panel li { margin: 0; padding: 0; border: 0; border-radius: 0; background: none; }
+
+/* ---- Workout editor page (Programs sheet, page 3) ---- */
+.workout-name { display: flex; flex-direction: column; gap: 0.4rem; margin-bottom: 0.9rem; font-size: 16px; font-weight: 500; color: var(--text-h); text-align: left; }
+.workout-name input { width: 100%; height: 48px; box-sizing: border-box; padding: 0 1rem; border: 1px solid var(--border); border-radius: 14px; background: var(--surface, var(--bg)); font-size: 17px; color: var(--text-h); }
+.workout-times { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.55rem; margin-bottom: 0.9rem; }
+.workout-time { display: flex; flex-direction: column; align-items: center; gap: 0.1rem; padding: 0.6rem 0.3rem; border: 1px solid var(--border); border-radius: 14px; background: var(--surface, var(--bg)); font-size: 15px; color: var(--text-h); }
+.workout-time input { width: 100%; min-width: 0; height: 40px; padding: 0; border: 0; background: transparent; font-size: 28px; font-weight: 600; text-align: center; color: var(--text-h); }
+.workout-time small { font-size: 14px; color: var(--text); }
+.workout-sets { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.4rem; font-size: 18px; color: var(--text-h); }
+.workout-stepper { display: flex; align-items: stretch; height: 44px; border: 1px solid var(--border); border-radius: 14px; background: var(--surface, var(--bg)); overflow: hidden; }
+.workout-stepper button { width: 50px; min-height: 0; padding: 0; border: 0; border-radius: 0; background: transparent; font-size: 22px; color: var(--text-h); }
+.workout-stepper input { width: 70px; padding: 0; border: 0; border-inline: 1px solid var(--border); border-radius: 0; background: transparent; font-size: 20px; font-weight: 600; text-align: center; color: var(--text-h); }
+.workout-rounds-head { display: flex; flex-direction: column; align-items: flex-start; gap: 0.1rem; margin: 1rem 0 0.6rem; }
+.workout-rounds-head strong { font-size: 20px; color: var(--text-h); }
+.workout-rounds-head span { font-size: 15px; color: var(--text); }
+.workout-rounds { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 0.8rem; }
+.workout-round { display: flex; align-items: center; height: 52px; border: 1px solid var(--border); border-radius: 14px; background: var(--surface, var(--bg)); }
+.workout-round-num { width: 3rem; flex: none; text-align: center; font-size: 17px; color: var(--text); border-right: 1px solid var(--border); line-height: 28px; }
+.workout-round input { flex: 1; min-width: 0; height: 100%; padding: 0 0.8rem; border: 0; background: transparent; font-size: 17px; color: var(--text-h); }
+.workout-add { display: flex; align-items: center; justify-content: center; width: 100%; height: 48px; border: 1.5px solid var(--hub-accent); border-radius: 14px; background: transparent; font-size: 17px; font-weight: 600; color: var(--hub-accent); }
+.workout-done { margin-top: 1rem; border-radius: 16px; }

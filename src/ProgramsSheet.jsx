@@ -2,12 +2,11 @@ import { useState } from 'react'
 import { newProgram, newWorkout } from './programs.js'
 import { EXERCISES } from './trainingData.js'
 
-// The number fields of a workout, in the order they show.
-const NUMBER_FIELDS = [
-  { key: 'exerciseSeconds', label: 'Exercise', unit: 'sec' },
-  { key: 'restSeconds', label: 'Rest', unit: 'sec' },
-  { key: 'setRestSeconds', label: 'Set rest', unit: 'sec' },
-  { key: 'sets', label: 'Sets', unit: '' },
+// The three time fields of a workout, in the order they show.
+const TIME_FIELDS = [
+  { key: 'exerciseSeconds', label: 'Exercise' },
+  { key: 'restSeconds', label: 'Rest' },
+  { key: 'setRestSeconds', label: 'Set rest' },
 ]
 
 // The Programs sheet on the Training tab. Three pages in one sheet:
@@ -55,7 +54,7 @@ function ProgramsSheet({ state, onChange, onClose }) {
     else onClose()
   }
 
-  const title = workout ? workout.name || 'Workout' : program ? program.name || 'Program' : 'Programs'
+  const title = workout ? 'Edit workout' : program ? program.name || 'Program' : 'Programs'
 
   return (
     <div className="training-backdrop" onClick={onClose}>
@@ -144,29 +143,45 @@ function ProgramsSheet({ state, onChange, onClose }) {
           {/* Page 3: one workout. */}
           {workout && (
             <>
-              <label className="training-setting">
+              <label className="workout-name">
                 <span>Name</span>
-                <input className="program-text" value={workout.name} onChange={e => editWorkout({ name: e.target.value })} />
+                <input value={workout.name} onChange={e => editWorkout({ name: e.target.value })} />
               </label>
-              {NUMBER_FIELDS.map(({ key, label, unit }) => (
-                <label key={key} className="training-setting">
-                  <span>{label}</span>
-                  <input type="number" inputMode="numeric" value={workout[key]} onChange={e => editWorkout({ [key]: e.target.value })} />
-                  <span className="training-setting-unit">{unit}</span>
-                </label>
-              ))}
-              <h3 className="program-head">Rounds (repeated for each set)</h3>
+              <div className="workout-times">
+                {TIME_FIELDS.map(({ key, label }) => (
+                  <label key={key} className="workout-time">
+                    <span>{label}</span>
+                    <input type="number" inputMode="numeric" value={workout[key]} onChange={e => editWorkout({ [key]: e.target.value })} />
+                    <small>sec</small>
+                  </label>
+                ))}
+              </div>
+              <div className="workout-sets">
+                <strong>Sets</strong>
+                <div className="workout-stepper">
+                  <button type="button" aria-label="Fewer sets" onClick={() => editWorkout({ sets: Math.max(1, (Number(workout.sets) || 1) - 1) })}>
+                    −
+                  </button>
+                  <input type="number" inputMode="numeric" aria-label="Sets" value={workout.sets} onChange={e => editWorkout({ sets: e.target.value })} />
+                  <button type="button" aria-label="More sets" onClick={() => editWorkout({ sets: Math.min(99, (Number(workout.sets) || 0) + 1) })}>
+                    ＋
+                  </button>
+                </div>
+              </div>
+              <div className="workout-rounds-head">
+                <strong>Rounds</strong>
+                <span>Repeated for each set</span>
+              </div>
               <datalist id="exercise-names">
                 {Object.values(EXERCISES).map(e => (
                   <option key={e.name} value={e.name} />
                 ))}
               </datalist>
-              <div className="program-list">
+              <div className="workout-rounds">
                 {workout.rounds.map((round, i) => (
-                  <div key={i} className="program-row">
-                    <span className="program-num">{i + 1}</span>
+                  <div key={i} className="workout-round">
+                    <span className="workout-round-num">{String(i + 1).padStart(2, '0')}</span>
                     <input
-                      className="program-text"
                       list="exercise-names"
                       placeholder="Exercise (empty = Freestyle)"
                       value={round.name}
@@ -183,14 +198,12 @@ function ProgramsSheet({ state, onChange, onClose }) {
                   </div>
                 ))}
               </div>
-              <div className="program-actions">
-                <button type="button" className="program-link" onClick={() => editWorkout({ rounds: [...workout.rounds, { name: '' }] })}>
-                  ＋ Add round
-                </button>
-                <button type="button" className="program-link" onClick={back}>
-                  Done
-                </button>
-              </div>
+              <button type="button" className="workout-add" onClick={() => editWorkout({ rounds: [...workout.rounds, { name: '' }] })}>
+                ＋ Add round
+              </button>
+              <button type="button" className="training-settings-save workout-done" onClick={back}>
+                Done
+              </button>
               {program.workouts.length > 1 && (
                 <button type="button" className="program-link danger" onClick={deleteWorkout}>
                   Delete workout
