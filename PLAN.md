@@ -239,11 +239,11 @@ A 5th tab for game ideas I have while chilling. Main ideas float as soft clouds;
 - [ ] **1b. "Move to…" picker.** From the ··· menu: pick a new home from a list of ideas, or "Make it a main idea". One `parentId` change + history event "moved". Can't move into itself or anything inside it. *Built 2026-11-11 as an indented list (event type `idea-moved`), waiting for my test.*
 - [ ] **1c. Restore deleted ideas.** Deleted ideas listed on the Archive page (`MenuPages.jsx`) with a Restore button. *Built 2026-11-12 (`restoreIdea` in `ideaActions.js`); shows title, path of parents and ideas inside. If the parent is still deleted, it comes back as a main idea. Waiting for my test.*
 - [ ] **1d. Backup nudge and text export.** "Last backup X days ago" line on the Ideas overview (`planner-last-backup`); "Export as text" in the ··· menu: the idea and everything inside as an indented outline, via the iPhone share sheet or copied.
-- [ ] **1e. Work timer link (plan on Opus).** "Work on this" starts the Work timer and tags the session with the idea id; the idea shows total time worked.
+- [x] ~~**1e. Work timer link.**~~ *Removed 2026-11-12: not relevant to my plan.*
 - [ ] **1f. Search.** One field on the overview that finds any idea or note at any depth and opens it.
-- [ ] **2. Pinch zoom and pan** on the overview and inside an idea, plus the ＋ / − buttons from the mockups.
-- [ ] **3. Drag and move.** Long-press a cloud to pick it up, drop it on another visible cloud to move it there (one `parentId` change, history event "moved").
-- [ ] **4. Tray.** Drag a cloud to the bottom to park the whole branch in a tray, go to any other idea, tap "Place here".
+- [ ] **2. Pinch zoom and pan** *(not now, 2026-11-12)*. If added later, the image and bubbles must resize with the zoom. Plus the ＋ / − buttons from the mockups.
+- [x] ~~**3. Drag and move.**~~ *Dropped 2026-11-12: not needed without a fluid, free-moving view. "Move to…" (1b) covers moving.*
+- [x] ~~**4. Tray.**~~ *Dropped 2026-11-12: it is drag-based, and "Move to…" (1b) covers moving.*
 - [ ] **5. Merge.** "Merge" from the tray: a preview of the combined cloud first, then confirm. Restore of a merged idea from the archive.
 - [ ] **6. Links and extra fields.** "Needs" links between ideas, game label, "how it works" text. Deleted ideas show up in the Archive page.
 - [ ] **7. Polish.** Brain-like two-lobe layout, gentle floating motion (off when the phone asks for reduced motion).
