@@ -126,10 +126,6 @@ function IdeasOverview({ items, apply, onGear }) {
           </IdeaCloud>
         ))}
       </div>
-      {/* Where deleted ideas can be restored. */}
-      <p className="goal-meta">
-        <a href="#archive" className="goal-link">Deleted ideas (Archive)</a>
-      </p>
       <button type="button" className="ideas-round ideas-add" onClick={() => setAdding(true)} aria-label="Add idea">
         ＋
       </button>
