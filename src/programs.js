@@ -1,14 +1,16 @@
 // Your own training programs, without any screen code.
 //
 // A program is a named list of workouts (for example Day A, Day B, Day C).
-// Each workout is one interval session: exercise time, rest, a list of
-// rounds, and how many sets. The workouts come up in order, so after you
+// Each workout is one interval session made of one or more blocks
+// (Set A, Set B, …). A block has its own exercise time, rest, list of
+// rounds and how many sets; the timer plays the blocks one after another. The workouts come up in order, so after you
 // finish Day A the Training tab offers Day B, and so on round and round.
 //
 // Saved shape (localStorage 'planner-programs'):
 // {
-//   programs: [{ id, name, perWeek, workouts: [{ id, name, exerciseSeconds,
-//                restSeconds, setRestSeconds, sets, rounds: [{ name, exerciseId }] }] }],
+//   programs: [{ id, name, perWeek, workouts: [{ id, name, blocks: [{ id, name,
+//                exerciseSeconds, restSeconds, setRestSeconds, sets,
+//                rounds: [{ name }] }] }] }],
 //   activeId: id of the program in use (or null),
 //   log: [{ startedAt, programId, workoutId }]   // finished workouts
 // }
@@ -19,7 +21,10 @@ const KEY = 'planner-programs'
 export function loadPrograms() {
   try {
     const saved = JSON.parse(localStorage.getItem(KEY))
-    if (saved && Array.isArray(saved.programs)) return { activeId: null, log: [], ...saved }
+    if (saved && Array.isArray(saved.programs)) {
+      const programs = saved.programs.map(p => ({ ...p, workouts: p.workouts.map(withBlocks) }))
+      return { activeId: null, log: [], ...saved, programs }
+    }
   } catch {
     // Unreadable save: start empty.
   }
@@ -32,7 +37,10 @@ export function savePrograms(state) {
 
 const newId = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 6)
 
-export function newWorkout(name) {
+// Block names go A, B, C, … in order.
+export const blockName = index => `Set ${String.fromCharCode(65 + index)}`
+
+export function newBlock(name) {
   return {
     id: newId(),
     name,
@@ -42,6 +50,31 @@ export function newWorkout(name) {
     sets: 3,
     rounds: [{ name: '' }, { name: '' }, { name: '' }],
   }
+}
+
+export function newWorkout(name) {
+  return { id: newId(), name, blocks: [newBlock(blockName(0))] }
+}
+
+// Older saves kept the rounds, sets and times on the workout itself.
+// Those become the workout's one block, so old programs keep working.
+function withBlocks(workout) {
+  if (Array.isArray(workout.blocks) && workout.blocks.length) return workout
+  const { exerciseSeconds, restSeconds, setRestSeconds, sets, rounds, ...rest } = workout
+  const block = { id: newId(), name: blockName(0), exerciseSeconds, restSeconds, setRestSeconds, sets, rounds: rounds || [] }
+  return { ...rest, blocks: [block] }
+}
+
+// A short line for the Programs list: "3 rounds × 3 sets · 45s" for one
+// block, "2 blocks · 5 rounds" for more.
+export function workoutSummary(workout) {
+  const blocks = workout.blocks
+  if (blocks.length === 1) {
+    const b = blocks[0]
+    return `${b.rounds.length} rounds × ${b.sets} sets · ${b.exerciseSeconds}s`
+  }
+  const rounds = blocks.reduce((sum, b) => sum + b.rounds.length, 0)
+  return `${blocks.length} blocks · ${rounds} rounds`
 }
 
 export function newProgram(name) {
@@ -79,20 +112,21 @@ export function doneThisWeek(state, program, now = Date.now()) {
 // get its details; any other name is your own exercise.
 export function workoutPlan(program, workout) {
   const byName = Object.fromEntries(Object.entries(EXERCISES).map(([id, e]) => [e.name.toLowerCase(), id]))
-  const rounds = workout.rounds.map(r => {
-    const name = r.name.trim()
-    return { exerciseId: byName[name.toLowerCase()] || null, name: name || null }
+  const blocks = workout.blocks.map(block => {
+    const rounds = block.rounds.map(r => {
+      const name = r.name.trim()
+      return { exerciseId: byName[name.toLowerCase()] || null, name: name || null }
+    })
+    return {
+      name: block.name,
+      exerciseSeconds: num(block.exerciseSeconds, 5, 600, 45),
+      restSeconds: num(block.restSeconds, 0, 300, 10),
+      setRestSeconds: num(block.setRestSeconds, 0, 600, 60),
+      sets: num(block.sets, 1, 10, 1),
+      rounds: rounds.length ? rounds : [{ exerciseId: null, name: null }],
+    }
   })
-  return {
-    name: workout.name,
-    programId: program.id,
-    workoutId: workout.id,
-    exerciseSeconds: num(workout.exerciseSeconds, 5, 600, 45),
-    restSeconds: num(workout.restSeconds, 0, 300, 10),
-    setRestSeconds: num(workout.setRestSeconds, 0, 600, 60),
-    sets: num(workout.sets, 1, 10, 1),
-    rounds: rounds.length ? rounds : [{ exerciseId: null, name: null }],
-  }
+  return { name: workout.name, programId: program.id, workoutId: workout.id, blocks }
 }
 
 // Adds a finished workout to the log (once per start time).

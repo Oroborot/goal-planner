@@ -68,7 +68,6 @@ function TrainingScreen({ onGear }) {
   const plan = session ? session.plan || DEFAULT_SETTINGS : nextPlan || settings
   const workout = useMemo(() => workoutFrom(plan), [plan])
   const periods = useMemo(() => buildPeriods(workout), [workout])
-  const totalRounds = workout.rounds.length * workout.sets
   // The whole workout's length in seconds, for the "time left" clock.
   const sessionTotalSeconds = periods.reduce((sum, p) => sum + p.seconds, 0)
 
@@ -202,11 +201,12 @@ function TrainingScreen({ onGear }) {
       <header className="training-top">
         {/* Tap the round and set numbers to change them. */}
         <button type="button" className="training-counts" onClick={() => (nextPlan ? setProgramsOpen(true) : setSettingsOpen(true))} aria-label="Workout settings">
+          {/* With more than one block the counter starts with its name. */}
           <span>
-            Round {period.round + 1} / {totalRounds}
+            {period.blockName && `${period.blockName} · `}Round {period.round + 1} / {period.rounds}
           </span>
           <span className="training-set">
-            Set {period.set + 1} / {workout.sets} ✎
+            Set {period.set + 1} / {period.sets} ✎
           </span>
         </button>
         <div className="training-session">

@@ -17,24 +17,35 @@
 const TRAINING_KEY = 'planner-training'
 
 // Turn a workout (see trainingData.js) into its list of periods.
-// `round` counts across all sets (0, 1, 2, …); `set` starts at 0.
+// A workout with blocks (Set A, Set B, …) plays them one after another,
+// with the finished block's set rest in between. Older workouts without
+// blocks are one block.
+// Each period knows its block: `round` counts across all sets of that
+// block (0, 1, 2, …), `set` starts at 0, `rounds` and `sets` are the
+// block's totals, `blockName` is null when there's only one block.
 export function buildPeriods(workout) {
-  const perSet = workout.rounds.length
-  const total = perSet * workout.sets
+  const blocks = workout.blocks || [workout]
   const periods = []
-  for (let i = 0; i < total; i++) {
-    const set = Math.floor(i / perSet)
-    const { exerciseId, name } = workout.rounds[i % perSet]
-    periods.push({ kind: 'exercise', round: i, set, exerciseId, name, seconds: workout.exerciseSeconds })
-    if (i === total - 1) break
-    const endOfSet = (i + 1) % perSet === 0
-    periods.push({
-      kind: endOfSet ? 'setRest' : 'rest',
-      round: i,
-      set,
-      seconds: endOfSet ? workout.setRestSeconds : workout.restSeconds,
-    })
-  }
+  blocks.forEach((block, b) => {
+    const perSet = block.rounds.length
+    const total = perSet * block.sets
+    const info = { blockName: blocks.length > 1 ? block.name : null, rounds: total, sets: block.sets }
+    for (let i = 0; i < total; i++) {
+      const set = Math.floor(i / perSet)
+      const { exerciseId, name } = block.rounds[i % perSet]
+      periods.push({ kind: 'exercise', round: i, set, exerciseId, name, seconds: block.exerciseSeconds, ...info })
+      const lastOfBlock = i === total - 1
+      if (lastOfBlock && b === blocks.length - 1) break
+      const endOfSet = (i + 1) % perSet === 0
+      periods.push({
+        kind: endOfSet ? 'setRest' : 'rest',
+        round: i,
+        set,
+        seconds: endOfSet ? block.setRestSeconds : block.restSeconds,
+        ...info,
+      })
+    }
+  })
   return periods
 }
 
