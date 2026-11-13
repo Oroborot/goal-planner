@@ -2,7 +2,8 @@ import { useState } from 'react'
 import BackLink from './BackLink.jsx'
 import { parseKey } from './calendar.js'
 import { shortDuration } from './stats.js'
-import { loadSessions } from './workLog.js'
+import { breakStats, gainText, loadProjects, loadSessions } from './workLog.js'
+import { focusByProject, focusTotals, gainTotals, noGains, workSessions } from './workStats.js'
 import { loadRatings } from './ratings.js'
 import { DAY_PARTS, inRange, ratingLists, ratingTotals, timeOfDay, topExercises, trainingSessions, workoutTotals } from './trainingStats.js'
 
@@ -69,6 +70,159 @@ function RatingList({ rows }) {
   )
 }
 
+// The Week / Month / All time switch, used by the Work and Training chips.
+function RangeTabs({ days, setDays }) {
+  return (
+    <div className="tabs">
+      {RANGES.map(r => (
+        <button
+          key={r.label}
+          type="button"
+          className={days === r.value ? 'tab active' : 'tab'}
+          aria-pressed={days === r.value}
+          onClick={() => setDays(r.value)}
+        >
+          {r.label}
+        </button>
+      ))}
+    </div>
+  )
+}
+
+// The four Morning / Afternoon / Evening / Night bars + the "Most often" line.
+function TimeOfDayBars({ sessions }) {
+  const parts = timeOfDay(sessions)
+  const topPart = DAY_PARTS.find(p => p.value === parts.top)
+  const maxPart = Math.max(1, ...DAY_PARTS.map(p => parts.counts[p.value]))
+  return (
+    <>
+      <div className="day-bars">
+        {DAY_PARTS.map(p => {
+          const n = parts.counts[p.value]
+          return (
+            <div key={p.value} className="day-bar" title={`${p.label} (${p.hint}): ${n}`}>
+              <span className="day-bar-value">{n > 0 ? n : ''}</span>
+              <div className="day-bar-track">
+                <div className="day-bar-fill" style={{ height: `${(n / maxPart) * 100}%` }} />
+              </div>
+              <span className="day-bar-label">{p.label}</span>
+            </div>
+          )
+        })}
+      </div>
+      <p className="goal-meta">Most often: {topPart.label.toLowerCase()} ({topPart.hint} h).</p>
+    </>
+  )
+}
+
+// The Work chip: focus time, projects, time of day, breaks, gains.
+function WorkStats() {
+  const [days, setDays] = useState(7)
+  // Read once when the chip opens (the data lives in localStorage).
+  const [all] = useState(() => workSessions(loadSessions()))
+  const [projects] = useState(() => loadProjects())
+
+  const sessions = inRange(all, days)
+  const totals = focusTotals(sessions)
+  const byProject = focusByProject(sessions, projects)
+  const breaks = breakStats(sessions)
+  const gains = gainTotals(sessions)
+  const empty = sessions.length === 0
+
+  return (
+    <>
+      <RangeTabs days={days} setDays={setDays} />
+
+      <div className="stat-cards">
+        <div className="stat-card">
+          <strong>{totals.count}</strong>
+          <span>sessions</span>
+        </div>
+        <div className="stat-card">
+          <strong>{shortDuration(totals.seconds)}</strong>
+          <span>focus time</span>
+        </div>
+      </div>
+
+      <section className="stats-section">
+        <h2>Focus per project</h2>
+        {empty ? (
+          <p className="empty">No sessions in this range.</p>
+        ) : (
+          <ul className="stats-list">
+            {byProject.map(p => (
+              <li key={p.id} className="stats-goal">
+                <div className="stats-goal-head">
+                  <span className="goal-link">{p.name}</span>
+                  <span className="goal-meta">{shortDuration(p.ms / 1000)}</span>
+                </div>
+                <div className="stats-bar">
+                  <div className="stats-bar-fill" style={{ width: `${p.share * 100}%`, background: p.color }} />
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+
+      <section className="stats-section">
+        <h2>Time of day</h2>
+        {empty ? <p className="empty">No sessions in this range.</p> : <TimeOfDayBars sessions={sessions} />}
+      </section>
+
+      <section className="stats-section">
+        <h2>Breaks</h2>
+        {breaks.count === 0 ? (
+          <p className="empty">No breaks in this range.</p>
+        ) : (
+          <div className="stat-cards">
+            <div className="stat-card">
+              <strong>{breaks.count}</strong>
+              <span>breaks</span>
+            </div>
+            <div className="stat-card">
+              <strong>{shortDuration(breaks.average / 1000)}</strong>
+              <span>average break</span>
+            </div>
+            <div className="stat-card">
+              <strong>{breaks.ratio === null ? '–' : `${breaks.ratio.toFixed(1)} : 1`}</strong>
+              <span>focus to break</span>
+            </div>
+          </div>
+        )}
+      </section>
+
+      <section className="stats-section">
+        <h2>Gains</h2>
+        {noGains(gains) ? (
+          <p className="empty">No gains logged in this range.</p>
+        ) : (
+          <ul className="stats-list">
+            {gains.money.map(m => (
+              <li key={`money-${m.currency}`}>
+                <span className="goal-link">Money ({m.currency})</span>
+                <span className="goal-meta">{gainText({ type: 'money', currency: m.currency, value: m.value })}</span>
+              </li>
+            ))}
+            {gains.numbers.map(n => (
+              <li key={`number-${n.unit}`}>
+                <span className="goal-link">{n.unit || 'Numbers'}</span>
+                <span className="goal-meta">{gainText({ type: 'number', value: n.value, unit: n.unit })}</span>
+              </li>
+            ))}
+            {gains.items > 0 && (
+              <li>
+                <span className="goal-link">Items listed</span>
+                <span className="goal-meta">{gains.items}</span>
+              </li>
+            )}
+          </ul>
+        )}
+      </section>
+    </>
+  )
+}
+
 // The Training chip: workouts, time of day, favourite exercises, ratings.
 function TrainingStats() {
   const [days, setDays] = useState(7)
@@ -78,28 +232,13 @@ function TrainingStats() {
 
   const sessions = inRange(all, days)
   const totals = workoutTotals(sessions)
-  const parts = timeOfDay(sessions)
-  const topPart = DAY_PARTS.find(p => p.value === parts.top)
-  const maxPart = Math.max(1, ...DAY_PARTS.map(p => parts.counts[p.value]))
   const exercises = topExercises(sessions)
   const { best, worst } = ratingLists(ratings)
   const total = ratingTotals(ratings)
 
   return (
     <>
-      <div className="tabs">
-        {RANGES.map(r => (
-          <button
-            key={r.label}
-            type="button"
-            className={days === r.value ? 'tab active' : 'tab'}
-            aria-pressed={days === r.value}
-            onClick={() => setDays(r.value)}
-          >
-            {r.label}
-          </button>
-        ))}
-      </div>
+      <RangeTabs days={days} setDays={setDays} />
 
       <div className="stat-cards">
         <div className="stat-card">
@@ -114,27 +253,7 @@ function TrainingStats() {
 
       <section className="stats-section">
         <h2>Time of day</h2>
-        {totals.count === 0 ? (
-          <p className="empty">No workouts in this range.</p>
-        ) : (
-          <>
-            <div className="day-bars">
-              {DAY_PARTS.map(p => {
-                const n = parts.counts[p.value]
-                return (
-                  <div key={p.value} className="day-bar" title={`${p.label} (${p.hint}): ${n}`}>
-                    <span className="day-bar-value">{n > 0 ? n : ''}</span>
-                    <div className="day-bar-track">
-                      <div className="day-bar-fill" style={{ height: `${(n / maxPart) * 100}%` }} />
-                    </div>
-                    <span className="day-bar-label">{p.label}</span>
-                  </div>
-                )
-              })}
-            </div>
-            <p className="goal-meta">Most often: {topPart.label.toLowerCase()} ({topPart.hint} h).</p>
-          </>
-        )}
+        {totals.count === 0 ? <p className="empty">No workouts in this range.</p> : <TimeOfDayBars sessions={sessions} />}
       </section>
 
       <section className="stats-section">
@@ -217,6 +336,8 @@ function StatsPage() {
 
       {scope === 'training' ? (
         <TrainingStats />
+      ) : scope === 'work' ? (
+        <WorkStats />
       ) : (
         <p className="empty">{SCOPES.find(s => s.value === scope).label} stats are coming in the next step.</p>
       )}
