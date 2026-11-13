@@ -291,6 +291,7 @@ function TrainingScreen({ onGear }) {
         <TrainingPanel
           type={panel.type}
           exercise={panel.exerciseId ? EXERCISES[panel.exerciseId] : null}
+          exerciseId={panel.exerciseId}
           name={panel.name}
           onClose={() => setPanel(null)}
         />

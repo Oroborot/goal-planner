@@ -8,7 +8,7 @@ const LAST_BACKUP_KEY = 'planner-last-backup'
 // Each one is saved in the file under its slot name. A running Work or
 // Training timer is left out on purpose: loading an old one back would
 // bring a stale timer to life.
-const EXTRA_KEYS = ['planner-work-sessions', 'planner-work-projects', 'planner-work-prefs', 'planner-training-settings', 'planner-programs']
+const EXTRA_KEYS = ['planner-work-sessions', 'planner-work-projects', 'planner-work-prefs', 'planner-training-settings', 'planner-programs', 'planner-ratings']
 
 // Reads the Work and Training slots. Slots that were never saved are left out.
 function readExtras() {

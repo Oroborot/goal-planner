@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react'
 import AppIcon from './icons.jsx'
 import { VARIATIONS } from './trainingData.js'
+import { addVote, getTally, ratingKey } from './ratings.js'
 
 // How far (in px) the panel has to be pulled down before it closes.
 const SWIPE_CLOSE = 80
@@ -68,12 +69,39 @@ function ExerciseDetails({ exercise, fallback }) {
   )
 }
 
+// Small − and ＋ buttons. Each tap adds one vote for this exercise (saved
+// with the date) and the running tally is shown next to them. The buttons
+// flash briefly so you can feel the tap. `rateKey` is the exercise id (or
+// the lowercase custom name).
+function RateBar({ rateKey }) {
+  const [tally, setTally] = useState(() => getTally(rateKey))
+  const [flash, setFlash] = useState(null)
+
+  function vote(v) {
+    setTally(addVote(rateKey, v))
+    setFlash(v)
+    setTimeout(() => setFlash(null), 250)
+  }
+
+  return (
+    <div className="rate-bar">
+      <button type="button" className={`rate-btn${flash === -1 ? ' flash' : ''}`} onClick={() => vote(-1)} aria-label="Dislike this exercise">
+        −
+      </button>
+      <span className="rate-tally">− {tally.minus} · ＋ {tally.plus}</span>
+      <button type="button" className={`rate-btn${flash === 1 ? ' flash' : ''}`} onClick={() => vote(1)} aria-label="Like this exercise">
+        ＋
+      </button>
+    </div>
+  )
+}
+
 // The bottom panel on the Training tab. `type` is 'details' (the current
 // exercise) or 'variations' (its variations list). It sits above the
 // Pause / Skip / +10s buttons, so they stay usable, and the timer keeps
 // running behind it. Closes with ✕, a tap on the dimmed screen, or a swipe
 // down on the top part.
-function TrainingPanel({ type, exercise: given, name, onClose }) {
+function TrainingPanel({ type, exercise: given, exerciseId, name, onClose }) {
   // A round with your own exercise name has no data: show just the name.
   const exercise = given || (name ? { name, custom: true } : null)
   // The variation picked in the list (only shows its details, never changes
@@ -99,6 +127,10 @@ function TrainingPanel({ type, exercise: given, name, onClose }) {
 
   const picked = pickedId ? VARIATIONS[pickedId] : null
   const variationIds = exercise?.variations || []
+
+  // What the votes are saved under: the picked variation's id, the exercise
+  // id, or the lowercase custom name.
+  const rateId = picked ? ratingKey(pickedId) : ratingKey(exerciseId, exercise?.name)
 
   let title = exercise ? exercise.name : 'Freestyle'
   if (type === 'variations') title = picked ? picked.name : 'Variations'
@@ -164,6 +196,13 @@ function TrainingPanel({ type, exercise: given, name, onClose }) {
                 )
               })}
             </div>
+          )}
+          {/* Rating: for the exercise itself, or the picked variation. Not for Freestyle. */}
+          {exercise && (type === 'details' || picked) && (
+            <RateBar
+              key={rateId}
+              rateKey={rateId}
+            />
           )}
         </div>
       </div>
