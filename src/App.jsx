@@ -261,7 +261,7 @@ function App() {
       />
     )
   } else if (screen.name === 'stats') {
-    page = <StatsPage items={items} events={events} />
+    page = <StatsPage />
   } else if (screen.name === 'history') {
     page = <HistoryPage items={items} events={events} deleteEvents={deleteEvents} />
   } else if (screen.name === 'archive') {

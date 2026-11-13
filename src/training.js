@@ -13,6 +13,8 @@
 // - extraSec:        seconds added to this rest with +10s
 // - pendingExtraSec: seconds added during an exercise, for the coming rest
 
+import { ratingKey } from './ratings.js'
+
 // Where the running session is saved, so a refresh or a closed app keeps it.
 const TRAINING_KEY = 'planner-training'
 
@@ -136,6 +138,18 @@ export function trainingRecord(session, periods, now) {
   if (!done && focusMs < MIN_SAVE_SECONDS * 1000) return null
   const endedAt = done ? session.startedAt + session.periodStartMs + session.pausedMs : (session.pausedAt ?? now)
   const plannedMs = periods.reduce((sum, p) => sum + p.seconds * 1000, 0)
+  // The exercises that were actually reached: every period up to the one
+  // running now (all of them when the workout finished). Each exercise is
+  // listed once per workout: its id, or the lowercase custom name.
+  const reached = periods.slice(0, done ? periods.length : session.index + 1)
+  const exercises = [
+    ...new Set(
+      reached
+        .filter(p => p.kind === 'exercise')
+        .map(p => ratingKey(p.exerciseId, p.name))
+        .filter(Boolean),
+    ),
+  ]
   return {
     id: `training-${session.startedAt}`,
     projectId: 'training',
@@ -153,6 +167,7 @@ export function trainingRecord(session, periods, now) {
     progress: null,
     gains: [],
     note: null,
+    exercises,
   }
 }
 
