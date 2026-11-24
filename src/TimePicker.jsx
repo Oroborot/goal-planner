@@ -27,7 +27,7 @@ function parseTime(text) {
 // One box for a time: type any time, or pick from a short list (every 15
 // minutes, shown the 12h or 24h way from Settings). No endless wheel.
 // `value` is '18:30' or '' for no time.
-function TimePicker({ value, onChange, label = 'Time' }) {
+function TimePicker({ value, onChange, label = 'Time', placeholder }) {
   return (
     <Combo
       value={value}
@@ -35,7 +35,7 @@ function TimePicker({ value, onChange, label = 'Time' }) {
       options={TIMES.map(t => ({ value: t, label: showTime(t) }))}
       format={v => (v ? showTime(v) : '')}
       parse={parseTime}
-      placeholder={`${label} (optional)`}
+      placeholder={placeholder ?? `${label} (optional)`}
       label={label}
     />
   )

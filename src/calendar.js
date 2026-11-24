@@ -63,6 +63,8 @@ export function habitsOn(goals, key) {
   return goals.filter(
     g =>
       g.repeat &&
+      // A routine switched Off (see routineActions.js) hides from the calendar.
+      !g.paused &&
       g.repeat.days.includes(day.getDay()) &&
       // Local day, not .slice(0, 10): that's the UTC day, which can be a
       // day early or late depending on your time zone.
@@ -112,6 +114,8 @@ export function timeOn(goals, goal, key, depth = 0) {
       if (start) return anchor.duration ? endTime(start, anchor.duration) : start
     }
   }
+  // A routine has its own time on every day it repeats.
+  if (goal.repeat) return goal.time || null
   return goal.date === key ? goal.time : null
 }
 
@@ -126,6 +130,8 @@ export function dayEntries(goals, key) {
     done: goal.repeat ? goal.doneDates.includes(key) : goal.done,
   }))
   entries.sort((a, b) => {
+    // "Top" tasks come first, whatever their time.
+    if (Boolean(a.goal.pinned) !== Boolean(b.goal.pinned)) return a.goal.pinned ? -1 : 1
     if (a.time && b.time) return a.time.localeCompare(b.time)
     if (a.time !== b.time) return a.time ? -1 : 1
     if (a.habit !== b.habit) return a.habit ? 1 : -1

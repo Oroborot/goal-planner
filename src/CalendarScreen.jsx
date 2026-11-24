@@ -6,6 +6,8 @@ import { colorOf } from './colors.js'
 import { showTime } from './settings.js'
 import TimePicker from './TimePicker.jsx'
 import { addGoal, toggleGoal } from './goalActions.js'
+import { addRoutine } from './routineActions.js'
+import { EVERY_DAY, WEEKDAYS } from './repeat.js'
 import { planWeek, weekTitle } from './calendarPlan.js'
 import { clockOf, doneWeek } from './calendarDone.js'
 import { loadProjects, loadSessions } from './workLog.js'
@@ -75,28 +77,70 @@ function Detail({ entry, goals, onToggle }) {
 function AddTaskForm({ dateKey, items, apply, onClose }) {
   const [title, setTitle] = useState('')
   const [time, setTime] = useState('')
+  // Repeat is a tick: when on, pick the weekdays (all seven to begin with).
+  const [repeat, setRepeat] = useState(false)
+  const [days, setDays] = useState(EVERY_DAY)
+  // Top: show this task first on its day.
+  const [pinned, setPinned] = useState(false)
+
+  function toggleDay(day) {
+    setDays(days.includes(day) ? days.filter(d => d !== day) : [...days, day])
+  }
 
   function submit(e) {
     e.preventDefault()
     if (!title.trim()) return
-    apply(
-      addGoal(items, title.trim(), 'day', [], '', { date: dateKey, time }),
-    )
+    if (!repeat) {
+      apply(addGoal(items, title.trim(), 'day', [], '', { date: dateKey, time, pinned }))
+    } else {
+      if (days.length === 0) return
+      // A repeating task: it shows on every chosen weekday from now on.
+      apply(addRoutine(items, title.trim(), { days, time, pinned }))
+    }
     // Keep the form open for the next task; just empty it.
     setTitle('')
     setTime('')
+    setRepeat(false)
+    setPinned(false)
+    setDays(EVERY_DAY)
   }
 
   return (
     <form className="goal-form cal-add-form" onSubmit={submit}>
-      <input
-        value={title}
-        onChange={e => setTitle(e.target.value)}
-        placeholder="New task…"
-        aria-label="New task"
-        autoFocus
-      />
-      <TimePicker value={time} onChange={setTime} label="Time" />
+      {/* Row 1: the task name, with a small time box on its right. */}
+      <div className="cal-add-top">
+        <input
+          value={title}
+          onChange={e => setTitle(e.target.value)}
+          placeholder="New task…"
+          aria-label="New task"
+          autoFocus
+        />
+        <div className="cal-add-time">
+          <TimePicker value={time} onChange={setTime} label="Time" placeholder="Time" />
+        </div>
+      </div>
+      {/* Row 2: a tick for repeating; the weekdays slide in when it is on. */}
+      <div className="cal-add-repeat">
+        <label className={repeat ? 'repeat-pill on' : 'repeat-pill'}>
+          <input type="checkbox" checked={repeat} onChange={e => setRepeat(e.target.checked)} />
+          <span aria-hidden="true">↻</span> Repeat
+        </label>
+        <label className={pinned ? 'repeat-pill on' : 'repeat-pill'}>
+          <input type="checkbox" checked={pinned} onChange={e => setPinned(e.target.checked)} />
+          <span aria-hidden="true">▲</span> Top
+        </label>
+        {repeat && (
+          <div className="day-picker">
+            {WEEKDAYS.map(d => (
+              <label key={d.value} className={days.includes(d.value) ? 'day on' : 'day'}>
+                <input type="checkbox" checked={days.includes(d.value)} onChange={() => toggleDay(d.value)} aria-label={d.short} />
+                {d.short}
+              </label>
+            ))}
+          </div>
+        )}
+      </div>
       <div className="row">
         <button type="button" className="secondary" onClick={onClose}>
           Close
@@ -262,6 +306,10 @@ function CalendarScreen({ items, apply, onGear }) {
         <h1>Calendar</h1>
         <GearButton onClick={onGear} />
       </div>
+
+      <a href="#routines" className="cal-routines-link">
+        Routines ↻
+      </a>
 
       <div className="tabs">
         {VIEWS.map(v => (

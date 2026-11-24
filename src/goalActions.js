@@ -44,6 +44,10 @@ function makeGoal(title, timeframe, parentIds, why = '') {
     // a task was skipped from, shown as "Skipped from Tue".
     asap: false,
     skippedFrom: null,
+    // A repeating goal (routine) switched Off: hidden from the calendar, kept.
+    paused: false,
+    // "Top": shows first on its day, above the time order.
+    pinned: false,
     // How important (0 none, 1 low, 2 medium, 3 high) and the expected time
     // in minutes (null = not set).
     importance: 0,
@@ -76,6 +80,7 @@ export function addGoal(items, title, timeframe, parentIds, why = '', when = {})
     goal.time = (when.date && when.time) || null
     goal.asap = !when.date && Boolean(when.asap)
   }
+  if (when.pinned) goal.pinned = true
   if (when.importance) goal.importance = when.importance
   if (when.duration) goal.duration = when.duration
   const events = [
@@ -263,7 +268,10 @@ export function saveGoal(items, id, changes, childIds) {
   if (after.repeat) Object.assign(after, { done: false, completedAt: null, completedBy: null })
   // Only one-time Day goals sit on a calendar date; repeating goals use
   // their repeat days instead. Being on the calendar is optional.
-  if (after.timeframe !== 'day' || after.repeat || !after.date) Object.assign(after, { date: null, time: null })
+  // A repeating goal keeps its time of day, but has no single date.
+  if (after.timeframe !== 'day') Object.assign(after, { date: null, time: null })
+  else if (after.repeat) after.date = null
+  else if (!after.date) Object.assign(after, { date: null, time: null })
   // ASAP is only for one-time Day tasks without a date.
   if (after.timeframe !== 'day' || after.repeat || after.date) after.asap = false
   const events = []

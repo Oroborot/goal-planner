@@ -26,6 +26,8 @@ import TabBar from './TabBar.jsx'
 import GearSheet from './GearSheet.jsx'
 import EmptyTab from './EmptyTab.jsx'
 import CalendarScreen from './CalendarScreen.jsx'
+import RoutinesScreen from './RoutinesScreen.jsx'
+import { pauseAllRoutines } from './routineActions.js'
 import TrainingScreen from './TrainingScreen.jsx'
 import WorkScreen from './WorkScreen.jsx'
 import IdeasScreen from './IdeasScreen.jsx'
@@ -70,6 +72,7 @@ function screenFromAddress() {
   if (/^month\/\d{4}-\d{2}$/.test(address)) return { name: 'month', monthKey: address.slice(6) }
   if (/^week\/\d{4}-\d{2}-\d{2}$/.test(address)) return { name: 'week', mondayKey: mondayOf(address.slice(5)) }
   if (/^day\/\d{4}-\d{2}-\d{2}$/.test(address)) return { name: 'day', dateKey: address.slice(4) }
+  if (address === 'routines') return { name: 'routines' }
   if (address === 'goals') return { name: 'goals' }
   if (address.startsWith('goal/')) return { name: 'goal', goalId: address.slice(5) }
   if (address === 'notes') return { name: 'notes' }
@@ -101,6 +104,21 @@ function App() {
   // (store.js decides where: localStorage now, a server later.)
   useEffect(() => saveItems(items), [items])
   useEffect(() => saveEvents(events), [events])
+
+  // One time on this device: switch every old repeating task Off, so only
+  // the ones you pick in the Routines library show on the calendar.
+  useEffect(() => {
+    try {
+      if (localStorage.getItem('planner-routines-reset')) return
+      localStorage.setItem('planner-routines-reset', '1')
+    } catch {
+      return
+    }
+    const result = pauseAllRoutines(items)
+    if (result) apply(result)
+    // Runs once when the app opens.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   // Every change goes through here: the goal actions return the new items
   // plus history entries for what happened, and both get saved.
@@ -323,6 +341,8 @@ function App() {
         onGear={() => setGearOpen(true)}
       />
     )
+  } else if (screen.name === 'routines') {
+    page = <RoutinesScreen items={items} apply={apply} />
   } else if (screen.name === 'calendar') {
     page = <CalendarScreen items={items} apply={apply} onGear={() => setGearOpen(true)} />
   } else {

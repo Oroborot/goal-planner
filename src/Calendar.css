@@ -35,3 +35,27 @@
 .cal-line-focus { font-size: 0.85em; white-space: nowrap; font-variant-numeric: tabular-nums; }
 .cal-lines.open { padding-top: 0.2rem; padding-bottom: 0.9rem; }
 .cal-lines.open li.cal-line { padding: 0.35rem 0; }
+
+/* Routines library */
+.routine-list { list-style: none; margin: 0.8rem 0; padding: 0; display: flex; flex-direction: column; gap: 0.5rem; }
+.routine-row { padding: 0.6rem 0.8rem; border: 1px solid var(--border); border-radius: 12px; display: flex; flex-direction: column; gap: 0.5rem; }
+.routine-row.off { opacity: 0.6; }
+.routine-main { display: flex; align-items: center; justify-content: space-between; gap: 0.6rem; }
+.routine-text { display: flex; flex-direction: column; min-width: 0; }
+.routine-switch { display: flex; align-items: center; gap: 0.4rem; }
+.routine-switch input { width: 1.3rem; height: 1.3rem; margin: 0; }
+.cal-routines-link { display: inline-block; margin: 0.2rem 0 0.6rem; color: var(--accent); }
+
+/* Add-task form: name + small time on one row, a Repeat pill under it. */
+.cal-add-top { display: flex; gap: 0.5rem; align-items: flex-start; }
+.cal-add-top > input { flex: 1; min-width: 0; }
+.cal-add-time { position: relative; width: 5.2rem; flex: none; }
+.cal-add-time .combo-list { position: absolute; top: 100%; right: 0; left: auto; width: 7rem; z-index: 5; box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35); }
+.cal-add-repeat { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; }
+.repeat-pill { display: inline-flex; align-items: center; gap: 0.35rem; min-height: 36px; padding: 0 0.8rem; border: 1px solid var(--border); border-radius: 999px; font-size: 0.9em; cursor: pointer; transition: background 0.15s, border-color 0.15s; }
+.repeat-pill.on { border-color: var(--accent); background: var(--accent-bg); color: var(--text-h); }
+.repeat-pill input { position: absolute; opacity: 0; pointer-events: none; }
+.cal-add-repeat .day-picker { margin-top: 0; flex: 1 1 100%; animation: cal-fade 0.15s ease-out; }
+@keyframes cal-fade { from { opacity: 0; transform: translateY(-3px); } to { opacity: 1; transform: none; } }
+.cal-add-repeat .day-picker { flex-wrap: nowrap; gap: 0.25rem; }
+.cal-add-repeat .day-picker .day { flex: 1; min-width: 0; padding: 0; display: flex; align-items: center; justify-content: center; font-size: 0.78em; }
