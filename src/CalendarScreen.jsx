@@ -7,6 +7,9 @@ import { showTime } from './settings.js'
 import TimePicker from './TimePicker.jsx'
 import { addGoal, toggleGoal } from './goalActions.js'
 import { planWeek, weekTitle } from './calendarPlan.js'
+import { clockOf, doneWeek } from './calendarDone.js'
+import { loadProjects, loadSessions } from './workLog.js'
+import { durationText } from './workTimer.js'
 import './Calendar.css'
 
 // The two views of the tab: what we will do, and what we did.
@@ -171,6 +174,64 @@ function DayCard({ day, goals, items, apply, open, onToggle, isToday }) {
   )
 }
 
+// One line of the Done view: time range, name, focus time.
+function DoneLine({ item, goals }) {
+  const { kind, startedAt, endedAt, name, focusMs, goal } = item
+  const color = goal ? colorOf(goals, goal) : item.color
+  let when
+  if (kind === 'task') {
+    // A task has only the moment it was ticked (habits have none).
+    when = Number.isFinite(startedAt) ? showTime(clockOf(startedAt)) : ''
+  } else {
+    when = `${showTime(clockOf(startedAt))}–${showTime(clockOf(endedAt || startedAt))}`
+  }
+  return (
+    <li className="cal-line cal-done-line">
+      <span className="cal-line-time">{when}</span>
+      <span className="goal-dot" style={{ background: color }} />
+      <span className="cal-line-title">
+        {kind === 'task' ? '✓ ' : ''}
+        {name}
+      </span>
+      <span className="cal-line-focus goal-meta">{kind === 'task' ? '' : durationText(focusMs)}</span>
+    </li>
+  )
+}
+
+// One day card of the Done view. Same look as the Plan card.
+function DoneCard({ day, goals, open, onToggle, isToday }) {
+  const date = parseKey(day.key)
+  const count = day.items.length
+  const focus = day.items.reduce((sum, i) => sum + i.focusMs, 0)
+  return (
+    <section className={`cal-day ${isToday ? 'today' : ''} ${count === 0 ? 'empty-day' : ''}`}>
+      <button type="button" className="cal-day-head" aria-expanded={open} onClick={onToggle}>
+        <span className="cal-date">
+          <strong>{date.getDate()}</strong>
+          <span>{date.toLocaleDateString(undefined, { weekday: 'short' })}</span>
+        </span>
+        <span className="cal-day-title">
+          {isToday ? 'Today' : date.toLocaleDateString(undefined, { weekday: 'long' })}
+          <span className="goal-meta">
+            {count === 0 ? 'Nothing logged' : focus > 0 ? `${durationText(focus)} focused` : `${count} done`}
+          </span>
+        </span>
+        <span className="cal-chevron" aria-hidden="true">
+          {open ? '▾' : '▸'}
+        </span>
+      </button>
+      {/* Folded and opened show the same lines; opened adds some space. */}
+      {count > 0 && (
+        <ul className={open ? 'cal-lines open' : 'cal-lines'}>
+          {day.items.map(i => (
+            <DoneLine key={i.id} item={i} goals={goals} />
+          ))}
+        </ul>
+      )}
+    </section>
+  )
+}
+
 // The Calendar tab. Plan: the week as day cards, only what is planned,
 // in time order. Done: what you did (comes in a later step).
 function CalendarScreen({ items, apply, onGear }) {
@@ -182,6 +243,8 @@ function CalendarScreen({ items, apply, onGear }) {
   const today = todayKey()
   const goals = activeGoals(items)
   const week = planWeek(goals, monday)
+  // Done view: read the saved Work sessions each time it draws (cheap).
+  const doneDays = view === 'done' ? doneWeek(loadSessions(), loadProjects(), goals, monday) : []
   const isThisWeek = monday === mondayOf(today)
 
   function toggle(key) {
@@ -214,10 +277,7 @@ function CalendarScreen({ items, apply, onGear }) {
         ))}
       </div>
 
-      {view === 'done' ? (
-        <p className="empty">What you did (timed work and workouts) comes in the next step.</p>
-      ) : (
-        <>
+      <>
           <div className="day-nav">
             <button type="button" className="icon-button" onClick={() => setMonday(addDaysKey(monday, -7))} aria-label="Previous week">
               ←
@@ -236,7 +296,18 @@ function CalendarScreen({ items, apply, onGear }) {
           </div>
 
           <div className="cal-week">
-            {week.map(day => (
+            {view === 'done'
+              ? doneDays.map(day => (
+                  <DoneCard
+                    key={day.key}
+                    day={day}
+                    goals={goals}
+                    open={opened.has(day.key)}
+                    onToggle={() => toggle(day.key)}
+                    isToday={day.key === today}
+                  />
+                ))
+              : week.map(day => (
               <DayCard
                 key={day.key}
                 day={day}
@@ -250,7 +321,6 @@ function CalendarScreen({ items, apply, onGear }) {
             ))}
           </div>
         </>
-      )}
     </div>
   )
 }

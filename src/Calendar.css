@@ -30,3 +30,8 @@
 .cal-add-form { margin: 0.4rem 0; }
 .cal-open .add-toggle { width: 100%; margin: 0.2rem 0; }
 .cal-day-link { display: inline-block; padding: 0.3rem 0; color: var(--accent); }
+
+/* Done view: a little focus time at the right of each line. */
+.cal-line-focus { font-size: 0.85em; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.cal-lines.open { padding-top: 0.2rem; padding-bottom: 0.9rem; }
+.cal-lines.open li.cal-line { padding: 0.35rem 0; }
