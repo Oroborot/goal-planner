@@ -115,10 +115,6 @@ const SHAPES = {
       </>
     ),
   },
-  cookbook: {
-    label: 'Cookbook',
-    shape: <path d="M6 3v6a3 3 0 0 0 6 0V3M9 3v6M9 12v9M18 21V3c-2 1.5-3.5 4.5-3.5 9H18" />,
-  },
   projects: {
     label: 'Projects',
     shape: (

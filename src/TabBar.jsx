@@ -5,7 +5,7 @@ import { loadIdeasSpot } from './ideasMemory.js'
 const TABS = [
   { id: 'training', label: 'Training', href: '#training' },
   { id: 'work', label: 'Work', href: '#work' },
-  { id: 'cookbook', label: 'Cookbook', href: '#cookbook' },
+  { id: 'calendar', label: 'Calendar', href: '#calendar' },
   { id: 'projects', label: 'Projects', href: '#projects' },
   { id: 'ideas', label: 'Ideas', href: '#ideas' },
 ]

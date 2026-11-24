@@ -25,6 +25,7 @@ import { rememberPage } from './navHistory.js'
 import TabBar from './TabBar.jsx'
 import GearSheet from './GearSheet.jsx'
 import EmptyTab from './EmptyTab.jsx'
+import CalendarScreen from './CalendarScreen.jsx'
 import TrainingScreen from './TrainingScreen.jsx'
 import WorkScreen from './WorkScreen.jsx'
 import IdeasScreen from './IdeasScreen.jsx'
@@ -43,11 +44,11 @@ import {
 import './App.css'
 
 // The 5 tabs of the hub, shown in the bar at the bottom.
-const TABS = ['training', 'work', 'cookbook', 'projects', 'ideas']
+const TABS = ['training', 'work', 'calendar', 'projects', 'ideas']
 
 // Which screen to show, read from the end of the web address:
 //   no address    -> the Training tab
-//   #work, #cookbook, #projects, #ideas -> the other tabs
+//   #work, #calendar, #projects, #ideas -> the other tabs
 //   #idea/<id>    -> inside one idea (still the Ideas tab)
 //   #home         -> the old Today home screen (hidden, still works)
 //   #goals        -> the goals list
@@ -322,8 +323,10 @@ function App() {
         onGear={() => setGearOpen(true)}
       />
     )
+  } else if (screen.name === 'calendar') {
+    page = <CalendarScreen items={items} onGear={() => setGearOpen(true)} />
   } else {
-    // Cookbook or Projects: not built yet.
+    // Projects: not built yet.
     page = <EmptyTab key={screen.name} tab={screen.name} onGear={() => setGearOpen(true)} />
   }
 
