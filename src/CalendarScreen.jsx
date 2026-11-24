@@ -1,13 +1,11 @@
 import { useState } from 'react'
 import GearButton from './GearButton.jsx'
 import { activeGoals } from './progress.js'
-import { addDaysKey, endTime, formatMinutes, mondayOf, parseKey, todayKey } from './calendar.js'
+import { addDaysKey, endTime, mondayOf, parseKey, todayKey } from './calendar.js'
 import { colorOf } from './colors.js'
 import { showTime } from './settings.js'
-import { ImportanceIcon, TaskExtrasFields } from './TaskExtras.jsx'
 import TimePicker from './TimePicker.jsx'
 import { addGoal, toggleGoal } from './goalActions.js'
-import { biggerGoals, labelOf } from './timeframes.js'
 import { planWeek, weekTitle } from './calendarPlan.js'
 import './Calendar.css'
 
@@ -44,8 +42,6 @@ function Line({ entry, goals }) {
 function Detail({ entry, goals, onToggle }) {
   const { goal, done, habit } = entry
   const color = colorOf(goals, goal)
-  const feeds = goals.filter(g => goal.parentIds.includes(g.id)).map(g => g.title)
-  const checklist = goal.checklist || []
   return (
     <li className={done ? 'cal-detail done' : 'cal-detail'} style={{ borderLeftColor: color }}>
       <div className="cal-detail-top">
@@ -66,44 +62,26 @@ function Detail({ entry, goals, onToggle }) {
       <a href={`#goal/${goal.id}`} className="goal-link cal-detail-title">
         {goal.title}
         {habit && ' ↻'}
-        <ImportanceIcon importance={goal.importance} color={color} />
       </a>
-      <div className="cal-detail-meta goal-meta">
-        {goal.duration ? <span>⏱ {formatMinutes(goal.duration)}</span> : null}
-        {checklist.length > 0 && (
-          <span>
-            ☑ {checklist.filter(c => c.done).length}/{checklist.length}
-          </span>
-        )}
-        {feeds.length > 0 && <span>feeds {feeds.join(', ')}</span>}
-      </div>
     </li>
   )
 }
 
 // The small "add task" form inside an opened day card.
 // It makes a normal Day goal with this day's date, like the Day page does.
-function AddTaskForm({ dateKey, goals, items, apply, onClose }) {
+function AddTaskForm({ dateKey, items, apply, onClose }) {
   const [title, setTitle] = useState('')
   const [time, setTime] = useState('')
-  const [parentId, setParentId] = useState('')
-  const [extras, setExtras] = useState({ importance: 0, duration: '' })
 
   function submit(e) {
     e.preventDefault()
     if (!title.trim()) return
     apply(
-      addGoal(items, title.trim(), 'day', parentId ? [parentId] : [], '', {
-        date: dateKey,
-        time,
-        importance: extras.importance,
-        duration: Number(extras.duration) || null,
-      }),
+      addGoal(items, title.trim(), 'day', [], '', { date: dateKey, time }),
     )
     // Keep the form open for the next task; just empty it.
     setTitle('')
     setTime('')
-    setExtras({ importance: 0, duration: '' })
   }
 
   return (
@@ -116,17 +94,6 @@ function AddTaskForm({ dateKey, goals, items, apply, onClose }) {
         autoFocus
       />
       <TimePicker value={time} onChange={setTime} label="Time" />
-      <div className="row">
-        <select value={parentId} onChange={e => setParentId(e.target.value)} aria-label="Goal">
-          <option value="">No goal</option>
-          {biggerGoals(goals, 'day').map(g => (
-            <option key={g.id} value={g.id}>
-              {g.title} ({labelOf(g.timeframe)})
-            </option>
-          ))}
-        </select>
-      </div>
-      <TaskExtrasFields value={extras} onChange={setExtras} />
       <div className="row">
         <button type="button" className="secondary" onClick={onClose}>
           Close
@@ -142,7 +109,6 @@ function DayCard({ day, goals, items, apply, open, onToggle, isToday }) {
   // The add form is folded until you tap "＋ Add task".
   const [adding, setAdding] = useState(false)
   const date = parseKey(day.key)
-  const done = day.entries.filter(e => e.done).length
   const count = day.entries.length
   return (
     <section className={`cal-day ${isToday ? 'today' : ''} ${count === 0 ? 'empty-day' : ''}`}>
@@ -154,9 +120,7 @@ function DayCard({ day, goals, items, apply, open, onToggle, isToday }) {
         <span className="cal-day-title">
           {isToday ? 'Today' : date.toLocaleDateString(undefined, { weekday: 'long' })}
           <span className="goal-meta">
-            {count === 0
-              ? 'Nothing planned'
-              : `${done} of ${count} done${day.load > 0 ? ` · ${formatMinutes(day.load)}` : ''}`}
+            {count === 0 ? 'Nothing planned' : `${count} planned`}
           </span>
         </span>
         <span className="cal-chevron" aria-hidden="true">
@@ -189,7 +153,6 @@ function DayCard({ day, goals, items, apply, open, onToggle, isToday }) {
           {adding ? (
             <AddTaskForm
               dateKey={day.key}
-              goals={goals}
               items={items}
               apply={apply}
               onClose={() => setAdding(false)}

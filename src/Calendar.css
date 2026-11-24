@@ -20,7 +20,8 @@
 .cal-line-title { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text-h); }
 .cal-open { padding: 0 0.8rem 0.8rem; }
 .cal-details li.cal-detail { margin: 0 0 0.5rem; padding: 0.55rem 0.7rem; border-left: 4px solid var(--accent); }
-.cal-detail.done { opacity: 0.65; }
+.cal-detail.done { opacity: 0.55; }
+.cal-detail.done .cal-detail-title { text-decoration: line-through; }
 .cal-detail-top { display: flex; justify-content: space-between; gap: 0.5rem; }
 .cal-detail-time { font-size: 0.85em; font-variant-numeric: tabular-nums; }
 .cal-detail-title { display: block; margin: 0.1rem 0; font-weight: 600; }
