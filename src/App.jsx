@@ -324,7 +324,7 @@ function App() {
       />
     )
   } else if (screen.name === 'calendar') {
-    page = <CalendarScreen items={items} onGear={() => setGearOpen(true)} />
+    page = <CalendarScreen items={items} apply={apply} onGear={() => setGearOpen(true)} />
   } else {
     // Projects: not built yet.
     page = <EmptyTab key={screen.name} tab={screen.name} onGear={() => setGearOpen(true)} />
