@@ -1,0 +1,2 @@
+{"id":"work-tab","kind":"leaf","title":"Work tab: timer, log and stats","priority":2,"urgent":false,"status":"done","files":["src/WorkScreen.jsx","src/WorkPanels.jsx","src/Work.css","src/workTimer.js","src/workLog.js","src/workStats.js"]}
+{"id":"work-projects","kind":"leaf","title":"Projects with a ship date","priority":2,"urgent":false,"status":"todo","files":[],"links":[{"to":"work-tab","reason":"The Work tab projects come from here."}]}

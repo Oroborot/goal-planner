@@ -1,0 +1,9 @@
+{"id":"app-navigation","kind":"leaf","title":"Menu, tab bar and Home","priority":2,"urgent":false,"status":"done","files":["src/App.jsx","src/HomeScreen.jsx","src/HomeHero.jsx","src/SideMenu.jsx","src/BottomBar.jsx","src/TabBar.jsx","src/AddSheet.jsx","src/navHistory.js"]}
+{"id":"redesign","kind":"leaf","title":"Redesign: calm, readable look","priority":2,"urgent":false,"status":"wip","files":[]}
+{"id":"themes","kind":"leaf","title":"Themes and look settings","priority":2,"urgent":false,"status":"done","files":["src/themes.js","src/ThemePicker.jsx","src/colors.js","src/ColorPicker.jsx","src/index.css","src/App.css"]}
+{"id":"cover-screen","kind":"leaf","title":"Cover screen","priority":2,"urgent":false,"status":"done","files":["src/CoverScreen.jsx","src/CoverBackground.jsx","src/quotes.js"]}
+{"id":"settings-backup","kind":"leaf","title":"Settings and backup","priority":2,"urgent":false,"status":"done","files":["src/SettingsPage.jsx","src/settings.js","src/BackupSection.jsx","src/backup.js","src/store.js","src/GearButton.jsx","src/GearSheet.jsx"]}
+{"id":"stats","kind":"leaf","title":"Stats","priority":2,"urgent":false,"status":"done","files":["src/StatsPage.jsx","src/stats.js","src/GoalStats.jsx"],"links":[{"to":"history-archive","reason":"Counts come from the history log."},{"to":"timer","reason":"Shows timer time."}]}
+{"id":"history-archive","kind":"leaf","title":"History and archive","priority":2,"urgent":false,"status":"done","files":["src/history.js","src/EventRow.jsx","src/GoalHistory.jsx","src/MenuPages.jsx"]}
+{"id":"installable-app","kind":"leaf","title":"Installable phone app","priority":2,"urgent":false,"status":"done","files":[]}
+{"id":"customize","kind":"leaf","title":"Customize icons, colors and font","priority":2,"urgent":false,"status":"todo","files":[]}

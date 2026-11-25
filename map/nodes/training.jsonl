@@ -1,0 +1,5 @@
+{"id":"training-timer","kind":"leaf","title":"Training timer and programs","priority":2,"urgent":false,"status":"done","files":["src/TrainingScreen.jsx","src/TrainingPanel.jsx","src/TrainingSettings.jsx","src/training.js","src/sound.js","src/ProgramsSheet.jsx","src/programs.js"]}
+{"id":"training-stats","kind":"leaf","title":"Training history and stats","priority":2,"urgent":false,"status":"done","files":["src/trainingData.js","src/trainingStats.js"]}
+{"id":"training-multi-sets","kind":"leaf","title":"Multiple sets in one workout","priority":2,"urgent":false,"status":"todo","files":[]}
+{"id":"training-library","kind":"leaf","title":"Exercise library, premade programs, program check","priority":2,"urgent":false,"status":"todo","files":[]}
+{"id":"training-stretching","kind":"leaf","title":"Stretching after a session","priority":2,"urgent":false,"status":"todo","files":[]}

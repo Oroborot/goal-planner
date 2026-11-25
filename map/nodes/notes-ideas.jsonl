@@ -1,0 +1,8 @@
+{"id":"notes","kind":"leaf","title":"Notes and note categories","priority":2,"urgent":false,"status":"done","files":["src/NotesScreen.jsx","src/NotePage.jsx","src/NoteEditForm.jsx","src/noteActions.js","src/categoryActions.js","src/CategorySelect.jsx","src/ManageCategories.jsx"]}
+{"id":"ideas-clouds","kind":"leaf","title":"Ideas clouds","priority":2,"urgent":false,"status":"review","files":["src/IdeasScreen.jsx","src/IdeaCloud.jsx","src/Ideas.css","src/cloudShape.js","src/ideaActions.js","src/ideasMemory.js"]}
+{"id":"ideas-move-restore","kind":"leaf","title":"Ideas: move and restore","priority":2,"urgent":false,"status":"review","files":[]}
+{"id":"ideas-text","kind":"leaf","title":"Ideas: text inside an idea","priority":2,"urgent":false,"status":"todo","files":[]}
+{"id":"ideas-backup-export","kind":"leaf","title":"Ideas: backup reminder and text export","priority":2,"urgent":false,"status":"todo","files":[]}
+{"id":"ideas-search","kind":"leaf","title":"Ideas: search","priority":2,"urgent":false,"status":"todo","files":[]}
+{"id":"ideas-merge-links","kind":"leaf","title":"Ideas: merge and links","priority":2,"urgent":false,"status":"todo","files":[]}
+{"id":"ideas-motion","kind":"leaf","title":"Ideas: zoom and floating motion","priority":2,"urgent":false,"status":"parked","files":[]}

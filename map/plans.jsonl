@@ -1,0 +1,6 @@
+{"id":"main-plan","path":"PLAN.md","node":"app-navigation","state":"live","nextReview":"2026-12-25"}
+{"id":"design-ideas","path":"DESIGN-IDEAS.md","node":"redesign","state":"live","nextReview":"2026-12-25"}
+{"id":"restructure-ideas","path":"RESTRUCTURE-IDEAS.md","node":"work-projects","state":"live","nextReview":"2026-12-25"}
+{"id":"training-spec","path":"TRAINING-SPEC.md","node":"training-timer","state":"done"}
+{"id":"small-fixes-prompt","path":"NEXT-PROMPT.md","node":"work-tab","state":"done"}
+{"id":"old-handoff","path":"NEXT-SESSION.md","node":"app-navigation","state":"dead"}

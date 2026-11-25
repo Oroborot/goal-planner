@@ -1,0 +1,6 @@
+{"id":"goal-editing","kind":"leaf","title":"Add, edit and link goals","priority":2,"urgent":false,"status":"done","files":["src/goalActions.js","src/GoalsScreen.jsx","src/GoalEditForm.jsx","src/AddSmallerGoalForm.jsx","src/DeletedGoals.jsx"]}
+{"id":"goal-progress","kind":"leaf","title":"Goal page and progress","priority":2,"urgent":false,"status":"done","files":["src/GoalPage.jsx","src/progress.js","src/ProgressBar.jsx","src/Checklist.jsx","src/TaskExtras.jsx"],"links":[{"to":"goal-editing","reason":"Shows their progress."}]}
+{"id":"repeating-goals","kind":"leaf","title":"Repeating goals and streaks","priority":2,"urgent":false,"status":"done","files":["src/repeat.js","src/RepeatFields.jsx","src/RepeatPanel.jsx","src/RepeatSummary.jsx"]}
+{"id":"goal-tree","kind":"leaf","title":"Goal tree view","priority":2,"urgent":false,"status":"wip","files":["src/GoalTree.jsx"]}
+{"id":"folders","kind":"leaf","title":"Folders","priority":2,"urgent":false,"status":"done","files":["src/FoldersPage.jsx"],"links":[{"to":"goal-editing","reason":"Lists achieved goals and their why."}]}
+{"id":"rewards","kind":"leaf","title":"Rewards","priority":2,"urgent":false,"status":"parked","files":["src/RewardsPage.jsx","src/rewardActions.js"]}

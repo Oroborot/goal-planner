@@ -1,0 +1,7 @@
+{"id":"login-sync","kind":"leaf","title":"Login and sync","priority":2,"urgent":false,"status":"todo","files":[],"links":[{"to":"legal-privacy","reason":"Legal must be done before going public."}]}
+{"id":"share-journeys","kind":"leaf","title":"Share goal journeys","priority":2,"urgent":false,"status":"todo","files":[],"links":[{"to":"login-sync","reason":"Cannot work without accounts."}]}
+{"id":"phone-notifications","kind":"leaf","title":"Phone version and real notifications","priority":2,"urgent":false,"status":"todo","files":[],"links":[{"to":"login-sync","reason":"May need a server (costs money)."}]}
+{"id":"legal-privacy","kind":"leaf","title":"Legal and privacy","priority":2,"urgent":false,"status":"todo","files":[]}
+{"id":"shopping-cooking","kind":"leaf","title":"Shopping and cooking","priority":2,"urgent":false,"status":"todo","files":[]}
+{"id":"dreams-sleep","kind":"leaf","title":"Dreams and sleep","priority":2,"urgent":false,"status":"todo","files":[]}
+{"id":"ai-help","kind":"leaf","title":"AI help","priority":2,"urgent":false,"status":"parked","files":[]}
